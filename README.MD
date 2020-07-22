@@ -4,6 +4,7 @@
 该框架依然十分精简易上手，出错概率低。同时支持移动客户端访问。
 
 
+
 ## 核心技术及组件
 > web服务框架    GoFrame        v1.13.1
 >
@@ -40,7 +41,12 @@
 17.  案例演示：常用的前端组件整合演示。
 
 ## 使用方法
-
+```
+1. git clone git@github.com:1307super/gea.git
+2. 导入document/sql/gea.sql
+3. 修改配置文件
+4. go run main.go 启动
+```
 
 
 ## 感谢(排名不分先后)
