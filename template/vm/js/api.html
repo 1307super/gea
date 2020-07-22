@@ -1,0 +1,57 @@
+import request from '@/utils/request'
+
+{{$businessName :=.table.BusinessName}}
+// 查询{{.table.FunctionName}}列表
+export function list{{$businessName}}(query) {
+  return request({
+    url: '/{{.table.ModuleName}}/{{$businessName}}/list',
+    method: 'get',
+    params: query
+  })
+}
+
+// 查询{{.table.FunctionName}}详细
+export function get{{$businessName}}({{.table.PkColumn.ColumnName}}) {
+  return request({
+    url: '/{{.table.ModuleName}}/{{$businessName}}/info',
+    method: 'get',
+    params: {
+     id: {{.table.PkColumn.ColumnName}}
+    }
+  })
+}
+
+// 新增{{.table.FunctionName}}
+export function add{{$businessName}}(data) {
+  return request({
+    url: '/{{.table.ModuleName}}/{{$businessName}}',
+    method: 'post',
+    data: data
+  })
+}
+
+// 修改{{.table.FunctionName}}
+export function update{{$businessName}}(data) {
+  return request({
+    url: '/{{.table.ModuleName}}/{{$businessName}}',
+    method: 'put',
+    data: data
+  })
+}
+
+// 删除{{.table.FunctionName}}
+export function del{{$businessName}}({{.table.PkColumn.ColumnName}}) {
+  return request({
+    url: '/{{.table.ModuleName}}/{{$businessName}}/' + {{.table.PkColumn.ColumnName}},
+    method: 'delete'
+  })
+}
+
+// 导出{{.table.FunctionName}}
+export function export{{$businessName}}(query) {
+  return request({
+    url: '/{{.table.ModuleName}}/{{$businessName}}/export',
+    method: 'get',
+    params: query
+  })
+}

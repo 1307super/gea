@@ -1,0 +1,147 @@
+// ==========================================================================
+// GEAGO自动生成model扩展代码列表、增、删，改、查、导出，只生成一次，按需修改,再次生成不会覆盖.
+// 生成日期：{{.table.CreateTime}}
+// 生成路径: app/model/{{.table.ModuleName}}/{{.table.BusinessName}}/{{.table.BusinessName}}.go
+// 生成人：{{.table.FunctionAuthor}}
+// ==========================================================================
+package {{.table.BusinessName}}
+
+import (
+     "github.com/gogf/gf/database/gdb"
+     "github.com/gogf/gf/errors/gerror"
+     "{{.table.PackageName}}/app/utils/page"
+)
+
+//新增页面请求参数
+type AddReq struct { {{range $index, $column := .table.Columns}}
+     {{if and (eq $column.IsInsert "1") (ne $column.IsPk "1")}} {{$column.GoField}}  {{if eq $column.GoType "Time"}}*gtime.Time{{else}}{{$column.GoType}}{{end}}   `p:"{{$column.HtmlField}}" {{if eq $column.IsRequired "1"}}v:"required#{{$column.ColumnComment}}不能为空"{{end}}` {{end}} {{end}}
+}
+
+//修改页面请求参数
+type EditReq struct {
+     {{.table.PkColumn.GoField}}     {{.table.PkColumn.GoType}}  `p:"{{.table.PkColumn.HtmlField}}" v:"required#主键ID不能为空"` {{range $index, $column := .table.Columns}} {{if eq $column.IsEdit "1"}}
+     {{$column.GoField}}  {{if eq $column.GoType "Time"}}*gtime.Time{{else}}{{$column.GoType}}{{end}} `p:"{{$column.HtmlField}}" {{if eq $column.IsRequired "1"}}v:"required#{{$column.ColumnComment}}不能为空"{{end}}` {{end}} {{end}}
+}
+
+//分页请求参数 {{$pkColumn := .table.PkColumn}}
+type SelectPageReq struct { {{range $index, $column := .table.Columns}} {{if eq $column.IsQuery "1"}}
+     {{$column.GoField}}  {{if eq $column.GoType "Time"}}*gtime.Time{{else}}{{$column.GoType}}{{end}} `p:"{{$column.HtmlField}}"` //{{$column.ColumnComment}} {{end}} {{end}}
+     BeginTime  string `p:"beginTime"`  //开始时间
+     EndTime     string `p:"endTime"`     //结束时间
+     PageNum     int     `p:"pageNum"`     //当前页码
+     PageSize   int     `p:"pageSize"`   //每页数
+     OrderByColumn string `p:"orderByColumn"` //排序字段
+     IsAsc           string `p:"isAsc"`           //排序方式
+}
+
+//根据条件分页查询数据
+func SelectListByPage(param *SelectPageReq) ([]Entity, *page.Paging, error) {
+     db, err := gdb.Instance()
+     if err != nil {
+        return nil, nil, gerror.New("获取数据库连接失败")
+    }
+    model := db.Table("{{.table.TableName}} t")
+    if param != nil { {{range $index, $column := .table.Columns}} {{if eq $column.IsQuery "1"}}{{if eq $column.QueryType "LIKE"}}
+        if param.{{$column.GoField}} != "" {
+            model.Where("t.{{$column.ColumnName}} like ?", "%"+param.{{$column.GoField}}+"%")
+        } {{else if eq $column.QueryType "EQ"}} {{if eq $column.GoType "string"}}
+        if param.{{$column.GoField}} != "" {
+            model.Where("t.{{$column.ColumnName}} = ?", param.{{$column.GoField}})
+        } {{else if eq $column.GoType "int" "int64"}}
+        if param.{{$column.GoField}} != 0 {
+            model.Where("t.{{$column.ColumnName}} = ?", param.{{$column.GoField}})
+        }{{end}} {{end}} {{end}} {{end}}
+        if param.BeginTime != "" {
+            model.Where("date_format(t.create_time,'%y%m%d') >= date_format(?,'%y%m%d') ", param.BeginTime)
+        }
+        if param.EndTime != "" {
+            model.Where("date_format(t.create_time,'%y%m%d') <= date_format(?,'%y%m%d') ", param.EndTime)
+        }
+    }
+
+    total, err := model.Count()
+
+    if err != nil {
+        return nil, nil, gerror.New("读取行数失败")
+    }
+
+    page := page.CreatePaging(param.PageNum, param.PageSize, total)
+
+    model.Limit(page.StartNum, page.Pagesize)
+
+    if param.OrderByColumn != "" {
+        model.Order(param.OrderByColumn + " " + param.IsAsc)
+    }
+
+    var result []Entity
+    model.Structs(&result)
+    return result, page, nil
+}
+
+// 导出excel
+func SelectListExport(param *SelectPageReq) (gdb.Result, error) {
+    db, err := gdb.Instance()
+    if err != nil {
+        return nil, gerror.New("获取数据库连接失败")
+    }
+    model := db.Table("{{.table.TableName}} t")
+    if param != nil { {{range $index, $column := .table.Columns}} {{if eq $column.IsQuery "1"}}{{if eq $column.QueryType "LIKE"}}
+        if param.{{$column.GoField}} != "" {
+            model.Where("t.{{$column.ColumnName}} like ?", "%"+param.{{$column.GoField}}+"%")
+        } {{else if eq $column.QueryType "EQ"}} {{if eq $column.GoType "string"}}
+        if param.{{$column.GoField}} != "" {
+            model.Where("t.{{$column.ColumnName}} = ?", param.{{$column.GoField}})
+        } {{else if eq $column.GoType "int" "int64"}}
+        if param.{{$column.GoField}} != 0 {
+            model.Where("t.{{$column.ColumnName}} = ?", param.{{$column.GoField}})
+        }
+        {{end}} {{end}} {{end}} {{end}}
+        if param.BeginTime != "" {
+            model.Where("date_format(t.create_time,'%y%m%d') >= date_format(?,'%y%m%d') ", param.BeginTime)
+        }
+
+        if param.EndTime != "" {
+            model.Where("date_format(t.create_time,'%y%m%d') <= date_format(?,'%y%m%d') ", param.EndTime)
+        }
+    }
+
+    //{{range $index, $column := .table.Columns}}"{{$column.ColumnComment}}",{{end}}
+    model.Fields("{{range $index, $column := .table.Columns}} {{if eq $index 0}}t.{{$column.ColumnName}}{{else}},t.{{$column.ColumnName}}{{end}}{{end}}")
+
+    result, _ := model.All()
+    return result, nil
+}
+
+//获取所有数据
+func SelectListAll(param *SelectPageReq) ([]Entity,error) {
+    db, err := gdb.Instance()
+    if err != nil {
+        return nil, gerror.New("获取数据库连接失败")
+    }
+
+    model := db.Table("{{.table.TableName}} t")
+
+    if param != nil { {{range $index, $column := .table.Columns}} {{if eq $column.IsQuery "1"}}{{if eq $column.QueryType "LIKE"}}
+        if param.{{$column.GoField}} != "" {
+            model.Where("t.{{$column.ColumnName}} like ?", "%"+param.{{$column.GoField}}+"%")
+        } {{else if eq $column.QueryType "EQ"}} {{if eq $column.GoType "string"}}
+        if param.{{$column.GoField}} != "" {
+            model.Where("t.{{$column.ColumnName}} = ?", param.{{$column.GoField}})
+        } {{else if eq $column.GoType "int" "int64"}}
+        if param.{{$column.GoField}} != 0 {
+            model.Where("t.{{$column.ColumnName}} = ?", param.{{$column.GoField}})
+        }{{end}}
+        {{end}} {{end}} {{end}}
+        if param.BeginTime != "" {
+            model.Where("date_format(t.create_time,'%y%m%d') >= date_format(?,'%y%m%d') ", param.BeginTime)
+        }
+
+        if param.EndTime != "" {
+            model.Where("date_format(t.create_time,'%y%m%d') <= date_format(?,'%y%m%d') ", param.EndTime)
+        }
+    }
+
+    var result []Entity
+    model.Structs(&result)
+    return result, nil
+}

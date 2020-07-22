@@ -1,0 +1,99 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "生成文档请在调试模式下进行\u003ca href=\"/tool/swagger?a=r\"\u003e重新生成文档\u003c/a\u003e",
+        "title": "GEAGO 自动生成API文档",
+        "contact": {},
+        "license": {},
+        "version": "1.0"
+    },
+    "host": "localhost:8082",
+    "basePath": "/",
+    "paths": {
+        "/api/v1/index": {
+            "get": {
+                "description": "api测试",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "测试"
+                ],
+                "summary": "api测试",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/model.CommonRes"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/login": {
+            "post": {
+                "description": "api测试",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "测试"
+                ],
+                "summary": "登陆",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "姓名",
+                        "name": "username",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "密码",
+                        "name": "password",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/model.CommonRes"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "model.CommonRes": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "description": "响应编码 0 成功 500 错误 403 无权限  -1  失败",
+                    "type": "integer"
+                },
+                "data": {
+                    "description": "数据内容",
+                    "type": "object"
+                },
+                "msg": {
+                    "description": "消息",
+                    "type": "string"
+                },
+                "otype": {
+                    "description": "业务类型",
+                    "type": "integer"
+                }
+            }
+        }
+    }
+}

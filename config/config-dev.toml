@@ -1,0 +1,81 @@
+# HTTP Server
+[status]
+    admin = true
+    api = false
+
+[admin]
+	Address     = ":8090"
+	ServerRoot  = "public"
+	ServerAgent = "gea"
+	LogPath     = "log/gea/server"
+	DumpRouterMap = true
+[api]
+	Address     = ":8090"
+	ServerRoot  = "public"
+	ServerAgent = "gea"
+	LogPath     = "log/gea/api"
+	DumpRouterMap = true
+
+#jwt配置
+[jwt]
+    #过期时间
+    timeout = 864000
+    #token分割符
+    refresh = 1800
+    #安全密钥
+    encryptKey = "geazxc0123lk0912"
+
+# Logger.
+[logger]
+    AppName     = "gea-local"
+    Path        = "log/gea"
+    Level       = "all"
+    Stdout      = true
+
+# Template.
+[viewer]
+    Path        = "template"
+    DefaultFile = "index.html"
+    Delimiters  =  ["{{", "}}"]
+
+# Database.
+[database]
+    [database.default]
+        link  = "mysql:root:@tcp(127.0.0.1:3306)/gea"
+        debug = true
+    [database.logger]
+        Path   = "log/gea/sql"
+        Level  = "all"
+        Stdout = true
+[casbin]
+    driverName = "mysql"
+    dataSourceName = "root:@tcp(127.0.0.1:3306)/gea"
+
+# Gen
+[gen]
+    author        = "1307"
+    moduleName    = "module"
+    packageName   = "gea"
+    autoRemovePre = true
+    tablePrefix   = "t_,sys_"
+
+[compiler]
+    name     = "gea"
+    version  = "1.0.0"
+    arch     = "386,amd64"
+    system   = "windows,darwin"
+    output   = ""
+    path     = "./bin"
+    extra    = "-ldflags \"-s -w\""
+    # 自定义编译时内置变量
+    [compiler.VarMap]
+        author = "1307"
+        email  = "1307@qq.com"
+[apollo]
+    Enable = true
+    AppId = "p04gft27AJ2JuBuV"
+    Cluster = "default"
+    NamespaceName = "application"
+    Ip = "dev.cc.dev.sih.cq.cn"
+    NextTryConnTime = 0
+    IsBackupConfig = false

@@ -1,0 +1,13 @@
+2020-03-24 11:22:30.922 [DEBU] [2 ms] SELECT * FROM `sys_config` WHERE config_key='sys.resource.url' LIMIT 1
+2020-03-24 11:22:57.555 [DEBU] [1 ms] SELECT * FROM `sys_user` WHERE login_name='admin' LIMIT 1
+2020-03-24 11:22:57.557 [DEBU] [2 ms] INSERT INTO `sys_user_online`(`dept_name`,`ipaddr`,`login_location`,`os`,`start_timestamp`,`last_access_time`,`expire_time`,`login_name`,`browser`,`status`,`sessionId`) VALUES('','127.0.0.1','内网IP','Intel Mac OS X 10_15_1','2020-03-24 11:22:57','2020-03-24 11:22:57',1440,'admin','Chrome','on_line','C1IQRDD8FU48MQS899') 
+2020-03-24 11:22:57.558 [DEBU] [1 ms] INSERT INTO `sys_logininfor`(`msg`,`ipaddr`,`login_location`,`os`,`status`,`info_id`,`login_name`,`browser`,`login_time`) VALUES('登陆成功','127.0.0.1','内网IP','Intel Mac OS X 10_15_1','0',0,'admin','Chrome','2020-03-24 11:22:57') 
+2020-03-24 11:22:57.597 [DEBU] [0 ms] SELECT * FROM `sys_config` WHERE config_key='sys.index.sideTheme' LIMIT 1
+2020-03-24 11:22:57.598 [DEBU] [0 ms] SELECT * FROM `sys_config` WHERE config_key='sys.index.skinName' LIMIT 1
+2020-03-24 11:23:22.965 [DEBU] [1 ms] SELECT * FROM `sys_config` WHERE config_key='sys.index.sideTheme' LIMIT 1
+2020-03-24 11:23:22.967 [DEBU] [0 ms] SELECT * FROM `sys_config` WHERE config_key='sys.index.skinName' LIMIT 1
+2020-03-24 11:23:22.967 [DEBU] [0 ms] SELECT * FROM `sys_config` WHERE config_key='sys.resource.url' LIMIT 1
+2020-03-24 11:24:11.765 [DEBU] [0 ms] SELECT * FROM `sys_config` WHERE config_key='sys.index.sideTheme' LIMIT 1
+2020-03-24 11:24:11.766 [DEBU] [0 ms] SELECT * FROM `sys_config` WHERE config_key='sys.index.skinName' LIMIT 1
+2020-03-24 11:24:11.767 [DEBU] [1 ms] SELECT * FROM `sys_config` WHERE config_key='sys.resource.url' LIMIT 1
+2020-03-24 13:55:46.419 [DEBU] [2 ms] SELECT * FROM `sys_config` WHERE config_key='sys.resource.url' LIMIT 1

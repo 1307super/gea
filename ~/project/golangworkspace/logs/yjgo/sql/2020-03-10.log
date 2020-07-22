@@ -1,0 +1,48 @@
+2020-03-10 17:06:22.035 [DEBU] [11 ms] SELECT * FROM `sys_config` WHERE config_key='sys.resource.url' LIMIT 1
+2020-03-10 17:06:42.396 [DEBU] [7 ms] SELECT * FROM `sys_user` WHERE login_name='admin' LIMIT 1
+2020-03-10 17:06:42.408 [DEBU] [11 ms] INSERT INTO `sys_user_online`(`sessionId`,`ipaddr`,`login_location`,`os`,`start_timestamp`,`last_access_time`,`expire_time`,`login_name`,`dept_name`,`browser`,`status`) VALUES('C171AXPXJT5KTSPLIN','127.0.0.1','内网IP','Intel Mac OS X 10_15_1','2020-03-10 17:06:42','2020-03-10 17:06:42',1440,'admin','','Chrome','on_line') 
+2020-03-10 17:06:42.415 [DEBU] [7 ms] INSERT INTO `sys_logininfor`(`ipaddr`,`login_location`,`browser`,`os`,`status`,`msg`,`info_id`,`login_name`,`login_time`) VALUES('127.0.0.1','内网IP','Chrome','Intel Mac OS X 10_15_1','0','登陆成功',0,'admin','2020-03-10 17:06:42') 
+2020-03-10 17:06:42.473 [DEBU] [0 ms] SELECT * FROM `sys_config` WHERE config_key='sys.index.sideTheme' LIMIT 1
+2020-03-10 17:06:42.474 [DEBU] [0 ms] SELECT * FROM `sys_config` WHERE config_key='sys.index.skinName' LIMIT 1
+2020-03-10 17:07:05.408 [DEBU] [7 ms] SHOW FULL COLUMNS FROM `sys_dict_data`
+2020-03-10 17:07:05.410 [DEBU] [2 ms] SELECT * FROM `sys_dict_data` WHERE `dict_code`='status = \'0\' and dict_type = ? order by dict_sort asc'
+2020-03-10 17:07:05.414 [DEBU] [0 ms] SELECT * FROM `sys_dict_data` WHERE `dict_code`='status = \'0\' and dict_type = ? order by dict_sort asc'
+2020-03-10 17:07:05.544 [DEBU] [1 ms] SELECT * FROM `sys_dict_data` WHERE `dict_code`='status = \'0\' and dict_type = ? order by dict_sort asc'
+2020-03-10 17:07:56.275 [DEBU] [6 ms] SELECT * FROM `sys_dict_data` WHERE `dict_code`='status = \'0\' and dict_type = ? order by dict_sort asc'
+2020-03-10 17:07:56.280 [DEBU] [0 ms] SELECT * FROM `sys_dict_data` WHERE `dict_code`='status = \'0\' and dict_type = ? order by dict_sort asc'
+2020-03-10 17:07:56.344 [DEBU] [1 ms] SELECT * FROM `sys_dict_data` WHERE `dict_code`='status = \'0\' and dict_type = ? order by dict_sort asc'
+2020-03-10 17:08:00.173 [DEBU] [0 ms] SELECT * FROM `sys_dict_data` WHERE `dict_code`='status = \'0\' and dict_type = ? order by dict_sort asc'
+2020-03-10 17:08:00.229 [DEBU] [1 ms] SELECT * FROM `sys_dict_data` WHERE `dict_code`='status = \'0\' and dict_type = ? order by dict_sort asc'
+2020-03-10 17:08:15.649 [DEBU] [0 ms] SELECT * FROM `sys_dict_data` WHERE `dict_code`='status = \'0\' and dict_type = ? order by dict_sort asc'
+2020-03-10 17:08:18.634 [DEBU] [1 ms] SELECT * FROM `sys_dict_data` WHERE `dict_code`='status = \'0\' and dict_type = ? order by dict_sort asc'
+2020-03-10 17:08:18.703 [DEBU] [1 ms] SELECT * FROM `sys_dict_data` WHERE `dict_code`='status = \'0\' and dict_type = ? order by dict_sort asc'
+2020-03-10 17:08:19.180 [DEBU] [0 ms] SELECT * FROM `sys_dict_data` WHERE `dict_code`='status = \'0\' and dict_type = ? order by dict_sort asc'
+2020-03-10 17:08:19.246 [DEBU] [1 ms] SELECT * FROM `sys_dict_data` WHERE `dict_code`='status = \'0\' and dict_type = ? order by dict_sort asc'
+2020-03-10 17:08:19.675 [DEBU] [0 ms] SELECT * FROM `sys_dict_data` WHERE `dict_code`='status = \'0\' and dict_type = ? order by dict_sort asc'
+2020-03-10 17:08:19.747 [DEBU] [1 ms] SELECT * FROM `sys_dict_data` WHERE `dict_code`='status = \'0\' and dict_type = ? order by dict_sort asc'
+2020-03-10 17:08:38.058 [DEBU] [0 ms] SELECT * FROM `sys_dict_data` WHERE `dict_code`='status = \'0\' and dict_type = ? order by dict_sort asc'
+2020-03-10 17:08:45.272 [DEBU] [2 ms] SELECT * FROM `sys_dept` WHERE dept_id !=0 and dept_name='上汽红岩' and parent_id = 0 LIMIT 1
+2020-03-10 17:08:58.236 [DEBU] [0 ms] SELECT * FROM `sys_dept` WHERE dept_id !=100 and dept_name='上汽红岩' and parent_id = 0 LIMIT 1
+2020-03-10 17:08:58.242 [DEBU] [6 ms] SELECT * FROM `sys_dept` WHERE dept_id=100 LIMIT 1
+2020-03-10 17:08:58.246 [DEBU] [3 ms] SELECT * FROM `sys_dept` WHERE dept_id=0 LIMIT 1
+2020-03-10 17:08:58.254 [DEBU] [5 ms] INSERT INTO `sys_oper_log`(`business_type`,`dept_name`,`status`,`oper_time`,`request_method`,`oper_name`,`oper_url`,`json_result`,`error_msg`,`oper_id`,`title`,`method`,`oper_param`,`operator_type`,`oper_ip`,`oper_location`) VALUES(1,'运维部门',1,'2020-03-10 17:08:58','POST','admin','/system/dept/edit','{"code":500,"msg":"操作失败","data":null,"otype":1}','',0,'修改部门','/system/dept/edit','{"DeptId":100,"ParentId":0,"DeptName":"上汽红岩","OrderNum":0,"Leader":"admin","Phone":"18983690292","Email":"haowen.xia@sih.cq.cn","Status":"0"}',1,'127.0.0.1','内网IP') 
+2020-03-10 17:09:02.240 [DEBU] [1 ms] SELECT * FROM `sys_dept` WHERE dept_id !=100 and dept_name='上汽红岩' and parent_id = 0 LIMIT 1
+2020-03-10 17:09:02.244 [DEBU] [4 ms] SELECT * FROM `sys_dept` WHERE dept_id=100 LIMIT 1
+2020-03-10 17:09:02.244 [DEBU] [0 ms] SELECT * FROM `sys_dept` WHERE dept_id=0 LIMIT 1
+2020-03-10 17:09:02.247 [DEBU] [2 ms] INSERT INTO `sys_oper_log`(`oper_id`,`error_msg`,`oper_time`,`method`,`oper_name`,`oper_location`,`oper_param`,`title`,`business_type`,`oper_ip`,`json_result`,`status`,`request_method`,`operator_type`,`dept_name`,`oper_url`) VALUES(0,'','2020-03-10 17:09:02','/system/dept/edit','admin','内网IP','{"DeptId":100,"ParentId":0,"DeptName":"上汽红岩","OrderNum":0,"Leader":"admin","Phone":"18983690292","Email":"haowen.xia@sih.cq.cn","Status":"0"}','修改部门',1,'127.0.0.1','{"code":500,"msg":"操作失败","data":null,"otype":1}',1,'POST',1,'运维部门','/system/dept/edit') 
+2020-03-10 17:09:22.392 [DEBU] [1 ms] SELECT * FROM `sys_dept` WHERE dept_id !=100 and dept_name='上汽红岩' and parent_id = 0 LIMIT 1
+2020-03-10 17:09:22.393 [DEBU] [0 ms] SELECT * FROM `sys_dept` WHERE dept_id=100 LIMIT 1
+2020-03-10 17:09:22.393 [DEBU] [0 ms] SELECT * FROM `sys_dept` WHERE dept_id=0 LIMIT 1
+2020-03-10 17:09:22.399 [DEBU] [2 ms] INSERT INTO `sys_oper_log`(`title`,`operator_type`,`json_result`,`status`,`oper_id`,`oper_name`,`oper_location`,`error_msg`,`business_type`,`request_method`,`oper_url`,`oper_ip`,`method`,`dept_name`,`oper_param`,`oper_time`) VALUES('修改部门',1,'{"code":500,"msg":"操作失败","data":null,"otype":1}',1,0,'admin','内网IP','',1,'POST','/system/dept/edit','127.0.0.1','/system/dept/edit','运维部门','{"DeptId":100,"ParentId":0,"DeptName":"上汽红岩","OrderNum":0,"Leader":"admin","Phone":"18983690292","Email":"haowen.xia@sih.cq.cn","Status":"0"}','2020-03-10 17:09:22') 
+2020-03-10 17:12:48.529 [DEBU] [4 ms] SELECT * FROM `sys_dept` WHERE dept_id !=100 and dept_name='上汽红岩' and parent_id = 0 LIMIT 1
+2020-03-10 17:12:48.535 [DEBU] [5 ms] SELECT * FROM `sys_dept` WHERE dept_id=100 LIMIT 1
+2020-03-10 17:12:48.536 [DEBU] [0 ms] SELECT * FROM `sys_dept` WHERE dept_id=0 LIMIT 1
+2020-03-10 17:12:48.544 [DEBU] [6 ms] INSERT INTO `sys_oper_log`(`title`,`method`,`request_method`,`dept_name`,`oper_time`,`business_type`,`operator_type`,`oper_ip`,`oper_param`,`oper_id`,`json_result`,`status`,`oper_name`,`oper_url`,`oper_location`,`error_msg`) VALUES('修改部门','/system/dept/edit','POST','运维部门','2020-03-10 17:12:48',2,1,'127.0.0.1','{"DeptId":100,"ParentId":0,"DeptName":"上汽红岩","OrderNum":0,"Leader":"admin","Phone":"18983690292","Email":"haowen.xia@sih.cq.cn","Status":"0"}',0,'{"code":500,"msg":"父部门不能为空","data":null,"otype":2}',1,'admin','/system/dept/edit','内网IP','') 
+2020-03-10 17:14:07.207 [DEBU] [6 ms] SELECT * FROM `sys_dept` WHERE dept_id !=100 and dept_name='上汽红岩' and parent_id = 0 LIMIT 1
+2020-03-10 17:14:07.213 [DEBU] [5 ms] SELECT * FROM `sys_dept` WHERE dept_id=100 LIMIT 1
+2020-03-10 17:14:07.214 [DEBU] [0 ms] SELECT * FROM `sys_dept` WHERE dept_id=0 LIMIT 1
+2020-03-10 17:14:07.219 [DEBU] [2 ms] INSERT INTO `sys_oper_log`(`oper_ip`,`status`,`title`,`method`,`request_method`,`operator_type`,`oper_name`,`dept_name`,`json_result`,`oper_id`,`oper_location`,`error_msg`,`business_type`,`oper_url`,`oper_param`,`oper_time`) VALUES('127.0.0.1',1,'修改部门','/system/dept/edit','POST',1,'admin','运维部门','{"code":500,"msg":"父部门不能为空","data":null,"otype":2}',0,'内网IP','',2,'/system/dept/edit','{"DeptId":100,"ParentId":0,"DeptName":"上汽红岩","OrderNum":0,"Leader":"admin","Phone":"18983690292","Email":"haowen.xia@sih.cq.cn","Status":"0"}','2020-03-10 17:14:07') 
+2020-03-10 17:14:10.639 [DEBU] [1 ms] SELECT * FROM `sys_dept` WHERE dept_id !=100 and dept_name='上汽红岩' and parent_id = 0 LIMIT 1
+2020-03-10 17:14:10.639 [DEBU] [0 ms] SELECT * FROM `sys_dept` WHERE dept_id=100 LIMIT 1
+2020-03-10 17:14:10.640 [DEBU] [0 ms] SELECT * FROM `sys_dept` WHERE dept_id=0 LIMIT 1
+2020-03-10 17:14:10.645 [DEBU] [4 ms] INSERT INTO `sys_oper_log`(`oper_param`,`status`,`error_msg`,`operator_type`,`oper_location`,`oper_ip`,`oper_name`,`business_type`,`request_method`,`method`,`dept_name`,`oper_url`,`json_result`,`oper_time`,`oper_id`,`title`) VALUES('{"DeptId":100,"ParentId":0,"DeptName":"上汽红岩","OrderNum":0,"Leader":"admin","Phone":"18983690292","Email":"haowen.xia@sih.cq.cn","Status":"0"}',1,'',1,'内网IP','127.0.0.1','admin',2,'POST','/system/dept/edit','运维部门','/system/dept/edit','{"code":500,"msg":"父部门不能为空","data":null,"otype":2}','2020-03-10 17:14:10',0,'修改部门') 

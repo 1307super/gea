@@ -1,0 +1,142 @@
+// ==========================================================================
+// GEAGO自动生成业务逻辑层相关代码，只生成一次，按需修改,再次生成不会覆盖.
+// 生成日期：{{.table.CreateTime}}
+// 生成路径: app/service/{{.table.ModuleName}}/{{.table.BusinessName}}/{{.table.BusinessName}}_service.go
+// 生成人：{{.table.FunctionAuthor}}
+// ==========================================================================
+package {{.table.BusinessName}}
+
+import (
+    "github.com/gogf/gf/errors/gerror"
+    "github.com/gogf/gf/net/ghttp"
+    "github.com/gogf/gf/os/gtime"
+    {{.table.BusinessName}}Model "{{.table.PackageName}}/app/model/{{.table.ModuleName}}/{{.table.BusinessName}}"
+    userService "{{.table.BusinessName}}/app/service/system/user"
+    "{{.table.PackageName}}/app/utils/convert"
+    "{{.table.PackageName}}/app/utils/excel"
+    "{{.table.PackageName}}/app/utils/page"
+)
+
+//根据主键查询数据
+func SelectRecordById(id int64) (*{{.table.BusinessName}}Model.Entity, error) {
+    return {{.table.BusinessName}}Model.FindOne("{{.table.PkColumn.ColumnName}}", id)
+}
+
+//根据主键删除数据
+func DeleteRecordById(id int64) bool {
+    result, err := {{.table.BusinessName}}Model.Delete("{{.table.PkColumn.ColumnName}}", id)
+    if err == nil {
+        affected, _ := result.RowsAffected()
+        if affected > 0 {
+            return true
+        }
+    }
+
+    return false
+}
+
+//批量删除数据记录
+func DeleteRecordByIds(ids string) int64 {
+    idarr := convert.ToInt64Array(ids, ",")
+    result, err := {{.table.BusinessName}}Model.Delete("{{.table.PkColumn.ColumnName}} in (?)", idarr)
+    if err != nil {
+        return 0
+    }
+
+    nums, _ := result.RowsAffected()
+
+    return nums
+}
+
+//添加数据
+func AddSave(req *{{.table.BusinessName}}Model.AddReq, session *ghttp.Session) (int64, error) {
+    var entity {{.table.BusinessName}}Model.Entity
+    {{range $index, $column := .table.Columns}} {{if eq $column.IsInsert "1"}}
+    entity.{{$column.GoField}} = req.{{$column.GoField}}{{end}} {{end}}
+    entity.CreateTime = gtime.Now()
+    entity.CreateBy = ""
+
+    user := userService.GetProfile(session)
+
+    if user != nil {
+        entity.CreateBy = user.LoginName
+    }
+
+    result, err := entity.Insert()
+    if err != nil {
+        return 0, err
+    }
+
+    id, err := result.LastInsertId()
+
+    if err != nil || id <= 0 {
+        return 0, err
+    }
+    return id, nil
+}
+
+//修改数据
+func EditSave(req *{{.table.BusinessName}}Model.EditReq, session *ghttp.Session) (int64, error) {
+
+    entity, err := {{.table.BusinessName}}Model.FindOne("{{.table.PkColumn.ColumnName}}=?", req.{{.table.PkColumn.GoField}})
+
+    if err != nil {
+        return 0, err
+    }
+
+    if entity == nil {
+        return 0, gerror.New("数据不存在")
+    }
+    {{range $index, $column := .table.Columns}} {{if eq $column.IsEdit "1"}}
+    entity.{{$column.GoField}} = req.{{$column.GoField}}{{end}} {{end}}
+    entity.UpdateTime = gtime.Now()
+    entity.UpdateBy = ""
+
+    user := userService.GetProfile(session)
+
+    if user == nil {
+        entity.UpdateBy = user.LoginName
+    }
+
+    result, err := entity.Update()
+
+    if err != nil {
+        return 0, err
+    }
+
+    rs, err := result.RowsAffected()
+
+    if err != nil {
+        return 0, err
+    }
+
+    return rs, nil
+}
+
+//根据条件查询数据
+func SelectListAll(params *{{.table.BusinessName}}Model.SelectPageReq) ([]{{.table.BusinessName}}Model.Entity, error) {
+    return {{.table.BusinessName}}Model.SelectListAll(params)
+}
+
+//根据条件分页查询数据
+func SelectListByPage(params *{{.table.BusinessName}}Model.SelectPageReq) ([]{{.table.BusinessName}}Model.Entity, *page.Paging, error) {
+    return {{.table.BusinessName}}Model.SelectListByPage(params)
+}
+
+// 导出excel
+func Export(param *{{.table.BusinessName}}Model.SelectPageReq) (string, error) {
+    result, err := {{.table.BusinessName}}Model.SelectListExport(param)
+    if err != nil {
+        return "", err
+    }
+
+    head := []string{ {{range $index, $column := .table.Columns}} {{if eq $index 0}}"{{$column.ColumnComment}}"{{else}},"{{$column.ColumnComment}}"{{end}}{{end}}}
+    key := []string{ {{range $index, $column := .table.Columns}} {{if eq $index 0}}"{{$column.ColumnName}}"{{else}},"{{$column.ColumnName}}"{{end}}{{end}}}
+    url, err := excel.DownlaodExcel(head,key, result)
+
+    if err != nil {
+        return "", err
+    }
+
+    return url, nil
+}

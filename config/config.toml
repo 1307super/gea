@@ -1,0 +1,15 @@
+[profile]
+    active = "local"
+
+[compiler]
+    name     = "gea"
+    version  = "dev-1.0.0"
+    arch     = "amd64"
+    system   = "linux"
+    output   = ""
+    path     = "./bin"
+    extra    = "-ldflags \"-s -w\""
+    # 自定义编译时内置变量
+    [compiler.VarMap]
+        author = "1307"
+        email  = "1307@qq.com"

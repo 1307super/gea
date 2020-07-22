@@ -1,0 +1,27 @@
+// ==========================================================================
+// GEAGO自动生成路由代码，只生成一次，按需修改,再次生成不会覆盖.
+// 生成日期：{{.table.CreateTime}}
+// 生成路径: app/controller/{{.table.ModuleName}}/{{.table.BusinessName}}_router.go
+// 生成人：{{.table.FunctionAuthor}}
+// ==========================================================================
+package {{.table.ModuleName}}
+
+import (
+    "{{.table.PackageName}}/app/controller/{{.table.ModuleName}}/{{.table.BusinessName}}"
+    "{{.table.PackageName}}/middleware/router"
+    "{{.table.PackageName}}/app/service/middleware/cors"
+    "{{.table.PackageName}}/app/service/middleware/jwt"
+    "gea/middleware/auth"
+    "github.com/gogf/gf/frame/g"
+)
+
+//加载路由
+func init() {
+    {{.table.BusinessName}}Controller := new({{.table.BusinessName}}.Controller)
+    s := g.Server("admin")
+    s.Group("/", func(group *ghttp.RouterGroup) {
+        group.Middleware(cors.CORS,jwt.JWT,auth.Auth)
+        group.REST("/{{.table.ModuleName}}/{{.table.BusinessName}}", {{.table.BusinessName}}Controller)
+        group.GET("/{{.table.ModuleName}}/{{.table.BusinessName}}", {{.table.BusinessName}}Controller,"Export")
+    }
+}

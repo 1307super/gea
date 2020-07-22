@@ -1,0 +1,115 @@
+// ==========================================================================
+// GEAGO自动生成控制器相关代码，只生成一次，按需修改,再次生成不会覆盖.
+// 生成日期：{{.table.CreateTime}}
+// 生成路径: app/controller/{{.table.ModuleName}}/{{.table.BusinessName}}/{{.table.BusinessName}}_controller.go
+// 生成人：{{.table.FunctionAuthor}}
+// ==========================================================================
+package {{.table.BusinessName}}
+
+import (
+   "{{.table.PackageName}}/app/controller"
+   "github.com/gogf/gf/net/ghttp"
+   "{{.table.PackageName}}/app/model"
+   {{.table.BusinessName}}Model "{{.table.PackageName}}/app/model/{{.table.ModuleName}}/{{.table.BusinessName}}"
+   {{.table.BusinessName}}Service "{{.table.PackageName}}/app/service/{{.table.ModuleName}}/{{.table.BusinessName}}"
+   "{{.table.PackageName}}/app/utils/response"
+)
+
+type Controller struct {
+    controller.BaseController
+}
+
+func (c *Controller) Init(r *ghttp.Request) {
+    c.Module = "{{.table.FunctionName}}管理"
+}
+
+//列表
+func (c *Controller) Get(r *ghttp.Request) {
+    var req *{{.table.BusinessName}}Model.SelectPageReq
+    //获取参数
+    if err := r.Parse(&req); err != nil {
+	    c.Err(r,err.Error())
+    }
+    rows := make([]{{.table.BusinessName}}Model.Entity, 0)
+    result, page, err := {{.table.BusinessName}}Service.SelectListByPage(req)
+
+    if err == nil && len(result)>0 {
+	    rows = result
+    }
+    c.SuccTable(r,page.Total,rows)
+}
+
+
+//新增
+func (c *Controller) Post(r *ghttp.Request) {
+    var req *{{.table.BusinessName}}Model.AddReq
+    //获取参数
+    if err := r.Parse(&req); err != nil {
+      c.Err(r,err.Error())
+    }
+    id, err := {{.table.BusinessName}}Service.AddSave(req, r.Session)
+    if err != nil || id <= 0 {
+        c.Err(r,err.Error())
+    }
+    c.Succ(r,id)
+}
+
+//修改
+func (c *Controller) Put(r *ghttp.Request) {
+    var req *{{.table.BusinessName}}Model.EditReq
+    //获取参数
+    if err := r.Parse(&req); err != nil {
+        c.Err(r,err.Error())
+    }
+    rs, err := {{.table.BusinessName}}Service.EditSave(req, r.Session)
+    if err != nil || rs <= 0 {
+        c.Err(r,err.Error())
+    }
+    c.Succ(r)
+}
+
+//删除
+func (c *Controller) Delete(r *ghttp.Request) {
+    var req *model.RemoveReq
+    //获取参数
+    if err := r.Parse(&req); err != nil {
+        c.Err(r,err.Error())
+    }
+
+    rs := {{.table.BusinessName}}Service.DeleteRecordByIds(req.Ids)
+
+    if rs > 0 {
+        c.Succ(r)
+    } else {
+        c.Err(r,"删除失败")
+    }
+}
+
+//详情
+func (c *Controller) Info(r *ghttp.Request) {
+    id := r.GetInt64("id")
+    if id <= 0 {
+        c.Err(r,"参数错误")
+    }
+    entity, err := {{.table.BusinessName}}Service.SelectRecordById(id)
+    if err != nil || entity == nil {
+        c.Err(r,"数据不存在")
+    }
+    c.Succ(r,entity)
+}
+
+//导出
+func (c *Controller) Export(r *ghttp.Request) {
+    r.SetCtxVar(response.ResponseBunissType,model.Buniss_Export)
+    var req *{{.table.BusinessName}}Model.SelectPageReq
+    //获取参数
+    if err := r.Parse(&req); err != nil {
+        c.Err(r,err.Error())
+    }
+    url, err := {{.table.BusinessName}}Service.Export(req)
+
+    if err != nil {
+        c.Err(r,err.Error())
+    }
+    c.Succ(r,url)
+}
