@@ -9,18 +9,26 @@ import (
 	"github.com/gogf/gf/util/gconv"
 	"github.com/zouyx/agollo/v3"
 	"github.com/zouyx/agollo/v3/env/config"
+	"os"
 )
+
+var Active string
 
 func init() {
 	initConfig()
-	//initApollo()
-	//initLogStash()
+	initApollo()
+	initLogStash()
 }
-
 
 // 初始化配置
 func initConfig() {
-	active := g.Cfg().Get("profile.active")
+	// 获取环境变量
+	active := os.Getenv("GF_PROFILES_ACTIVE")
+	glog.Infof("从环境变量获取环境：%s",active)
+	if active == "" {
+		active = gconv.String(g.Cfg().Get("profile.active"))
+		glog.Infof("从配置文件获取环境：%s",active)
+	}
 	switch active {
 	case "dev":
 		g.Cfg().SetFileName("config-dev.toml")
@@ -30,6 +38,7 @@ func initConfig() {
 		g.Cfg().SetFileName("config-local.toml")
 	}
 	fmt.Println("当前配置环境：",active)
+	Active = gconv.String(active)
 }
 
 // 初始化apollo配置
@@ -58,8 +67,12 @@ func initApollo() {
 }
 // 初始化logstash
 func initLogStash() {
+	logstashConfig := g.Cfg().GetMapStrStr("logstash")
+	if logstashConfig["Enable"] == "false" {
+		return
+	}
 	glog.SetWriter(&MyLogStashWriter{
-		logst:  logstash.New("10.86.13.239", 4560, 5),
+		logst:  logstash.New(logstashConfig["Ip"], gconv.Int(logstashConfig["Port"]), gconv.Int(logstashConfig["TimeOut"])),
 		logger: glog.New(),
 	})
 }
@@ -71,12 +84,16 @@ type MyLogStashWriter struct {
 
 type LogMessage struct {
 	AppName string `json:"appName"`
+	Env     string `json:"env"`
+	Type    string `json:"type"`
 	Message string `json:"message"`
 }
 
 func (w *MyLogStashWriter) Write(p []byte) (n int, err error) {
 	message := LogMessage{
-		AppName: gconv.String(g.Cfg().GetString("logger.AppName")),
+		AppName: gconv.String(g.Cfg().GetString("logstash.AppName")),
+		Env:     Active,
+		Type:    gconv.String(g.Cfg().GetString("logstash.Type")),
 		Message: gconv.String(p),
 	}
 	_, err = w.logst.Connect()

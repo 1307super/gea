@@ -71,11 +71,19 @@
     [compiler.VarMap]
         author = "1307"
         email  = "1307@qq.com"
+[logstash]
+    Enable = false
+    Ip = ""
+    Port = ""
+    AppName = "gea"
+    Type = "application"
+    TimeOut = 5
+
 [apollo]
     Enable = true
-    AppId = "p04gft27AJ2JuBuV"
+    AppId = ""
     Cluster = "default"
     NamespaceName = "application"
-    Ip = "dev.cc.dev.sih.cq.cn"
+    Ip = ""
     NextTryConnTime = 0
     IsBackupConfig = false
