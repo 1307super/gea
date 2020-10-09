@@ -143,7 +143,7 @@ func (c *Controller) Preview(r *ghttp.Request) {
 	appJsValue := ""
 	appJsTmp := "vm/js/api.html"
 
-	treeKey := "vm/html/tree.html.vm"
+	treeKey := "vm/vue/tree.html.vm"
 	treeValue := ""
 
 	if entity.TplCategory == "tree" {
@@ -170,7 +170,7 @@ func (c *Controller) Preview(r *ghttp.Request) {
 	}
 
 	if entity.TplCategory == "tree" {
-		if tmpTree, err := r.Response.ParseTpl("vm/html/index-tree.html", g.Map{"table": entity}); err == nil {
+		if tmpTree, err := r.Response.ParseTpl("vm/vue/index-tree.html", g.Map{"table": entity}); err == nil {
 			treeValue = tmpTree
 		}
 	}
@@ -257,9 +257,9 @@ func (c *Controller) GenCode(r *ghttp.Request) {
 
 		tableService.SetPkColumn(entity, entity.Columns)
 
-		listTmp := "vm/html/index.html"
+		listTmp := "vm/vue/index.html"
 		if entity.TplCategory == "tree" {
-			listTmp = "vm/html/index-tree.html"
+			listTmp = "vm/vue/index-tree.html"
 		}
 
 		//获取当前运行时目录
@@ -270,7 +270,7 @@ func (c *Controller) GenCode(r *ghttp.Request) {
 
 
 		if tmpList, err := r.Response.ParseTpl(listTmp, g.Map{"table": entity}); err == nil {
-			fileName := strings.Join([]string{curDir, "/template/", entity.ModuleName, "/", entity.BusinessName, "/list.vue"}, "")
+			fileName := strings.Join([]string{curDir, "/template/", entity.ModuleName, "/", entity.BusinessName, "/index.vue"}, "")
 			if !gfile.Exists(fileName) {
 				f, err := gfile.Create(fileName)
 				if err == nil {
@@ -280,7 +280,7 @@ func (c *Controller) GenCode(r *ghttp.Request) {
 			}
 		}
 		if tmpJs, err := r.Response.ParseTpl("vm/js/api.html", g.Map{"table": entity}); err == nil {
-			fileName := strings.Join([]string{curDir, "/template/", entity.ModuleName, "/", entity.BusinessName, "/app.js"}, "")
+			fileName := strings.Join([]string{curDir, "/template/", entity.ModuleName, "/", entity.BusinessName, "/index.js"}, "")
 			if !gfile.Exists(fileName) {
 				f, err := gfile.Create(fileName)
 				if err == nil {

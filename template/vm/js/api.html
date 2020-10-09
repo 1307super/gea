@@ -4,7 +4,7 @@ import request from '@/utils/request'
 // 查询{{.table.FunctionName}}列表
 export function list{{$businessName}}(query) {
   return request({
-    url: '/{{.table.ModuleName}}/{{$businessName}}/list',
+    url: '/{{.table.ModuleName}}/{{$businessName}}',
     method: 'get',
     params: query
   })
@@ -13,7 +13,7 @@ export function list{{$businessName}}(query) {
 // 查询{{.table.FunctionName}}详细
 export function get{{$businessName}}({{.table.PkColumn.ColumnName}}) {
   return request({
-    url: '/{{.table.ModuleName}}/{{$businessName}}/info',
+    url: '/{{.table.ModuleName}}/{{$businessName}}/info?id='+id,
     method: 'get',
     params: {
      id: {{.table.PkColumn.ColumnName}}
