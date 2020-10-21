@@ -64,4 +64,4 @@
 >
 > swaggo [https://github.com/swaggo/swag](https://github.com/swaggo/swag)
 >
-> agollo [https://github.com/zouyx/agollo] (https://github.com/zouyx/agollo) 
+> agollo [https://github.com/zouyx/agollo](https://github.com/zouyx/agollo) 
