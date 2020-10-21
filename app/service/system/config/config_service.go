@@ -1,21 +1,21 @@
 package config
 
 import (
-	"github.com/gogf/gf/errors/gerror"
-	"github.com/gogf/gf/net/ghttp"
-	"github.com/gogf/gf/os/gcache"
-	"github.com/gogf/gf/os/gtime"
 	configModel "gea/app/model/system/config"
 	userService "gea/app/service/system/user"
 	"gea/app/utils/convert"
 	"gea/app/utils/excel"
 	"gea/app/utils/page"
+	"github.com/gogf/gf/errors/gerror"
+	"github.com/gogf/gf/net/ghttp"
+	"github.com/gogf/gf/os/gcache"
+	"github.com/gogf/gf/os/gtime"
 )
 
 //根据键获取值
 func GetValueByKey(key string) string {
 	resultStr := ""
-	result := gcache.Get(key)
+	result, _ := gcache.Get(key)
 	if result == nil {
 		configRecord, err := configModel.FindOne("config_key", key)
 		if err != nil {

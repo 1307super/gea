@@ -192,12 +192,11 @@ func MenuTreeData(userId int64) ([]menuModel.RoleMenuTree, error) {
 
 //获取管理员菜单树数据
 func SelectMenuAll() ([]*menuModel.EntityExtend, error) {
-	//从缓存读取
-	cache := gcache.Get(model.MENU_TREE_CACHE)
+
+	cache, _ := gcache.Get(model.MENU_TREE_CACHE)
 	if cache != nil {
 		return cache.([]*menuModel.EntityExtend), nil
 	}
-
 	//从数据库中读取
 	var result []*menuModel.EntityExtend
 	result, err := SelectListAll(nil)
@@ -233,11 +232,11 @@ func SelectMenuNormalByUser(userId int64) ([]*menuModel.EntityExtend, error) {
 //获取管理员菜单数据
 func SelectMenuNormalAll() ([]*menuModel.EntityExtend, error) {
 	//从缓存读取
-	cache := gcache.Get(model.MENU_CACHE)
+	cache,_ := gcache.Get(model.MENU_CACHE)
+
 	if cache != nil {
 		return cache.([]*menuModel.EntityExtend), nil
 	}
-
 	//从数据库中读取
 	var result []*menuModel.EntityExtend
 	result, err := menuModel.SelectMenuNormalAll()
@@ -257,7 +256,7 @@ func SelectMenusByUserId(userId int64, router ...bool) ([]*menuModel.EntityExten
 	var result []*menuModel.EntityExtend
 
 	//从缓存读取
-	cache := gcache.Get(model.MENU_CACHE + gconv.String(userId))
+	cache,_ := gcache.Get(model.MENU_CACHE + gconv.String(userId))
 
 	if cache != nil {
 		return cache.([]*menuModel.EntityExtend), nil

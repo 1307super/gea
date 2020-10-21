@@ -80,7 +80,7 @@
     TimeOut = 5
 
 [apollo]
-    Enable = true
+    Enable = false
     AppId = ""
     Cluster = "default"
     NamespaceName = "application"

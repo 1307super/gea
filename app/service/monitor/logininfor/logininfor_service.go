@@ -82,7 +82,7 @@ func Export(param *logininfor.SelectPageReq) (string, error) {
 //记录密码尝试次数
 func SetPasswordCounts(loginName string) int {
 	curTimes := 0
-	curTimeObj := gcache.Get(USER_NOPASS_TIME + loginName)
+	curTimeObj, _ := gcache.Get(USER_NOPASS_TIME + loginName)
 	if curTimeObj != nil {
 		curTimes = gconv.Int(curTimeObj)
 	}
@@ -113,7 +113,7 @@ func Unlock(loginName string) {
 //检查账号是否锁定
 func CheckLock(loginName string) bool {
 	result := false
-	rs := gcache.Get(USER_LOCK + loginName)
+	rs,_ := gcache.Get(USER_LOCK + loginName)
 	if rs != nil {
 		result = true
 	}

@@ -295,14 +295,15 @@ func SelectMenuIds(roleId int64) (g.Array, error) {
 
 //func SelectMenuPermsByUserId(uid int64) (*garray.StrArray,*garray.StrArray) {
 func SelectMenuPermsByUserId(uid int64) *garray.StrArray {
+	perms := garray.NewStrArray()
 	// 缓存
 	//从缓存读取
-	cache := gcache.Get(AdminAuthMenu + gconv.String(uid))
-	if cache != nil {
+	cache,_ := gcache.Get(AdminAuthMenu + gconv.String(uid))
+	if cache != nil  {
 		return cache.(*garray.StrArray)
 	}
 	var result []*Entity
-	perms := garray.NewStrArray()
+
 
 	db, err := gdb.Instance()
 	if err != nil {

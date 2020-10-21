@@ -148,7 +148,7 @@ func (c *GeaClaims) SetCache(cacheKey string, userId string) string {
 
 // 获取缓存
 func (c *GeaClaims) GetCache(cacheKey string) (string, error) {
-	userCacheValue := gcache.Get(cacheKey)
+	userCacheValue,_ := gcache.Get(cacheKey)
 	if userCacheValue == nil {
 		return "", gerror.New("请登录")
 	}

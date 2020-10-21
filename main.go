@@ -3,9 +3,9 @@ package main
 import (
 	_ "gea/boot"
 	_ "gea/router"
-	"github.com/gogf/gf-swagger/swagger"
 	"github.com/gogf/gf/frame/g"
 	"github.com/gogf/gf/net/ghttp"
+	"github.com/gogf/swagger"
 
 	//"github.com/gogf/gf/net/ghttp"
 )
