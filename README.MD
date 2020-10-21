@@ -6,7 +6,7 @@
 
 
 ## 核心技术及组件
-> web服务框架    GoFrame        v1.13.1
+> web服务框架    GoFrame        v1.14.0
 >
 > 若依前端组件   RuoYi-Vue           v2.2.0
 >
@@ -14,11 +14,15 @@
 >
 > 导出excel文件  tealeg/xlsx    v1.0.5   
 >
-> api文档生成    gf-swagger/swagger    v1.0.3
+> api文档生成    gogf/swagger    v1.2.0
 >
 > 图形验证码     base64Captcha  v1.2.2  
 >
 > 服务器监控     gopsutil       v2.19.12+incompatible   
+>
+> 配置中心      zouyx/agollo       v4   
+>
+> 日志记录      logstash
 
 ## 内置功能
 
@@ -60,3 +64,4 @@
 >
 > swaggo [https://github.com/swaggo/swag](https://github.com/swaggo/swag)
 >
+> agollo [https://github.com/zouyx/agollo] (https://github.com/zouyx/agollo) 
