@@ -49,14 +49,14 @@ func DeleteRecordByIds(ids string) int64 {
 }
 
 //添加数据
-func AddSave(req *{{.table.BusinessName}}Model.AddReq, session *ghttp.Session) (int64, error) {
+func AddSave(req *{{.table.BusinessName}}Model.AddReq, r *ghttp.Request) (int64, error) {
     var entity {{.table.BusinessName}}Model.Entity
     {{range $index, $column := .table.Columns}} {{if eq $column.IsInsert "1"}}
     entity.{{$column.GoField}} = req.{{$column.GoField}}{{end}} {{end}}
     entity.CreateTime = gtime.Now()
     entity.CreateBy = ""
 
-    user := userService.GetProfile(session)
+    user, _ := userService.GetProfileApi(r.GetInt64("jwtUid"))
 
     if user != nil {
         entity.CreateBy = user.LoginName
@@ -76,7 +76,7 @@ func AddSave(req *{{.table.BusinessName}}Model.AddReq, session *ghttp.Session) (
 }
 
 //修改数据
-func EditSave(req *{{.table.BusinessName}}Model.EditReq, session *ghttp.Session) (int64, error) {
+func EditSave(req *{{.table.BusinessName}}Model.EditReq, r *ghttp.Request) (int64, error) {
 
     entity, err := {{.table.BusinessName}}Model.FindOne("{{.table.PkColumn.ColumnName}}=?", req.{{.table.PkColumn.GoField}})
 
@@ -92,7 +92,7 @@ func EditSave(req *{{.table.BusinessName}}Model.EditReq, session *ghttp.Session)
     entity.UpdateTime = gtime.Now()
     entity.UpdateBy = ""
 
-    user := userService.GetProfile(session)
+    user, _ := userService.GetProfileApi(r.GetInt64("jwtUid"))
 
     if user == nil {
         entity.UpdateBy = user.LoginName

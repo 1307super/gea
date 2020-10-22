@@ -47,7 +47,7 @@ func (c *Controller) Post(r *ghttp.Request) {
     if err := r.Parse(&req); err != nil {
       c.Err(r,err.Error())
     }
-    id, err := {{.table.BusinessName}}Service.AddSave(req, r.Session)
+    id, err := {{.table.BusinessName}}Service.AddSave(req, r)
     if err != nil || id <= 0 {
         c.Err(r,err.Error())
     }
@@ -61,7 +61,7 @@ func (c *Controller) Put(r *ghttp.Request) {
     if err := r.Parse(&req); err != nil {
         c.Err(r,err.Error())
     }
-    rs, err := {{.table.BusinessName}}Service.EditSave(req, r.Session)
+    rs, err := {{.table.BusinessName}}Service.EditSave(req, r)
     if err != nil || rs <= 0 {
         c.Err(r,err.Error())
     }
