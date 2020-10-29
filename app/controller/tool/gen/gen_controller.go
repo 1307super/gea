@@ -164,6 +164,11 @@ func (c *Controller) Preview(r *ghttp.Request) {
 	routerValue := ""
 	controllerKey := "vm/go/controller.go.vm"
 	controllerValue := ""
+	// vo dto
+	voKey := "vm/go/vo.go.vm"
+	voValue := ""
+	dtoKey := "vm/go/dto.go.vm"
+	dtoValue := ""
 
 	if tmpList, err := r.Response.ParseTpl(listTmp, g.Map{"table": entity}); err == nil {
 		listValue = tmpList
@@ -207,6 +212,15 @@ func (c *Controller) Preview(r *ghttp.Request) {
 		sqlValue = tmpSql
 	}
 
+	// vo
+	if tmpVo, err := r.Response.ParseTpl("vm/go/vo.html", g.Map{"table": entity}); err == nil {
+		voValue = tmpVo
+	}
+	// dto
+	if tmpDto, err := r.Response.ParseTpl("vm/go/dto.html", g.Map{"table": entity}); err == nil {
+		dtoValue = tmpDto
+	}
+
 	if entity.TplCategory == "tree" {
 		c.Succ(r,g.Map{
 			listKey:       listValue,
@@ -219,6 +233,8 @@ func (c *Controller) Preview(r *ghttp.Request) {
 			serviceKey:    serviceValue,
 			routerKey:     routerValue,
 			controllerKey: controllerValue,
+			voKey: voValue,
+			dtoKey: dtoValue,
 		})
 	} else {
 		c.Succ(r,g.Map{
@@ -231,6 +247,8 @@ func (c *Controller) Preview(r *ghttp.Request) {
 			serviceKey:    serviceValue,
 			routerKey:     routerValue,
 			controllerKey: controllerValue,
+			voKey: voValue,
+			dtoKey: dtoValue,
 		})
 	}
 
@@ -371,6 +389,27 @@ func (c *Controller) GenCode(r *ghttp.Request) {
 			}
 		}
 
+		if tmpVo, err := r.Response.ParseTpl("vm/go/vo.html", g.Map{"table": entity}); err == nil {
+			fileName := strings.Join([]string{curDir, "/app/vo/", entity.ModuleName, "/", entity.BusinessName, "vo/", entity.BusinessName, "_vo.go"}, "")
+			if !gfile.Exists(fileName) {
+				f, err := gfile.Create(fileName)
+				if err == nil {
+					f.WriteString(tmpVo)
+				}
+				f.Close()
+			}
+		}
+
+		if tmpDto, err := r.Response.ParseTpl("vm/go/dto.html", g.Map{"table": entity}); err == nil {
+			fileName := strings.Join([]string{curDir, "/app/dto/", entity.ModuleName, "/", entity.BusinessName, "dto/", entity.BusinessName, "_vo.go"}, "")
+			if !gfile.Exists(fileName) {
+				f, err := gfile.Create(fileName)
+				if err == nil {
+					f.WriteString(tmpDto)
+				}
+				f.Close()
+			}
+		}
 	}
 
 	c.Succ(r)

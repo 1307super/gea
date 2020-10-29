@@ -10,32 +10,11 @@ import (
      "github.com/gogf/gf/database/gdb"
      "github.com/gogf/gf/errors/gerror"
      "{{.table.PackageName}}/app/utils/page"
+     {{.table.BusinessName}}Vo "{{.table.PackageName}}/app/vo/{{.table.ModuleName}}/{{.table.BusinessName}}vo"
 )
 
-//新增页面请求参数
-type AddReq struct { {{range $index, $column := .table.Columns}}
-     {{if and (eq $column.IsInsert "1") (ne $column.IsPk "1")}} {{$column.GoField}}  {{if eq $column.GoType "Time"}}*gtime.Time{{else}}{{$column.GoType}}{{end}}   `p:"{{$column.HtmlField}}" {{if eq $column.IsRequired "1"}}v:"required#{{$column.ColumnComment}}不能为空"{{end}}` {{end}} {{end}}
-}
-
-//修改页面请求参数
-type EditReq struct {
-     {{.table.PkColumn.GoField}}     {{.table.PkColumn.GoType}}  `p:"{{.table.PkColumn.HtmlField}}" v:"required#主键ID不能为空"` {{range $index, $column := .table.Columns}} {{if eq $column.IsEdit "1"}}
-     {{$column.GoField}}  {{if eq $column.GoType "Time"}}*gtime.Time{{else}}{{$column.GoType}}{{end}} `p:"{{$column.HtmlField}}" {{if eq $column.IsRequired "1"}}v:"required#{{$column.ColumnComment}}不能为空"{{end}}` {{end}} {{end}}
-}
-
-//分页请求参数 {{$pkColumn := .table.PkColumn}}
-type SelectPageReq struct { {{range $index, $column := .table.Columns}} {{if eq $column.IsQuery "1"}}
-     {{$column.GoField}}  {{if eq $column.GoType "Time"}}*gtime.Time{{else}}{{$column.GoType}}{{end}} `p:"{{$column.HtmlField}}"` //{{$column.ColumnComment}} {{end}} {{end}}
-     BeginTime  string `p:"beginTime"`  //开始时间
-     EndTime     string `p:"endTime"`     //结束时间
-     PageNum     int     `p:"pageNum"`     //当前页码
-     PageSize   int     `p:"pageSize"`   //每页数
-     OrderByColumn string `p:"orderByColumn"` //排序字段
-     IsAsc           string `p:"isAsc"`           //排序方式
-}
-
 //根据条件分页查询数据
-func SelectListByPage(param *SelectPageReq) ([]Entity, *page.Paging, error) {
+func SelectListByPage(param *{{.table.BusinessName}}Vo.SelectPageReq) ([]Entity, *page.Paging, error) {
      db, err := gdb.Instance()
      if err != nil {
         return nil, nil, gerror.New("获取数据库连接失败")
@@ -79,7 +58,7 @@ func SelectListByPage(param *SelectPageReq) ([]Entity, *page.Paging, error) {
 }
 
 // 导出excel
-func SelectListExport(param *SelectPageReq) (gdb.Result, error) {
+func SelectListExport(param *{{.table.BusinessName}}Vo.SelectPageReq) (gdb.Result, error) {
     db, err := gdb.Instance()
     if err != nil {
         return nil, gerror.New("获取数据库连接失败")
@@ -113,7 +92,7 @@ func SelectListExport(param *SelectPageReq) (gdb.Result, error) {
 }
 
 //获取所有数据
-func SelectListAll(param *SelectPageReq) ([]Entity,error) {
+func SelectListAll(param *{{.table.BusinessName}}Vo.SelectPageReq) ([]Entity,error) {
     db, err := gdb.Instance()
     if err != nil {
         return nil, gerror.New("获取数据库连接失败")

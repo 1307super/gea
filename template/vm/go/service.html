@@ -10,6 +10,7 @@ import (
     "github.com/gogf/gf/errors/gerror"
     "github.com/gogf/gf/net/ghttp"
     "github.com/gogf/gf/os/gtime"
+    {{.table.BusinessName}}Vo "{{.table.PackageName}}/app/vo/{{.table.ModuleName}}/{{.table.BusinessName}}vo"
     {{.table.BusinessName}}Model "{{.table.PackageName}}/app/model/{{.table.ModuleName}}/{{.table.BusinessName}}"
     userService "{{.table.PackageName}}/app/service/system/user"
     "{{.table.PackageName}}/app/utils/convert"
@@ -49,7 +50,7 @@ func DeleteRecordByIds(ids string) int64 {
 }
 
 //添加数据
-func AddSave(req *{{.table.BusinessName}}Model.AddReq, r *ghttp.Request) (int64, error) {
+func AddSave(req *{{.table.BusinessName}}Vo.AddReq, r *ghttp.Request) (int64, error) {
     var entity {{.table.BusinessName}}Model.Entity
     {{range $index, $column := .table.Columns}} {{if eq $column.IsInsert "1"}}
     entity.{{$column.GoField}} = req.{{$column.GoField}}{{end}} {{end}}
@@ -76,7 +77,7 @@ func AddSave(req *{{.table.BusinessName}}Model.AddReq, r *ghttp.Request) (int64,
 }
 
 //修改数据
-func EditSave(req *{{.table.BusinessName}}Model.EditReq, r *ghttp.Request) (int64, error) {
+func EditSave(req *{{.table.BusinessName}}Vo.EditReq, r *ghttp.Request) (int64, error) {
 
     entity, err := {{.table.BusinessName}}Model.FindOne("{{.table.PkColumn.ColumnName}}=?", req.{{.table.PkColumn.GoField}})
 
@@ -114,17 +115,17 @@ func EditSave(req *{{.table.BusinessName}}Model.EditReq, r *ghttp.Request) (int6
 }
 
 //根据条件查询数据
-func SelectListAll(params *{{.table.BusinessName}}Model.SelectPageReq) ([]{{.table.BusinessName}}Model.Entity, error) {
+func SelectListAll(params *{{.table.BusinessName}}Vo.SelectPageReq) ([]{{.table.BusinessName}}Model.Entity, error) {
     return {{.table.BusinessName}}Model.SelectListAll(params)
 }
 
 //根据条件分页查询数据
-func SelectListByPage(params *{{.table.BusinessName}}Model.SelectPageReq) ([]{{.table.BusinessName}}Model.Entity, *page.Paging, error) {
+func SelectListByPage(params *{{.table.BusinessName}}Vo.SelectPageReq) ([]{{.table.BusinessName}}Model.Entity, *page.Paging, error) {
     return {{.table.BusinessName}}Model.SelectListByPage(params)
 }
 
 // 导出excel
-func Export(param *{{.table.BusinessName}}Model.SelectPageReq) (string, error) {
+func Export(param *{{.table.BusinessName}}Vo.SelectPageReq) (string, error) {
     result, err := {{.table.BusinessName}}Model.SelectListExport(param)
     if err != nil {
         return "", err

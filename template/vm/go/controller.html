@@ -10,7 +10,7 @@ import (
    "{{.table.PackageName}}/app/controller"
    "github.com/gogf/gf/net/ghttp"
    "{{.table.PackageName}}/app/model"
-   {{.table.BusinessName}}Model "{{.table.PackageName}}/app/model/{{.table.ModuleName}}/{{.table.BusinessName}}"
+    {{.table.BusinessName}}Vo "{{.table.PackageName}}/app/vo/{{.table.ModuleName}}/{{.table.BusinessName}}vo"
    {{.table.BusinessName}}Service "{{.table.PackageName}}/app/service/{{.table.ModuleName}}/{{.table.BusinessName}}"
    "{{.table.PackageName}}/app/utils/response"
 )
@@ -25,24 +25,19 @@ func (c *Controller) Init(r *ghttp.Request) {
 
 //列表
 func (c *Controller) Get(r *ghttp.Request) {
-    var req *{{.table.BusinessName}}Model.SelectPageReq
+    var req *{{.table.BusinessName}}Vo.SelectPageReq
     //获取参数
     if err := r.Parse(&req); err != nil {
 	    c.Err(r,err.Error())
     }
-    rows := make([]{{.table.BusinessName}}Model.Entity, 0)
-    result, page, err := {{.table.BusinessName}}Service.SelectListByPage(req)
-
-    if err == nil && len(result)>0 {
-	    rows = result
-    }
-    c.SuccTable(r,page.Total,rows)
+    result, page, _ := {{.table.BusinessName}}Service.SelectListByPage(req)
+    c.SuccTable(r,page.Total,result)
 }
 
 
 //新增
 func (c *Controller) Post(r *ghttp.Request) {
-    var req *{{.table.BusinessName}}Model.AddReq
+    var req *{{.table.BusinessName}}Vo.AddReq
     //获取参数
     if err := r.Parse(&req); err != nil {
       c.Err(r,err.Error())
@@ -56,7 +51,7 @@ func (c *Controller) Post(r *ghttp.Request) {
 
 //修改
 func (c *Controller) Put(r *ghttp.Request) {
-    var req *{{.table.BusinessName}}Model.EditReq
+    var req *{{.table.BusinessName}}Vo.EditReq
     //获取参数
     if err := r.Parse(&req); err != nil {
         c.Err(r,err.Error())
@@ -101,7 +96,7 @@ func (c *Controller) Info(r *ghttp.Request) {
 //导出
 func (c *Controller) Export(r *ghttp.Request) {
     r.SetCtxVar(response.ResponseBunissType,model.Buniss_Export)
-    var req *{{.table.BusinessName}}Model.SelectPageReq
+    var req *{{.table.BusinessName}}Vo.SelectPageReq
     //获取参数
     if err := r.Parse(&req); err != nil {
         c.Err(r,err.Error())

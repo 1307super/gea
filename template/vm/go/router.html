@@ -22,6 +22,6 @@ func init() {
     s.Group("/", func(group *ghttp.RouterGroup) {
         group.Middleware(cors.CORS,jwt.JWT,auth.Auth)
         group.REST("/{{.table.ModuleName}}/{{.table.BusinessName}}", {{.table.BusinessName}}Controller)
-        group.GET("/{{.table.ModuleName}}/{{.table.BusinessName}}", {{.table.BusinessName}}Controller,"Export")
+        group.GET("/{{.table.ModuleName}}/{{.table.BusinessName}}/export", {{.table.BusinessName}}Controller,"Export")
     })
 }
