@@ -63,10 +63,18 @@ func (r *Entity) Save() (result sql.Result, err error) {
 // It updates the record if there's already another same record in the table
 // (it checks using primary key or unique index).
 func (r *Entity) Update() (result sql.Result, err error) {
-	return Model.Data(r).Where(gdb.GetWhereConditionOfStruct(r)).Update()
+	where, args, err := gdb.GetWhereConditionOfStruct(r)
+	if err != nil {
+		return nil, err
+	}
+	return Model.Data(r).Where(where,args).Update()
 }
 
 // Delete does "DELETE FROM...WHERE..." statement for deleting current object from table.
 func (r *Entity) Delete() (result sql.Result, err error) {
-	return Model.Where(gdb.GetWhereConditionOfStruct(r)).Delete()
+	where, args, err := gdb.GetWhereConditionOfStruct(r)
+	if err != nil {
+		return nil, err
+	}
+	return Model.Where(where, args).Delete()
 }
