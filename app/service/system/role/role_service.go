@@ -5,6 +5,7 @@ import (
 	"gea/app/model/system/role_dept"
 	"gea/app/model/system/role_menu"
 	"gea/app/model/system/user_role"
+	menuService "gea/app/service/system/menu"
 	userService "gea/app/service/system/user"
 	"gea/app/utils/convert"
 	"gea/app/utils/excel"
@@ -101,6 +102,8 @@ func AddSave(req *roleModel.AddReq, r *ghttp.Request) (int64, error) {
 				}
 				// 加载权限
 				go ReloadPermissionsForUser(req.RoleKey)
+				// 清空缓存
+				go menuService.ClearCache()
 			}
 		}
 	}
@@ -164,6 +167,7 @@ func EditSave(req *roleModel.EditReq, r *ghttp.Request) (int64, error) {
 				}
 				// 重置权限
 				go ReloadPermissionsForUser(req.RoleKey)
+				go menuService.ClearCache()
 			}
 		}
 	}
@@ -180,7 +184,7 @@ func AuthDataScope(req *roleModel.DataScopeReq, r *ghttp.Request) (int64, error)
 		role.DataScope = req.DataScope
 	}
 
-	user,_ := userService.GetProfileApi(r.GetInt64("jwtUid"))
+	user, _ := userService.GetProfileApi(r.GetInt64("jwtUid"))
 
 	if user != nil {
 		role.UpdateBy = user.LoginName
@@ -228,15 +232,20 @@ func AuthDataScope(req *roleModel.DataScopeReq, r *ghttp.Request) (int64, error)
 //批量删除数据记录
 func DeleteRecordByIds(ids string) int64 {
 	idarr := convert.ToInt64Array(ids, ",")
-	roles, err := roleModel.FindAll("role_id in(?)",idarr)
+	roles, err := roleModel.FindAll("role_id in(?)", idarr)
 	result, err := roleModel.Delete("role_id in (?)", idarr)
 	if err != nil {
 		return 0
 	}
 	nums, _ := result.RowsAffected()
-	for _,role := range roles {
+	for _, role := range roles {
 		go casbin.DeletePermissionsForUser(role.RoleKey)
 	}
+	// 删除对应的权限
+	db := g.DB()
+	db.Table("sys_role_menu").Delete("role_id in(?)",idarr)
+	db.Table("sys_role_dept").Delete("role_id in(?)",idarr)
+	go menuService.ClearCache()
 	return nums
 }
 
@@ -261,7 +270,7 @@ func Export(param *roleModel.SelectPageReq) (string, error) {
 //查询角色
 func SelectRoleContactVo() (g.Array, error) {
 	userRoleFlags, err := roleModel.SelectRoleContactVo()
-	if err != nil  {
+	if err != nil {
 		return nil, gerror.New("未查询到用户角色数据")
 	}
 	var userRoles g.Array
@@ -272,7 +281,7 @@ func SelectRoleContactVo() (g.Array, error) {
 }
 func SelectRoleListByUserId(uid int64) ([]roleModel.EntityFlag, error) {
 	roleEntityFlags, err := roleModel.SelectRoleListByUserId(uid)
-	if err != nil  {
+	if err != nil {
 		return nil, gerror.New("未查询到用户角色数据数据")
 	}
 
@@ -280,11 +289,11 @@ func SelectRoleListByUserId(uid int64) ([]roleModel.EntityFlag, error) {
 }
 func SelectRoleListIdByUserId(uid int64) ([]int64, error) {
 	roleEntityFlags, err := roleModel.SelectRoleListByUserId(uid)
-	if err != nil  {
+	if err != nil {
 		return nil, gerror.New("未查询到用户角色数据数据")
 	}
 	var roleIds []int64
-	for _,roleEntityFlag := range roleEntityFlags  {
+	for _, roleEntityFlag := range roleEntityFlags {
 		roleIds = append(roleIds, roleEntityFlag.RoleId)
 	}
 	return roleIds, nil
@@ -391,7 +400,7 @@ func ChangeStatus(roleId int64, status string) error {
 	}
 	_, err := roleModel.Update(g.Map{
 		"status": status,
-	},"role_id=?",roleId)
+	}, "role_id=?", roleId)
 	if err != nil {
 		return err
 	}
@@ -407,7 +416,7 @@ func ReloadPermissionsForUser(roleName string) {
 // 加载所有角色权限
 func LoadRolePolicy(roleName string) {
 	permissionForRoles := roleModel.GetRoleMenuPolicy(roleName)
-	for _, permissionForRole := range permissionForRoles{
-		casbin.AddPermissionForUser(permissionForRole.RoleName,permissionForRole.Path,permissionForRole.Method)
+	for _, permissionForRole := range permissionForRoles {
+		casbin.AddPermissionForUser(permissionForRole.RoleName, permissionForRole.Path, permissionForRole.Method)
 	}
 }

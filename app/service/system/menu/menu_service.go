@@ -41,7 +41,7 @@ func DeleteRecordById(id int64) bool {
 			return true
 		}
 	}
-
+	ClearCache()
 	return false
 }
 
@@ -98,7 +98,7 @@ func AddSave(req *menuModel.AddReq, r *ghttp.Request) (int64, error) {
 		tx.Rollback()
 		return 0, err
 	}
-	clearCache()
+	ClearCache()
 	return id, tx.Commit()
 }
 
@@ -157,7 +157,7 @@ func EditSave(req *menuModel.EditReq, r *ghttp.Request) (int64, error) {
 		tx.Rollback()
 		return 0, err
 	}
-	clearCache()
+	ClearCache()
 	return 1, tx.Commit()
 }
 
@@ -179,24 +179,25 @@ func MenuTreeData(userId int64) ([]menuModel.RoleMenuTree, error) {
 	var menuList []*menuModel.EntityExtend
 	var err error
 	if userService.IsAdmin(userId) {
-		menuList,err = SelectMenuAll()
-	}else{
-		menuList, err =  SelectMenusListByUserId(userId)
+		menuList, err = SelectMenuAll()
+	} else {
+		menuList, err = SelectMenusListByUserId(userId)
 	}
 	if err != nil {
 		return nil, err
 	}
-	menuList = getChildPerms(menuList,0)
+	menuList = getChildPerms(menuList, 0)
 	return BuildRoleMenus(menuList), nil
 }
 
 //获取管理员菜单树数据
 func SelectMenuAll() ([]*menuModel.EntityExtend, error) {
-
-	cache, _ := gcache.Get(model.MENU_TREE_CACHE)
+	//从缓存读取
+	cache,_ := gcache.Get(model.MENU_TREE_CACHE)
 	if cache != nil {
 		return cache.([]*menuModel.EntityExtend), nil
 	}
+
 	//从数据库中读取
 	var result []*menuModel.EntityExtend
 	result, err := SelectListAll(nil)
@@ -208,6 +209,7 @@ func SelectMenuAll() ([]*menuModel.EntityExtend, error) {
 	gcache.Set(model.MENU_TREE_CACHE, result, time.Hour)
 	return result, nil
 }
+
 // 根据用户id获取菜单树
 func SelectMenusListByUserId(userId int64) ([]*menuModel.EntityExtend, error) {
 	result, err := menuModel.SelectMenusListByUserId(userId)
@@ -233,10 +235,10 @@ func SelectMenuNormalByUser(userId int64) ([]*menuModel.EntityExtend, error) {
 func SelectMenuNormalAll() ([]*menuModel.EntityExtend, error) {
 	//从缓存读取
 	cache,_ := gcache.Get(model.MENU_CACHE)
-
 	if cache != nil {
 		return cache.([]*menuModel.EntityExtend), nil
 	}
+
 	//从数据库中读取
 	var result []*menuModel.EntityExtend
 	result, err := menuModel.SelectMenuNormalAll()
@@ -292,10 +294,10 @@ func CheckMenuNameUnique(menuName string, menuId, parentId int64) string {
 	return "0"
 }
 
-
 func SelectMenuListByRoleId(roleId int64) (g.Array, error) {
 	return menuModel.SelectMenuIds(roleId)
 }
+
 // 获取子级
 func getChildPerms(menus []*menuModel.EntityExtend, parentId int64) []*menuModel.EntityExtend {
 	var result []*menuModel.EntityExtend
@@ -307,6 +309,7 @@ func getChildPerms(menus []*menuModel.EntityExtend, parentId int64) []*menuModel
 	}
 	return result
 }
+
 // 递归
 func recursionFn(menus []*menuModel.EntityExtend, entity *menuModel.EntityExtend) {
 	childMenus := getChildList(menus, entity)
@@ -394,7 +397,14 @@ func SelectMenuPermsByUserId(uid int64) *garray.StrArray {
 }
 
 // 清除缓存
-func clearCache() {
+func ClearCache() {
+	if cacheKeys, err := gcache.KeyStrings(); err == nil {
+		// 删除跟menu有关的缓存
+		for _,v := range cacheKeys {
+			if gstr.ContainsI(v,"menu") {
+				gcache.Remove(v)
+			}
+		}
+	}
 	gcache.Remove(model.MENU_CACHE)
 }
-
