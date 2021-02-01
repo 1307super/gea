@@ -1,143 +1,168 @@
 // ==========================================================================
 // GEAGO自动生成业务逻辑层相关代码，只生成一次，按需修改,再次生成不会覆盖.
 // 生成日期：{{.table.CreateTime}}
-// 生成路径: app/service/{{.table.ModuleName}}/{{.table.BusinessName}}/{{.table.BusinessName}}_service.go
+// 生成路径: app/system/{{.table.ModuleName}}/internal/service/{{.table.BusinessName}}.go
 // 生成人：{{.table.FunctionAuthor}}
 // ==========================================================================
-package {{.table.BusinessName}}
+package service
 
 import (
+    "context"
+    "fmt"
+    "gea/app/dao"
+    "gea/app/model"
+    "gea/app/shared"
+    "gea/app/system/{{.table.ModuleName}}/internal/define"
+    "gea/app/utils/convert"
+    "gea/app/utils/excel"
+    "gea/app/utils/page"
     "github.com/gogf/gf/errors/gerror"
-    "github.com/gogf/gf/net/ghttp"
     "github.com/gogf/gf/os/gtime"
-    {{.table.BusinessName}}Vo "{{.table.PackageName}}/app/vo/{{.table.ModuleName}}/{{.table.BusinessName}}vo"
-    {{.table.BusinessName}}Model "{{.table.PackageName}}/app/model/{{.table.ModuleName}}/{{.table.BusinessName}}"
-    userService "{{.table.PackageName}}/app/service/system/user"
-    "{{.table.PackageName}}/app/utils/convert"
-    "{{.table.PackageName}}/app/utils/excel"
-    "{{.table.PackageName}}/app/utils/page"
+    "github.com/gogf/gf/util/gconv"
 )
 
+var {{.table.BusinessName | Capitalize}} = new({{.table.BusinessName}}Service)
+
+type {{.table.BusinessName}}Service struct {}
+
 //根据主键查询数据
-func SelectRecordById(id int64) (*{{.table.BusinessName}}Model.Entity, error) {
-    return {{.table.BusinessName}}Model.FindOne("{{.table.PkColumn.ColumnName}}", id)
+func (s *{{.table.BusinessName}}Service) Info(id int64) (*model.{{.table.TableName | CamelString}}, error) {
+    return dao.{{.table.TableName | CamelString}}.FindOne(dao.{{.table.TableName | CamelString}}.Columns.{{.table.PkColumn.GoField}},id)
 }
 
-//根据主键删除数据
-func DeleteRecordById(id int64) bool {
-    result, err := {{.table.BusinessName}}Model.Delete("{{.table.PkColumn.ColumnName}}", id)
-    if err == nil {
-        affected, _ := result.RowsAffected()
-        if affected > 0 {
-            return true
+
+//根据条件分页查询数据
+func (s *{{.table.BusinessName}}Service)GetList(param *define.{{.table.BusinessName | Capitalize}}ApiSelectPageReq) *define.{{.table.BusinessName | Capitalize}}ServiceList {
+    m := dao.{{.table.TableName | CamelString}}.As("t")
+    if param != nil { {{range $index, $column := .table.Columns}} {{if eq $column.IsQuery "1"}}{{if eq $column.QueryType "LIKE"}}
+        if param.{{$column.GoField}} != "" {
+            m = m.Where("t.{{$column.ColumnName}} like ?", "%"+param.{{$column.GoField}}+"%")
+        } {{else if eq $column.QueryType "EQ"}} {{if eq $column.GoType "string"}}
+        if param.{{$column.GoField}} != "" {
+            m = m.Where("t.{{$column.ColumnName}} = ?", param.{{$column.GoField}})
+        } {{else if eq $column.GoType "int" "int64"}}
+        if param.{{$column.GoField}} != 0 {
+            m = m.Where("t.{{$column.ColumnName}} = ?", param.{{$column.GoField}})
+        }{{end}} {{end}} {{end}} {{end}}
+        if param.BeginTime != "" {
+            m = m.Where("date_format(t.create_time,'%y%m%d') >= date_format(?,'%y%m%d') ", param.BeginTime)
+        }
+        if param.EndTime != "" {
+            m = m.Where("date_format(t.create_time,'%y%m%d') <= date_format(?,'%y%m%d') ", param.EndTime)
         }
     }
-
-    return false
-}
-
-//批量删除数据记录
-func DeleteRecordByIds(ids string) int64 {
-    idarr := convert.ToInt64Array(ids, ",")
-    result, err := {{.table.BusinessName}}Model.Delete("{{.table.PkColumn.ColumnName}} in (?)", idarr)
+    total, err := m.Count()
     if err != nil {
-        return 0
+        return nil
     }
-
-    nums, _ := result.RowsAffected()
-
-    return nums
+    page := page.CreatePaging(param.PageNum, param.PageSize, total)
+    m = m.Limit(page.StartNum, page.Pagesize)
+    if param.OrderByColumn != "" {
+        m = m.Order(param.OrderByColumn + " " + param.IsAsc)
+    }
+    result := &define.{{.table.BusinessName | Capitalize}}ServiceList{
+        Page:  page.PageNum,
+        Size:  page.Pagesize,
+        Total: page.Total,
+    }
+    if err = m.Structs(&result.List); err != nil {
+        return nil
+    }
+    return result
 }
 
 //添加数据
-func AddSave(req *{{.table.BusinessName}}Vo.AddReq, r *ghttp.Request) (int64, error) {
-    var entity {{.table.BusinessName}}Model.Entity
-    {{range $index, $column := .table.Columns}} {{if eq $column.IsInsert "1"}}
-    entity.{{$column.GoField}} = req.{{$column.GoField}}{{end}} {{end}}
+func (s *{{.table.BusinessName}}Service) Create(ctx context.Context, req *define.{{.table.BusinessName | Capitalize}}ApiCreateReq) (int64, error) {
+    user := shared.Context.Get(ctx).User
+    var entity model.{{.table.TableName | CamelString}}
     entity.CreateTime = gtime.Now()
-    entity.CreateBy = ""
-
-    user, _ := userService.GetProfileApi(r.GetInt64("jwtUid"))
-
-    if user != nil {
-        entity.CreateBy = user.LoginName
-    }
-
-    result, err := entity.Insert()
-    if err != nil {
-        return 0, err
-    }
-
-    id, err := result.LastInsertId()
-
-    if err != nil || id <= 0 {
-        return 0, err
-    }
-    return id, nil
+    entity.CreateBy = user.LoginName
+    var editReq *define.{{.table.BusinessName | Capitalize}}ApiUpdateReq
+    gconv.Struct(req, &editReq)
+    return s.save(&entity, editReq)
 }
 
 //修改数据
-func EditSave(req *{{.table.BusinessName}}Vo.EditReq, r *ghttp.Request) (int64, error) {
-
-    entity, err := {{.table.BusinessName}}Model.FindOne("{{.table.PkColumn.ColumnName}}=?", req.{{.table.PkColumn.GoField}})
-
+func (s *{{.table.BusinessName}}Service) Update(ctx context.Context, req *define.{{.table.BusinessName | Capitalize}}ApiUpdateReq) (int64, error) {
+    user := shared.Context.Get(ctx).User
+    entity, err := dao.{{.table.TableName | CamelString}}.FindOne(dao.{{.table.TableName | CamelString}}.Columns.{{.table.PkColumn.GoField}}, req.{{.table.PkColumn.GoField}})
     if err != nil {
         return 0, err
     }
-
     if entity == nil {
         return 0, gerror.New("数据不存在")
     }
-    {{range $index, $column := .table.Columns}} {{if eq $column.IsEdit "1"}}
-    entity.{{$column.GoField}} = req.{{$column.GoField}}{{end}} {{end}}
     entity.UpdateTime = gtime.Now()
-    entity.UpdateBy = ""
+    entity.UpdateBy = user.LoginName
+    return s.save(entity, req)
+}
 
-    user, _ := userService.GetProfileApi(r.GetInt64("jwtUid"))
-
-    if user == nil {
-        entity.UpdateBy = user.LoginName
-    }
-
-    result, err := entity.Update()
-
+func (s *{{.table.BusinessName}}Service) save({{.table.BusinessName}} *model.{{.table.TableName | CamelString}}, req *define.{{.table.BusinessName | Capitalize}}ApiUpdateReq) (int64, error) {
+    var (
+        rs  int64
+        err error
+    )
+    {{range $index, $column := .table.Columns}} {{if eq $column.IsInsert "1"}}
+    {{.table.BusinessName}}.{{$column.GoField}} = req.{{$column.GoField}}{{end}} {{end}}
+    result, err := dao.{{.table.TableName | CamelString}}.Data({{.table.BusinessName}}).Save()
     if err != nil {
         return 0, err
     }
-
-    rs, err := result.RowsAffected()
-
+    if {{.table.BusinessName}}.{{.table.PkColumn.GoField}} == 0 {
+        // 新增
+        rs, err = result.LastInsertId()
+    } else {
+        rs, err = result.RowsAffected()
+    }
     if err != nil {
         return 0, err
     }
-
     return rs, nil
 }
 
-//根据条件查询数据
-func SelectListAll(params *{{.table.BusinessName}}Vo.SelectPageReq) ([]{{.table.BusinessName}}Model.Entity, error) {
-    return {{.table.BusinessName}}Model.SelectListAll(params)
-}
-
-//根据条件分页查询数据
-func SelectListByPage(params *{{.table.BusinessName}}Vo.SelectPageReq) ([]{{.table.BusinessName}}Model.Entity, *page.Paging, error) {
-    return {{.table.BusinessName}}Model.SelectListByPage(params)
+//批量删除数据记录
+func (s *{{.table.BusinessName}}Service) Delete(ids string) int64 {
+    idarr := convert.ToInt64Array(ids, ",")
+    field := fmt.Sprintf("%s in(?)", dao.{{.table.TableName | CamelString}}.Columns.{{.table.PkColumn.GoField}})
+    result, err := dao.{{.table.TableName | CamelString}}.Delete(field, idarr)
+    if err != nil {
+        return 0
+    }
+    nums, _ := result.RowsAffected()
+    return nums
 }
 
 // 导出excel
-func Export(param *{{.table.BusinessName}}Vo.SelectPageReq) (string, error) {
-    result, err := {{.table.BusinessName}}Model.SelectListExport(param)
+func (s *{{.table.BusinessName}}Service) Export(param *define.{{.table.BusinessName | Capitalize}}ApiSelectPageReq) (string, error) {
+    m := dao.{{.table.TableName | CamelString}}.As("t")
+    if param != nil { {{range $index, $column := .table.Columns}} {{if eq $column.IsQuery "1"}}{{if eq $column.QueryType "LIKE"}}
+        if param.{{$column.GoField}} != "" {
+            m = m.Where("t.{{$column.ColumnName}} like ?", "%"+param.{{$column.GoField}}+"%")
+        } {{else if eq $column.QueryType "EQ"}} {{if eq $column.GoType "string"}}
+        if param.{{$column.GoField}} != "" {
+            m = m.Where("t.{{$column.ColumnName}} = ?", param.{{$column.GoField}})
+        } {{else if eq $column.GoType "int" "int64"}}
+        if param.{{$column.GoField}} != 0 {
+            m = m.Where("t.{{$column.ColumnName}} = ?", param.{{$column.GoField}})
+        }{{end}} {{end}} {{end}} {{end}}
+        if param.BeginTime != "" {
+            m = m.Where("date_format(t.create_time,'%y%m%d') >= date_format(?,'%y%m%d') ", param.BeginTime)
+        }
+        if param.EndTime != "" {
+            m = m.Where("date_format(t.create_time,'%y%m%d') <= date_format(?,'%y%m%d') ", param.EndTime)
+        }
+    }
+    //"参数主键","参数名称","参数键名","参数键值","系统内置（Y是 N否）","状态"
+    m = m.Fields("{{range $index, $column := .table.Columns}} {{if eq $index 0}}t.{{$column.ColumnName}}{{else}},t.{{$column.ColumnName}}{{end}}{{end}}")
+    result, err := m.M.All()
     if err != nil {
         return "", err
     }
-
     head := []string{ {{range $index, $column := .table.Columns}} {{if eq $index 0}}"{{$column.ColumnComment}}"{{else}},"{{$column.ColumnComment}}"{{end}}{{end}}}
     key := []string{ {{range $index, $column := .table.Columns}} {{if eq $index 0}}"{{$column.ColumnName}}"{{else}},"{{$column.ColumnName}}"{{end}}{{end}}}
-    url, err := excel.DownlaodExcel(head,key, result)
-
+    url, err := excel.DownlaodExcel(head, key, result)
     if err != nil {
         return "", err
     }
-
     return url, nil
 }

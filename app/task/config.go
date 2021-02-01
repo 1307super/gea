@@ -2,15 +2,14 @@ package task
 
 import (
 	"fmt"
-	jobModel "gea/app/model/monitor/job"
-	jobLogModel "gea/app/model/monitor/job_log"
-	"github.com/gogf/gf/frame/g"
+	"gea/app/dao"
+	"gea/app/model"
 	"github.com/gogf/gf/os/gtime"
 )
 
 //任务信息
 type TaskEntity struct {
-	JobName  string
+	JobName   string
 	Param     []string
 	Func      func() interface{}
 	StartTime int64
@@ -66,25 +65,25 @@ func (t *TaskEntity) before() {
 // 任务执行后
 func (t *TaskEntity) after(res interface{}) {
 	endTime := gtime.TimestampMilli()
-	var jobLog jobLogModel.Entity
+	var jobLog model.SysJobLog
 	jobLog.JobName = t.JobName
 	jobLog.Status = "0"
 	jobLog.CreateTime = gtime.Now()
 	//jobLogService.DeleteRecordById()
 	//获取任务信息
-	job,err := jobModel.FindOne(g.Map{"job_name":t.JobName})
+	job, err := dao.SysJob.FindOne(dao.SysJob.Columns.JobName, t.JobName)
 	if err != nil {
 		// 执行失败
 		jobLog.Status = "1"
-		message := fmt.Sprintf("未查询到任务 【%s】",t.JobName)
+		message := fmt.Sprintf("未查询到任务 【%s】", t.JobName)
 		jobLog.ExceptionInfo = message
 		jobLog.JobMessage = message
-	}else{
+	} else {
 		// 计算运行时间
 		runTime := endTime - t.StartTime
-		jobLog.JobMessage = fmt.Sprintf("%s，执行结果：%#v 总共耗时：%d毫秒",t.JobName,res, runTime)
+		jobLog.JobMessage = fmt.Sprintf("%s，执行结果：%#v 总共耗时：%d毫秒", t.JobName, res, runTime)
 		jobLog.JobGroup = job.JobGroup
 		jobLog.InvokeTarget = job.InvokeTarget
 	}
-	jobLog.Insert()
+	dao.SysJobLog.Data(jobLog).Insert()
 }

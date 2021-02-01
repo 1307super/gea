@@ -1,110 +1,118 @@
 // ==========================================================================
 // GEAGO自动生成控制器相关代码，只生成一次，按需修改,再次生成不会覆盖.
 // 生成日期：{{.table.CreateTime}}
-// 生成路径: app/controller/{{.table.ModuleName}}/{{.table.BusinessName}}/{{.table.BusinessName}}_controller.go
+// 生成路径: app/system/{{.table.ModuleName}}/internal/api/{{.table.BusinessName}}.go
 // 生成人：{{.table.FunctionAuthor}}
 // ==========================================================================
-package {{.table.BusinessName}}
+package api
 
 import (
-   "{{.table.PackageName}}/app/controller"
-   "github.com/gogf/gf/net/ghttp"
-   "{{.table.PackageName}}/app/model"
-    {{.table.BusinessName}}Vo "{{.table.PackageName}}/app/vo/{{.table.ModuleName}}/{{.table.BusinessName}}vo"
-   {{.table.BusinessName}}Service "{{.table.PackageName}}/app/service/{{.table.ModuleName}}/{{.table.BusinessName}}"
-   "{{.table.PackageName}}/app/utils/response"
+    "{{.table.PackageName}}/app/controller"
+    "{{.table.PackageName}}/app/system/{{.table.ModuleName}}/internal/define"
+    "{{.table.PackageName}}/app/system/{{.table.ModuleName}}/internal/service"
+    "{{.table.PackageName}}/app/utils/response"
+    "github.com/gogf/gf/net/ghttp"
 )
 
-type Controller struct {
+var {{.table.BusinessName | Capitalize}} = new({{.table.BusinessName}}Api)
+
+type {{.table.BusinessName}}Api struct {
     controller.BaseController
 }
 
-func (c *Controller) Init(r *ghttp.Request) {
-    c.Module = "{{.table.FunctionName}}管理"
+func (a *{{.table.BusinessName}}Api) Init(r *ghttp.Request) {
+    a.Module = "{{.table.FunctionName}}管理"
 }
 
 //列表
-func (c *Controller) Get(r *ghttp.Request) {
-    var req *{{.table.BusinessName}}Vo.SelectPageReq
+func (a *{{.table.BusinessName}}Api) Get(r *ghttp.Request) {
+    var req *define.{{.table.BusinessName | Capitalize}}ApiSelectPageReq
     //获取参数
     if err := r.Parse(&req); err != nil {
-	    c.Err(r,err.Error())
+	    a.Err(r,err.Error())
     }
-    result, page, _ := {{.table.BusinessName}}Service.SelectListByPage(req)
-    c.SuccTable(r,page.Total,result)
+    result := service.{{.table.BusinessName | Capitalize}}.GetList(req)
+    if result != nil {
+        a.SuccTable(r, result.Total, result.List)
+    } else {
+        a.SuccTable(r, 0, nil)
+    }
 }
 
 
 //新增
-func (c *Controller) Post(r *ghttp.Request) {
-    var req *{{.table.BusinessName}}Vo.AddReq
+func (a *{{.table.BusinessName}}Api) Post(r *ghttp.Request) {
+    var req *define.{{.table.BusinessName | Capitalize}}ApiCreateReq
     //获取参数
     if err := r.Parse(&req); err != nil {
-      c.Err(r,err.Error())
+      a.Err(r,err.Error())
     }
-    id, err := {{.table.BusinessName}}Service.AddSave(req, r)
-    if err != nil || id <= 0 {
-        c.Err(r,err.Error())
+    id, err := service.{{.table.BusinessName | Capitalize}}.Create(r.Context(),req)
+    if err != nil {
+        a.Err(r, err.Error())
     }
-    c.Succ(r,id)
+    if  id <= 0 {
+        a.Err(r, "保存失败")
+    }
+    a.Succ(r, id)
 }
 
 //修改
-func (c *Controller) Put(r *ghttp.Request) {
-    var req *{{.table.BusinessName}}Vo.EditReq
+func (a *{{.table.BusinessName}}Api) Put(r *ghttp.Request) {
+    var req *define.{{.table.BusinessName | Capitalize}}ApiUpdateReq
     //获取参数
     if err := r.Parse(&req); err != nil {
-        c.Err(r,err.Error())
+        a.Err(r, err.Error())
     }
-    rs, err := {{.table.BusinessName}}Service.EditSave(req, r)
-    if err != nil || rs <= 0 {
-        c.Err(r,err.Error())
+    rs, err := service.{{.table.BusinessName | Capitalize}}.Update(r.Context(),req)
+    if err != nil {
+        a.Err(r, err.Error())
     }
-    c.Succ(r)
+    if  rs <= 0 {
+        a.Err(r, "修改失败")
+    }
+    a.Succ(r, rs)
 }
 
 //删除
-func (c *Controller) Delete(r *ghttp.Request) {
-    var req *model.RemoveReq
+func (a *{{.table.BusinessName}}Api) Delete(r *ghttp.Request) {
+    var req *define.{{.table.BusinessName | Capitalize}}ApiDeleteReq
     //获取参数
     if err := r.Parse(&req); err != nil {
-        c.Err(r,err.Error())
+        a.Err(r, err.Error())
     }
-
-    rs := {{.table.BusinessName}}Service.DeleteRecordByIds(req.Ids)
-
+    rs := service.{{.table.BusinessName | Capitalize}}.Delete(req.Ids)
     if rs > 0 {
-        c.Succ(r)
+        a.Succ(r, rs)
     } else {
-        c.Err(r,"删除失败")
+        a.Err(r, "删除失败")
     }
 }
 
 //详情
-func (c *Controller) Info(r *ghttp.Request) {
+func (a *{{.table.BusinessName}}Api) Info(r *ghttp.Request) {
     id := r.GetInt64("id")
     if id <= 0 {
-        c.Err(r,"参数错误")
+        a.Err(r,"参数错误")
     }
-    entity, err := {{.table.BusinessName}}Service.SelectRecordById(id)
+    entity, err := service.{{.table.BusinessName | Capitalize}}.Info(id)
     if err != nil || entity == nil {
-        c.Err(r,"数据不存在")
+        a.Err(r,"数据不存在")
     }
-    c.Succ(r,entity)
+    a.Succ(r,entity)
 }
 
 //导出
-func (c *Controller) Export(r *ghttp.Request) {
-    r.SetCtxVar(response.ResponseBunissType,model.Buniss_Export)
-    var req *{{.table.BusinessName}}Vo.SelectPageReq
+func (a *{{.table.BusinessName}}Api) Export(r *ghttp.Request) {
+    r.SetCtxVar(response.ResponseBunissType,response.Buniss_Export)
+    var req *define.{{.table.BusinessName | Capitalize}}ApiSelectPageReq
     //获取参数
     if err := r.Parse(&req); err != nil {
-        c.Err(r,err.Error())
+        a.Err(r,err.Error())
     }
-    url, err := {{.table.BusinessName}}Service.Export(req)
-
+    url, err := service.{{.table.BusinessName | Capitalize}}.Export(req)
     if err != nil {
-        c.Err(r,err.Error())
+        a.Err(r,err.Error())
     }
-    c.Succ(r,url)
+    a.Succ(r,url)
 }

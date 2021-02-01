@@ -2,18 +2,17 @@ package response
 
 import (
 	"github.com/gogf/gf/net/ghttp"
-	"gea/app/model"
 )
 
 // 通用api响应
 type TableResp struct {
-	c *model.TableDataInfo
+	c *TableDataInfo
 	r *ghttp.Request
 }
 
 //返回一个成功的消息体
 func BuildTable(r *ghttp.Request, total int, rows interface{}) *TableResp {
-	msg := model.TableDataInfo{
+	msg := TableDataInfo{
 		Code:  0,
 		Msg:   "操作成功",
 		Total: total,
@@ -39,7 +38,7 @@ func (resp *TableResp) SetRows(rows interface{}) *TableResp {
 
 //返回一个成功的消息体
 func (resp *TableResp)BuildTable(r *ghttp.Request, total int, rows interface{}) *TableResp {
-	msg := model.TableDataInfo{
+	msg := TableDataInfo{
 		Code:  0,
 		Msg:   "操作成功",
 		Total: total,

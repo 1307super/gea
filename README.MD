@@ -52,16 +52,5 @@
 4. go run main.go 启动
 ```
 
-
-## 感谢(排名不分先后)
-> gf框架 [https://github.com/gogf/gf](https://github.com/gogf/gf) 
->
-> RuoYi框架 [https://github.com/yangzongzhuan/RuoYi](https://github.com/yangzongzhuan/RuoYi)
->
-> 云捷go [https://github.com/zeroing-zy1/yjgo](https://github.com/zeroing-zy1/yjgo)
->
-> tealeg [https://github.com/tealeg/xlsx](https://github.com/tealeg/xlsx)
->
-> swaggo [https://github.com/swaggo/swag](https://github.com/swaggo/swag)
->
-> agollo [https://github.com/zouyx/agollo](https://github.com/zouyx/agollo) 
+# 感谢
+<a href="https://www.jetbrains.com/?from=gea"><img src="https://itician.org/download/thumbnails/1114119/jetbrains.png?version=1&modificationDate=1608649325806&api=v2" height="120" alt="JetBrains"/></a>

@@ -1,0 +1,46 @@
+// ==========================================================================
+// GEAGO自动生成model扩展代码列表、增、删，改、查、导出，只生成一次，按需修改,再次生成不会覆盖.
+// 生成日期：{{.table.CreateTime}}
+// 生成路径: app/system/{{.table.ModuleName}}/internal/define/{{.table.BusinessName}}.go
+// 生成人：{{.table.FunctionAuthor}}
+// ==========================================================================
+package define
+import "gea/app/model"
+
+// ========== api =============
+
+//分页请求参数 {{$pkColumn := .table.PkColumn}}
+type {{.table.BusinessName | Capitalize}}ApiSelectPageReq struct { {{range $index, $column := .table.Columns}} {{if eq $column.IsQuery "1"}}
+     {{$column.GoField}}  {{if eq $column.GoType "Time"}}*gtime.Time{{else}}{{$column.GoType}}{{end}} `p:"{{$column.HtmlField}}"` //{{$column.ColumnComment}} {{end}} {{end}}
+     BeginTime   string `p:"beginTime"`  //开始时间
+     EndTime     string `p:"endTime"`     //结束时间
+     PageNum     int     `p:"pageNum"`     //当前页码
+     PageSize    int     `p:"pageSize"`   //每页数
+     OrderByColumn string `p:"orderByColumn"` //排序字段
+     IsAsc           string `p:"isAsc"`           //排序方式
+}
+
+//新增页面请求参数
+type {{.table.BusinessName | Capitalize}}ApiCreateReq struct { {{range $index, $column := .table.Columns}}
+     {{if and (eq $column.IsInsert "1") (ne $column.IsPk "1")}} {{$column.GoField}}  {{if eq $column.GoType "Time"}}*gtime.Time{{else}}{{$column.GoType}}{{end}}   `p:"{{$column.HtmlField}}" {{if eq $column.IsRequired "1"}}v:"required#{{$column.ColumnComment}}不能为空"{{end}}` {{end}} {{end}}
+}
+
+//修改页面请求参数
+type {{.table.BusinessName | Capitalize}}ApiUpdateReq struct {
+     {{.table.PkColumn.GoField}}     {{.table.PkColumn.GoType}}  `p:"{{.table.PkColumn.HtmlField}}" v:"required#主键ID不能为空"`
+     {{.table.BusinessName | Capitalize}}ApiCreateReq
+}
+
+//通用的删除请求
+type {{.table.BusinessName | Capitalize}}ApiDeleteReq struct {
+     Ids string `p:"ids"  v:"required#请选择要删除的数据记录"`
+}
+
+// ======= service =========
+// 查询列表返回值
+type {{.table.BusinessName | Capitalize}}ServiceList struct {
+    List  []model.{{.table.TableName | CamelString}} `json:"list"`
+    Page  int            `json:"page"`
+    Size  int            `json:"size"`
+    Total int            `json:"total"`
+}

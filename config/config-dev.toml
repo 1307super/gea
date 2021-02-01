@@ -24,6 +24,7 @@
     refresh = 1800
     #安全密钥
     encryptKey = "geazxc0123lk0912"
+    cache = "redis"   # default/redis
 
 # Logger.
 [logger]
@@ -86,3 +87,7 @@
     Ip = ""
     NextTryConnTime = 0
     IsBackupConfig = false
+# Redis数据库配置
+[redis]
+    default  = "127.0.0.1:6379,3"
+    cache = "127.0.0.1:6379,4"

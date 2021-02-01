@@ -1,0 +1,28 @@
+// ==========================================================================
+// GEAGO自动生成数据库操作代码，无需手动修改，重新生成会自动覆盖.
+// 生成日期：{{.table.CreateTime}}
+// 生成路径: app/dao/{{.table.TableName}}.go
+// 生成人：{{.table.FunctionAuthor}}
+// ==========================================================================
+
+package dao
+
+import (
+    "gea/app/dao/internal"
+)
+
+// {{.table.TableName | CamelLower}}Dao is the manager for logic model data accessing
+// and custom defined data operations functions management. You can define
+// methods on it to extend its functionality as you wish.
+type {{.table.TableName | CamelLower}}Dao struct {
+    *internal.{{.table.TableName | CamelString}}Dao
+}
+
+var (
+    // {{.table.TableName | CamelString}} is globally public accessible object for table {{.table.TableName}} operations.
+    {{.table.TableName | CamelString}} = &{{.table.TableName | CamelLower}}Dao{
+        internal.{{.table.TableName | CamelString}},
+    }
+)
+
+// Fill with you ideas below.

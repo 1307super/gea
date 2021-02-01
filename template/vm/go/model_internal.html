@@ -1,0 +1,17 @@
+// ==========================================================================
+// GEAGO自动生成ORM代码，无需手动修改，重新生成会自动覆盖.
+// 生成日期：{{.table.CreateTime}}
+// 生成路径: app/model/{{.table.ModuleName}}/{{.table.BusinessName}}/{{.table.BusinessName}}_model.go
+// 生成人：{{.table.FunctionAuthor}}
+// ==========================================================================
+
+package internal
+
+import (
+    "github.com/gogf/gf/os/gtime"
+)
+
+// {{.table.TableName | CamelString}} is the golang structure for table sys_job.
+type {{.table.TableName | CamelString}} struct { {{range $index, $column := .table.Columns}}
+    {{if eq $column.IsPk "1"}} {{$column.GoField}}       {{if eq $column.GoType "Time"}}*gtime.Time{{else}}{{$column.GoType}}{{end}}         `orm:"{{$column.ColumnName}},primary" json:"{{$column.ColumnName}}"`    // {{$column.ColumnComment}} {{else}} {{$column.GoField}}    {{if eq $column.GoType "Time"}}*gtime.Time{{else}}{{$column.GoType}}{{end}}         `orm:"{{$column.ColumnName}}" json:"{{$column.ColumnName}}"`    // {{$column.ColumnComment}} {{end}} {{end}}
+}

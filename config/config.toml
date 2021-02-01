@@ -1,6 +1,14 @@
 [profile]
     active = "local"
-
+# Database.
+[database]
+    [database.default]
+        link  = "mysql:root:@tcp(127.0.0.1:3306)/gea"
+        debug = true
+    [database.logger]
+        Path   = "log/gea/sql"
+        Level  = "all"
+        Stdout = true
 [compiler]
     name     = "gea"
     version  = "dev-1.0.0"

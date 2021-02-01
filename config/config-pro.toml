@@ -24,6 +24,7 @@
     refresh = 1800
     #安全密钥
     encryptKey = "geazxc0123lk0912"
+    cache = "redis"   # default/redis
 
 # Logger.
 [logger]

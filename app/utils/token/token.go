@@ -142,13 +142,34 @@ func (c *GeaClaims) DecryptToken(token string) (*GeaClaims, error) {
 }
 // 设置缓存
 func (c *GeaClaims) SetCache(cacheKey string, userId string) string {
-	gcache.Set(cacheKey, userId, gconv.Duration(c.RefreshTime)*time.Millisecond*2)
+	cacheType := g.Cfg().GetString("jwt.cache")
+	switch cacheType {
+	case "default":
+		gcache.Set(cacheKey, userId, gconv.Duration(c.RefreshTime)*time.Millisecond*2)
+		break
+	case "redis":
+		g.Redis().DoVar("SETEX", cacheKey, c.RefreshTime, userId)
+	}
 	return userId
 }
 
 // 获取缓存
 func (c *GeaClaims) GetCache(cacheKey string) (string, error) {
-	userCacheValue,_ := gcache.Get(cacheKey)
+
+	cacheType := g.Cfg().GetString("jwt.cache")
+	var userCacheValue interface{}
+	var err error
+	switch cacheType {
+	case "default":
+		userCacheValue,_ = gcache.Get(cacheKey)
+		break
+	case "redis":
+		userCacheValue, err = g.Redis().Do("GET",cacheKey)
+		if err != nil {
+			return "", gerror.New("请登录")
+		}
+		break
+	}
 	if userCacheValue == nil {
 		return "", gerror.New("请登录")
 	}
@@ -157,5 +178,12 @@ func (c *GeaClaims) GetCache(cacheKey string) (string, error) {
 	return userId, nil
 }
 func RemoveCache(cacheKey string) {
-	gcache.Remove(cacheKey)
+	cacheType := g.Cfg().GetString("jwt.cache")
+	switch cacheType {
+	case "default":
+		gcache.Remove(cacheKey)
+		break
+	case "redis":
+		g.Redis().DoVar("DEL",cacheKey)
+	}
 }
