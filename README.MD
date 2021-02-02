@@ -46,6 +46,9 @@
 17.  案例演示：常用的前端组件整合演示。
 
 ## 使用方法
+
+[前端项目](git@github.com:1307super/gea.git)
+
 ```
 1. git clone git@github.com:1307super/gea.git
 2. 导入document/sql/gea.sql
