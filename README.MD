@@ -47,7 +47,7 @@
 
 ## 使用方法
 
-[前端项目](git@github.com:1307super/gea.git)
+[前端项目](https://github.com/1307super/gea-ui)
 
 ```
 1. git clone git@github.com:1307super/gea.git
