@@ -32,6 +32,10 @@
     Path        = "log/gea"
     Level       = "all"
     Stdout      = true
+    RotateSize  = "2M"
+    RotateBackupLimit    = 10
+    RotateBackupExpire   = "7d"
+    RotateBackupCompress = 9
 
 # Template.
 [viewer]

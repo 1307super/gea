@@ -8,13 +8,13 @@
 	ServerRoot  = "public"
 	ServerAgent = "gea"
 	LogPath     = "log/gea/server"
-	DumpRouterMap = true
+	DumpRouterMap = false
 [api]
 	Address     = ":8090"
 	ServerRoot  = "public"
 	ServerAgent = "gea"
 	LogPath     = "log/gea/api"
-	DumpRouterMap = true
+	DumpRouterMap = false
 
 #jwt配置
 [jwt]
@@ -32,7 +32,10 @@
     Path        = "log/gea"
     Level       = "all"
     Stdout      = true
-
+    RotateSize  = "2M"
+    RotateBackupLimit    = 10
+    RotateBackupExpire   = "7d"
+    RotateBackupCompress = 9
 # Template.
 [viewer]
     Path        = "template"
@@ -83,11 +86,10 @@
 [apollo]
     Enable = false
     AppId = ""
-    Cluster = "default"
-    NamespaceName = "application"
+    Cluster = ""
+    NamespaceName = ""
     Ip = ""
     NextTryConnTime = 0
-    IsBackupConfig = false
 # Redis数据库配置
 [redis]
     default  = "127.0.0.1:6379,3"

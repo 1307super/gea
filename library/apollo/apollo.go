@@ -5,10 +5,7 @@ import (
 	"github.com/gogf/gf/frame/g"
 	"github.com/gogf/gf/util/gconv"
 	"github.com/golang/glog"
-	"github.com/zouyx/agollo/v4"
-	"github.com/zouyx/agollo/v4/env/config"
-	"github.com/zouyx/agollo/v4/storage"
-	"sync"
+	"github.com/shima-park/agollo"
 )
 
 // 初始化apollo配置
@@ -18,52 +15,40 @@ func New() {
 		glog.Info("使用config.toml配置")
 	}else{
 		g.Dump(apolloConfig)
-		c := &config.AppConfig{
-			AppID:            apolloConfig["AppId"],
-			Cluster:          apolloConfig["Cluster"],
-			NamespaceName:    apolloConfig["NamespaceName"],
-			IP:               apolloConfig["Ip"],
-			NextTryConnTime:  gconv.Int64(apolloConfig["NextTryConnTime"]),
-			IsBackupConfig:   gconv.Bool(apolloConfig["IsBackupConfig"]),
-		}
-		agollo.SetLogger(&DefaultLogger{})
-		client,err := agollo.StartWithConfig(func() (*config.AppConfig, error) {
-			return c,nil
-		})
+
+		a, err := agollo.New(apolloConfig["Ip"], apolloConfig["AppId"], agollo.PreloadNamespaces(apolloConfig["NamespaceName"]))
+		// error handle...
 		if err != nil {
-			panic(err)
+			panic("加载配置失败")
 		}
-		fmt.Println("初始化Apollo配置成功")
-		c2 := &CustomChangeListener{}
-		// 开始监听配置
-		client.AddChangeListener(c2)
-		writeConfig(c.NamespaceName,client)
+		errorCh := a.Start()  // Start后会启动goroutine监听变化，并更新agollo对象内的配置cache
+		// 或者忽略错误处理直接 a.Start()
+		// 写入配置
+		writeConfig(a.GetNameSpace(apolloConfig["NamespaceName"]))
+		watchCh := a.Watch()
+		for{
+			select{
+			case  <- errorCh:
+				// handle error
+			case resp := <-watchCh:
+				OnChange(resp)
+			}
+		}
 	}
 }
 
-func writeConfig(namespace string,client *agollo.Client) {
-	cache := client.GetConfigCache(namespace)
-	cache.Range(func(key, value interface{}) bool {
+func writeConfig(config agollo.Configurations) {
+	for key,value := range config {
 		fmt.Println("key : ", key, ", value :", value)
 		g.Cfg().Set(gconv.String(key),value)
-		return true
-	})
+	}
 }
 
-type CustomChangeListener struct {
-	wg sync.WaitGroup
-}
-
-func (c *CustomChangeListener) OnChange(changeEvent *storage.ChangeEvent) {
+func OnChange(resp *agollo.ApolloResponse) {
 	//write your code here
 	fmt.Println("========== 获取到配置更新 ============")
-	for key, value := range changeEvent.Changes {
-		fmt.Println("change key : ", key, ", value :", value)
-		g.Cfg().Set(gconv.String(key),value.NewValue)
+	for _, value := range resp.Changes {
+		fmt.Println("change key : ", value.Key, ", value :", value.Value)
+		g.Cfg().Set(gconv.String(value.Key),value.Value)
 	}
-	//fmt.Println(changeEvent.Namespace)
-}
-
-func (c *CustomChangeListener) OnNewestChange(event *storage.FullChangeEvent) {
-	//write your code here
 }
