@@ -7,7 +7,7 @@ import (
 	//"github.com/gogf/gf/net/ghttp"
 )
 
-// @title GEAGO 自动生成API文档
+// @title GEA 自动生成API文档
 // @version 1.0
 // @description 生成文档请在调试模式下进行<a href="/tool/swagger?a=r">重新生成文档</a>
 
