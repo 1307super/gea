@@ -2,9 +2,6 @@ package main
 
 import (
 	"gea/app"
-	_ "gea/boot"
-
-	//"github.com/gogf/gf/net/ghttp"
 )
 
 // @title GEA 自动生成API文档

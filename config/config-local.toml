@@ -86,8 +86,8 @@
 [apollo]
     Enable = false
     AppId = ""
-    Cluster = ""
-    NamespaceName = ""
+    Cluster = "default"
+    NamespaceName = "application"
     Ip = ""
     NextTryConnTime = 0
 # Redis数据库配置
