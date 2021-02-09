@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"fmt"
 	"gea/app/dao"
 	"gea/app/model"
 	"gea/app/shared"
@@ -16,6 +17,7 @@ import (
 	"github.com/gogf/gf/net/ghttp"
 	"github.com/gogf/gf/os/gfile"
 	"github.com/gogf/gf/os/gtime"
+	"github.com/gogf/gf/text/gstr"
 	"github.com/gogf/gf/util/gconv"
 	"github.com/golang/glog"
 	"os"
@@ -316,46 +318,49 @@ func (s *genTableService) Delete(ids string) int64 {
 
 //查询据库列表
 func (s *genTableService) GetTables(param *define.GenTableApiSelectPageReq) *define.GenTableServiceList {
-	db, err := gdb.Instance()
+	db,err := gdb.Instance()
 	if err != nil {
 		return nil
 	}
-	m := db.Table("information_schema.tables")
-	m = m.Where("table_schema = (select database())")
-	m = m.Where("table_name NOT LIKE 'qrtz_%' AND table_name NOT LIKE 'gen_%'")
-	m = m.Where("table_name NOT IN (select table_name from gen_table)")
+	var whereSlice []string
+	whereSlice = append(whereSlice, "table_schema = (select database())")
+	whereSlice = append(whereSlice, "table_name NOT LIKE 'qrtz_%' AND table_name NOT LIKE 'gen_%'")
+	whereSlice = append(whereSlice, "table_name NOT IN (select table_name from gen_table)")
+
 	if param != nil {
 		if param.TableName != "" {
-			m = m.Where("lower(table_name) like lower(?)", "%"+param.TableName+"%")
+			whereSlice = append(whereSlice, fmt.Sprintf("lower(table_name) like lower(%s)","%"+param.TableName+"%"))
 		}
 		if param.TableComment != "" {
-			m = m.Where("lower(table_comment) like lower(?)", "%"+param.TableComment+"%")
+			whereSlice = append(whereSlice, fmt.Sprintf("lower(table_comment) like lower(%s)","%"+param.TableComment+"%"))
 		}
 		if param.BeginTime != "" {
-			m = m.Where("date_format(create_time,'%y%m%d') >= date_format(?,'%y%m%d') ", param.BeginTime)
+			whereSlice = append(whereSlice, "date_format(create_time,'%y%m%d') >= date_format('"+param.BeginTime+"','%y%m%d') ")
 		}
 		if param.EndTime != "" {
-			m = m.Where("date_format(create_time,'%y%m%d') <= date_format(?,'%y%m%d') ", param.EndTime)
+			whereSlice = append(whereSlice, "date_format(create_time,'%y%m%d') <= date_format('"+param.EndTime+"','%y%m%d') ")
 		}
 	}
-
-	total, err := m.Count()
-
+	where  := gstr.Implode(" and ",whereSlice)
+	countSql := fmt.Sprintf("select count(*) from information_schema.tables where %s ",where)
+	fmt.Println(countSql)
+	total, err := db.GetCount(countSql)
 	if err != nil {
 		return nil
 	}
-
 	page := page.CreatePaging(param.PageNum, param.PageSize, total)
 
-	m = m.Fields("table_name, table_comment, create_time, update_time")
-	m = m.Limit(page.StartNum, page.Pagesize)
-
+	listSql := fmt.Sprintf("select table_name, table_comment, create_time, update_time from information_schema.tables where %s limit ?,?",where)
 	var result = &define.GenTableServiceList{
 		Page:  page.PageNum,
 		Size:  page.Pagesize,
 		Total: page.Total,
 	}
-	if err = m.Structs(&result.List); err != nil {
+	rows, err := db.GetAll(listSql,g.Slice{page.StartNum,page.Pagesize})
+	if err != nil {
+		return nil
+	}
+	if err = rows.Structs(&result.List); err != nil {
 		return nil
 	}
 	return result
@@ -367,16 +372,21 @@ func (s *genTableService) GetAllByName(tableNames []string) ([]model.GenTable, e
 	if err != nil {
 		return nil, gerror.New("获取数据库连接失败")
 	}
-	m := db.Table("information_schema.tables")
-	m.Where("table_name NOT LIKE 'qrtz_%'")
-	m.Where("table_name NOT LIKE 'gen_%'")
-	m.Where("table_schema = (select database())")
+	var whereSlice []string
+	whereSlice = append(whereSlice, "table_name NOT LIKE 'qrtz_%'")
+	whereSlice = append(whereSlice, "table_name NOT LIKE 'gen_%'")
+	whereSlice = append(whereSlice, "table_schema = (select database())")
 	if len(tableNames) > 0 {
-		m.Where("table_name in (?)", tableNames)
+		whereSlice = append(whereSlice, fmt.Sprintf("table_name in ('%s')",gstr.Implode("','",tableNames)))
+	}
+	sql := fmt.Sprintf("select * from information_schema.tables where %s",gstr.Implode(" and ",whereSlice))
+	rows, err := db.GetAll(sql)
+	if err != nil {
+		return nil,gerror.New("未查询到数据")
 	}
 
 	var result []model.GenTable
-	err = m.Structs(&result)
+	err = rows.Structs(&result)
 	return result, err
 }
 

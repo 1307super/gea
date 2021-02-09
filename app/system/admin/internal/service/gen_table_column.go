@@ -1,9 +1,11 @@
 package service
 
 import (
+	"fmt"
 	"gea/app/model"
 	"github.com/gogf/gf/database/gdb"
 	"github.com/gogf/gf/errors/gerror"
+	"github.com/gogf/gf/text/gstr"
 )
 
 var GenTableColumn = &genTableColumnService{
@@ -35,12 +37,17 @@ func (s *genTableColumnService) GetAllByName(tableName string) ([]model.GenTable
 	if err != nil {
 		return nil, gerror.New("生成失败")
 	}
+
+	var whereSlice []string
+	whereSlice = append(whereSlice, "table_schema = (select database())")
+	whereSlice = append(whereSlice, fmt.Sprintf("table_name='%s'",tableName))
+	sql := fmt.Sprintf("select column_name, (case when (is_nullable = 'no' && column_key != 'PRI') then '1' else null end) as is_required, (case when column_key = 'PRI' then '1' else '0' end) as is_pk, ordinal_position as sort, column_comment, (case when extra = 'auto_increment' then '1' else '0' end) as is_increment, column_type from information_schema.columns where %s order by ?",gstr.Implode(" and ",whereSlice))
+	rows ,err := db.GetAll(sql,"ordinal_position")
+	if err != nil {
+		return nil, gerror.New("获取表字段失败")
+	}
 	var result []model.GenTableColumn
-	m := db.Table("information_schema.columns")
-	m.Where("table_schema = (select database())")
-	m.Where("table_name=?", tableName).Order("ordinal_position")
-	m.Fields("column_name, (case when (is_nullable = 'no' && column_key != 'PRI') then '1' else null end) as is_required, (case when column_key = 'PRI' then '1' else '0' end) as is_pk, ordinal_position as sort, column_comment, (case when extra = 'auto_increment' then '1' else '0' end) as is_increment, column_type")
-	m.Structs(&result)
+	rows.Structs(&result)
 	return result, nil
 }
 
