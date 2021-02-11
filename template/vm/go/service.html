@@ -1,7 +1,7 @@
 // ==========================================================================
 // GEA自动生成业务逻辑层相关代码，只生成一次，按需修改,再次生成不会覆盖.
 // 生成日期：{{.table.CreateTime}}
-// 生成路径: app/system/{{.table.ModuleName}}/internal/service/{{.table.BusinessName}}.go
+// 生成路径: app/system/{{.table.ModuleName}}/internal/service/{{.table.BusinessName | CamelLower}}.go
 // 生成人：{{.table.FunctionAuthor}}
 // ==========================================================================
 package service
@@ -21,18 +21,18 @@ import (
     "github.com/gogf/gf/util/gconv"
 )
 
-var {{.table.BusinessName | Capitalize}} = new({{.table.BusinessName}}Service)
+var {{.table.BusinessName | CamelString}} = new({{.table.BusinessName | CamelLower}}Service)
 
-type {{.table.BusinessName}}Service struct {}
+type {{.table.BusinessName| CamelLower}}Service struct {}
 
 //根据主键查询数据
-func (s *{{.table.BusinessName}}Service) Info(id int64) (*model.{{.table.TableName | CamelString}}, error) {
+func (s *{{.table.BusinessName | CamelLower}}Service) Info(id int64) (*model.{{.table.TableName | CamelString}}, error) {
     return dao.{{.table.TableName | CamelString}}.FindOne(dao.{{.table.TableName | CamelString}}.Columns.{{.table.PkColumn.GoField}},id)
 }
 
 
 //根据条件分页查询数据
-func (s *{{.table.BusinessName}}Service)GetList(param *define.{{.table.BusinessName | Capitalize}}ApiSelectPageReq) *define.{{.table.BusinessName | Capitalize}}ServiceList {
+func (s *{{.table.BusinessName | CamelLower}}Service)GetList(param *define.{{.table.BusinessName | CamelString}}ApiSelectPageReq) *define.{{.table.BusinessName | CamelString}}ServiceList {
     m := dao.{{.table.TableName | CamelString}}.As("t")
     if param != nil { {{range $index, $column := .table.Columns}} {{if eq $column.IsQuery "1"}}{{if eq $column.QueryType "LIKE"}}
         if param.{{$column.GoField}} != "" {
@@ -60,7 +60,7 @@ func (s *{{.table.BusinessName}}Service)GetList(param *define.{{.table.BusinessN
     if param.OrderByColumn != "" {
         m = m.Order(param.OrderByColumn + " " + param.IsAsc)
     }
-    result := &define.{{.table.BusinessName | Capitalize}}ServiceList{
+    result := &define.{{.table.BusinessName | CamelString}}ServiceList{
         Page:  page.PageNum,
         Size:  page.Pagesize,
         Total: page.Total,
@@ -72,18 +72,18 @@ func (s *{{.table.BusinessName}}Service)GetList(param *define.{{.table.BusinessN
 }
 
 //添加数据
-func (s *{{.table.BusinessName}}Service) Create(ctx context.Context, req *define.{{.table.BusinessName | Capitalize}}ApiCreateReq) (int64, error) {
+func (s *{{.table.BusinessName | CamelLower}}Service) Create(ctx context.Context, req *define.{{.table.BusinessName | CamelString}}ApiCreateReq) (int64, error) {
     user := shared.Context.Get(ctx).User
     var entity model.{{.table.TableName | CamelString}}
     entity.CreateTime = gtime.Now()
     entity.CreateBy = user.LoginName
-    var editReq *define.{{.table.BusinessName | Capitalize}}ApiUpdateReq
+    var editReq *define.{{.table.BusinessName | CamelString}}ApiUpdateReq
     gconv.Struct(req, &editReq)
     return s.save(&entity, editReq)
 }
 
 //修改数据
-func (s *{{.table.BusinessName}}Service) Update(ctx context.Context, req *define.{{.table.BusinessName | Capitalize}}ApiUpdateReq) (int64, error) {
+func (s *{{.table.BusinessName | CamelLower}}Service) Update(ctx context.Context, req *define.{{.table.BusinessName | CamelString}}ApiUpdateReq) (int64, error) {
     user := shared.Context.Get(ctx).User
     entity, err := dao.{{.table.TableName | CamelString}}.FindOne(dao.{{.table.TableName | CamelString}}.Columns.{{.table.PkColumn.GoField}}, req.{{.table.PkColumn.GoField}})
     if err != nil {
@@ -97,18 +97,18 @@ func (s *{{.table.BusinessName}}Service) Update(ctx context.Context, req *define
     return s.save(entity, req)
 }
 
-func (s *{{.table.BusinessName}}Service) save({{.table.BusinessName}} *model.{{.table.TableName | CamelString}}, req *define.{{.table.BusinessName | Capitalize}}ApiUpdateReq) (int64, error) {
+func (s *{{.table.BusinessName | CamelLower}}Service) save({{.table.BusinessName | CamelLower}} *model.{{.table.TableName | CamelString}}, req *define.{{.table.BusinessName | CamelString}}ApiUpdateReq) (int64, error) {
     var (
         rs  int64
         err error
     )
-    {{range $index, $column := .table.Columns}} {{if eq $column.IsInsert "1"}}
-    {{.table.BusinessName}}.{{$column.GoField}} = req.{{$column.GoField}}{{end}} {{end}}
-    result, err := dao.{{.table.TableName | CamelString}}.Data({{.table.BusinessName}}).Save()
+    {{range $index, $column := .table.Columns}}
+    {{if and (eq $column.IsInsert "1") (ne $column.IsPk "1")}}{{$.table.BusinessName | CamelLower}}.{{$column.GoField}} = req.{{$column.GoField}} {{end}}{{end}}
+    result, err := dao.{{.table.TableName | CamelString}}.Data({{.table.BusinessName | CamelLower}}).Save()
     if err != nil {
         return 0, err
     }
-    if {{.table.BusinessName}}.{{.table.PkColumn.GoField}} == 0 {
+    if {{.table.BusinessName | CamelLower}}.{{.table.PkColumn.GoField}} == 0 {
         // 新增
         rs, err = result.LastInsertId()
     } else {
@@ -121,7 +121,7 @@ func (s *{{.table.BusinessName}}Service) save({{.table.BusinessName}} *model.{{.
 }
 
 //批量删除数据记录
-func (s *{{.table.BusinessName}}Service) Delete(ids string) int64 {
+func (s *{{.table.BusinessName | CamelLower}}Service) Delete(ids string) int64 {
     idarr := convert.ToInt64Array(ids, ",")
     field := fmt.Sprintf("%s in(?)", dao.{{.table.TableName | CamelString}}.Columns.{{.table.PkColumn.GoField}})
     result, err := dao.{{.table.TableName | CamelString}}.Delete(field, idarr)
@@ -133,7 +133,7 @@ func (s *{{.table.BusinessName}}Service) Delete(ids string) int64 {
 }
 
 // 导出excel
-func (s *{{.table.BusinessName}}Service) Export(param *define.{{.table.BusinessName | Capitalize}}ApiSelectPageReq) (string, error) {
+func (s *{{.table.BusinessName | CamelLower}}Service) Export(param *define.{{.table.BusinessName | CamelString}}ApiSelectPageReq) (string, error) {
     m := dao.{{.table.TableName | CamelString}}.As("t")
     if param != nil { {{range $index, $column := .table.Columns}} {{if eq $column.IsQuery "1"}}{{if eq $column.QueryType "LIKE"}}
         if param.{{$column.GoField}} != "" {

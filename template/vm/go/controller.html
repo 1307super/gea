@@ -7,31 +7,30 @@
 package api
 
 import (
-    "{{.table.PackageName}}/app/controller"
     "{{.table.PackageName}}/app/system/{{.table.ModuleName}}/internal/define"
     "{{.table.PackageName}}/app/system/{{.table.ModuleName}}/internal/service"
     "{{.table.PackageName}}/app/utils/response"
     "github.com/gogf/gf/net/ghttp"
 )
 
-var {{.table.BusinessName | Capitalize}} = new({{.table.BusinessName}}Api)
+var {{.table.BusinessName | CamelString}} = new({{.table.BusinessName | CamelLower}}Api)
 
-type {{.table.BusinessName}}Api struct {
-    controller.BaseController
+type {{.table.BusinessName | CamelLower}}Api struct {
+    BaseController
 }
 
-func (a *{{.table.BusinessName}}Api) Init(r *ghttp.Request) {
+func (a *{{.table.BusinessName | CamelLower}}Api) Init(r *ghttp.Request) {
     a.Module = "{{.table.FunctionName}}管理"
 }
 
 //列表
-func (a *{{.table.BusinessName}}Api) Get(r *ghttp.Request) {
-    var req *define.{{.table.BusinessName | Capitalize}}ApiSelectPageReq
+func (a *{{.table.BusinessName | CamelLower}}Api) Get(r *ghttp.Request) {
+    var req *define.{{.table.BusinessName | CamelString}}ApiSelectPageReq
     //获取参数
     if err := r.Parse(&req); err != nil {
 	    a.Err(r,err.Error())
     }
-    result := service.{{.table.BusinessName | Capitalize}}.GetList(req)
+    result := service.{{.table.BusinessName | CamelString}}.GetList(req)
     if result != nil {
         a.SuccTable(r, result.Total, result.List)
     } else {
@@ -41,13 +40,13 @@ func (a *{{.table.BusinessName}}Api) Get(r *ghttp.Request) {
 
 
 //新增
-func (a *{{.table.BusinessName}}Api) Post(r *ghttp.Request) {
-    var req *define.{{.table.BusinessName | Capitalize}}ApiCreateReq
+func (a *{{.table.BusinessName | CamelLower}}Api) Post(r *ghttp.Request) {
+    var req *define.{{.table.BusinessName | CamelString}}ApiCreateReq
     //获取参数
     if err := r.Parse(&req); err != nil {
       a.Err(r,err.Error())
     }
-    id, err := service.{{.table.BusinessName | Capitalize}}.Create(r.Context(),req)
+    id, err := service.{{.table.BusinessName | CamelString}}.Create(r.Context(),req)
     if err != nil {
         a.Err(r, err.Error())
     }
@@ -58,13 +57,13 @@ func (a *{{.table.BusinessName}}Api) Post(r *ghttp.Request) {
 }
 
 //修改
-func (a *{{.table.BusinessName}}Api) Put(r *ghttp.Request) {
-    var req *define.{{.table.BusinessName | Capitalize}}ApiUpdateReq
+func (a *{{.table.BusinessName | CamelLower}}Api) Put(r *ghttp.Request) {
+    var req *define.{{.table.BusinessName | CamelString}}ApiUpdateReq
     //获取参数
     if err := r.Parse(&req); err != nil {
         a.Err(r, err.Error())
     }
-    rs, err := service.{{.table.BusinessName | Capitalize}}.Update(r.Context(),req)
+    rs, err := service.{{.table.BusinessName | CamelString}}.Update(r.Context(),req)
     if err != nil {
         a.Err(r, err.Error())
     }
@@ -75,13 +74,13 @@ func (a *{{.table.BusinessName}}Api) Put(r *ghttp.Request) {
 }
 
 //删除
-func (a *{{.table.BusinessName}}Api) Delete(r *ghttp.Request) {
-    var req *define.{{.table.BusinessName | Capitalize}}ApiDeleteReq
+func (a *{{.table.BusinessName | CamelLower}}Api) Delete(r *ghttp.Request) {
+    var req *define.{{.table.BusinessName | CamelString}}ApiDeleteReq
     //获取参数
     if err := r.Parse(&req); err != nil {
         a.Err(r, err.Error())
     }
-    rs := service.{{.table.BusinessName | Capitalize}}.Delete(req.Ids)
+    rs := service.{{.table.BusinessName | CamelString}}.Delete(req.Ids)
     if rs > 0 {
         a.Succ(r, rs)
     } else {
@@ -90,12 +89,12 @@ func (a *{{.table.BusinessName}}Api) Delete(r *ghttp.Request) {
 }
 
 //详情
-func (a *{{.table.BusinessName}}Api) Info(r *ghttp.Request) {
+func (a *{{.table.BusinessName | CamelLower}}Api) Info(r *ghttp.Request) {
     id := r.GetInt64("id")
     if id <= 0 {
         a.Err(r,"参数错误")
     }
-    entity, err := service.{{.table.BusinessName | Capitalize}}.Info(id)
+    entity, err := service.{{.table.BusinessName | CamelString}}.Info(id)
     if err != nil || entity == nil {
         a.Err(r,"数据不存在")
     }
@@ -103,14 +102,14 @@ func (a *{{.table.BusinessName}}Api) Info(r *ghttp.Request) {
 }
 
 //导出
-func (a *{{.table.BusinessName}}Api) Export(r *ghttp.Request) {
+func (a *{{.table.BusinessName | CamelLower}}Api) Export(r *ghttp.Request) {
     r.SetCtxVar(response.ResponseBunissType,response.Buniss_Export)
-    var req *define.{{.table.BusinessName | Capitalize}}ApiSelectPageReq
+    var req *define.{{.table.BusinessName | CamelString}}ApiSelectPageReq
     //获取参数
     if err := r.Parse(&req); err != nil {
         a.Err(r,err.Error())
     }
-    url, err := service.{{.table.BusinessName | Capitalize}}.Export(req)
+    url, err := service.{{.table.BusinessName | CamelString}}.Export(req)
     if err != nil {
         a.Err(r,err.Error())
     }
