@@ -28,8 +28,24 @@ func Init() {
 		// 下载
 		group.GET("/download",utils.Download)
 
-		// 鉴权
-		group.Middleware(service.Middleware.Jwt,service.Middleware.Auth,service.Middleware.OperationLog)
+		// 登录鉴权
+		group.Middleware(service.Middleware.Jwt)
+		group.GET("/getInfo",api.User.GetUserInfo)
+		group.GET("/getRouters", api.Menu.GetRouter)
+		group.GET("/system/dict/datas",  api.DictData.GetAll)
+		// 用户信息
+		group.GET("/system/user/profile", api.User.GetProfile)
+		group.PUT("/system/user/profile", api.User.UpdateProfile)
+		group.PUT("/system/user/profile/updatePwd", api.User.UpdatePassword)
+		group.POST("/system/user/profile/avatar", api.User.UpdateAvatar)
+		group.GET("/system/menu/treeselect",  api.Menu.MenuTreeData)
+		group.GET("/system/menu/roleMenuTreeselect",  api.Menu.RoleMenuTreeData)
+		group.GET("/system/dept/treeselect",  api.Dept.TreeData) // 用户列表树形列表
+		group.GET("/system/dept/roleDeptTreeselect",api.Dept.RoleDeptTreeData)
+		group.GET("/system/configKey",  api.Config.GetValueByKey)
+
+		// 菜单鉴权
+		group.Middleware(service.Middleware.Auth,service.Middleware.OperationLog)
 		// 用户列表
 		group.GET("/getInfo",api.User.GetUserInfo)
 		group.REST("/system/user",api.User)
@@ -124,13 +140,6 @@ func Init() {
 		group.GET("/tool/gen/batchGenCode", api.GenTable.GenCode)
 
 	})
-	// 允许的权限
-	service.ALLOW_PERMISSION.Append("/getInfo","/getRouters",
-		"/system/dict/datas", "/system/user/profile",
-		"/system/user/profile/updatePwd","/system/user/profile/avatar",
-		"/system/menu/treeselect","/system/menu/roleMenuTreeselect",
-		"/system/dept/treeselect","/system/dept/roleDeptTreeselect",
-		"/system/dict/datas","/system/configKey")
 
 	initCasbin()
 	s.Start()

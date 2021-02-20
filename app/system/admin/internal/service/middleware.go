@@ -100,7 +100,7 @@ func (s *middlewareService) Auth(r *ghttp.Request) {
 		response.ErrorResp(r).SetStatus(401).SetMsg("用户不存在").WriteJsonExit()
 	}
 	// 如果是不是超管 校验权限
-	if !hasPermissions(r, user.Permissions) {
+	if !hasPermissions(user.Permissions) {
 		// casbin校验
 		// 判断判断
 		isOk, err := casbin.Enforce(user.User.LoginName, url, r.Method)
@@ -111,8 +111,8 @@ func (s *middlewareService) Auth(r *ghttp.Request) {
 	r.Middleware.Next()
 }
 
-func hasPermissions(r *ghttp.Request, userPermissions *garray.StrArray) bool {
-	return userPermissions.Contains(ALL_PERMISSION) || ALLOW_PERMISSION.Contains(r.Request.URL.Path)
+func hasPermissions(userPermissions *garray.StrArray) bool {
+	return userPermissions.Contains(ALL_PERMISSION)
 }
 
 
