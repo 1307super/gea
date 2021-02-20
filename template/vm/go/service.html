@@ -75,8 +75,7 @@ func (s *{{.table.BusinessName | CamelLower}}Service)GetList(param *define.{{.ta
 func (s *{{.table.BusinessName | CamelLower}}Service) Create(ctx context.Context, req *define.{{.table.BusinessName | CamelString}}ApiCreateReq) (int64, error) {
     user := shared.Context.Get(ctx).User
     var entity model.{{.table.TableName | CamelString}}
-    entity.CreateTime = gtime.Now()
-    entity.CreateBy = user.LoginName
+    // 写你自己的字段，例如CreateTime，CreateBy
     var editReq *define.{{.table.BusinessName | CamelString}}ApiUpdateReq
     gconv.Struct(req, &editReq)
     return s.save(&entity, editReq)
@@ -92,8 +91,7 @@ func (s *{{.table.BusinessName | CamelLower}}Service) Update(ctx context.Context
     if entity == nil {
         return 0, gerror.New("数据不存在")
     }
-    entity.UpdateTime = gtime.Now()
-    entity.UpdateBy = user.LoginName
+    // 写你自己的字段，例如UpdateTime，UpdateBy
     return s.save(entity, req)
 }
 
