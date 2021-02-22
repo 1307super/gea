@@ -47,19 +47,11 @@ func Init() {
 		// 菜单鉴权
 		group.Middleware(service.Middleware.Auth,service.Middleware.OperationLog)
 		// 用户列表
-		group.GET("/getInfo",api.User.GetUserInfo)
 		group.REST("/system/user",api.User)
 		group.GET("/system/user/info",  api.User.Info)
 		group.PUT("/system/user/resetPwd",api.User.ResetPwdSave)
 		group.PUT("/system/user/changeStatus",api.User.ChangeStatus)
 		group.GET("/system/user/export", api.User.Export)
-
-		// 用户信息
-		group.GET("/system/user/profile", api.User.GetProfile)
-		group.PUT("/system/user/profile", api.User.UpdateProfile)
-		group.PUT("/system/user/profile/updatePwd", api.User.UpdatePassword)
-		group.POST("/system/user/profile/avatar", api.User.UpdateAvatar)
-
 
 		// 角色
 		group.REST("/system/role",api.Role)
@@ -70,17 +62,12 @@ func Init() {
 
 		// 菜单
 		// 获取路由
-		group.GET("/getRouters", api.Menu.GetRouter)
 		group.REST("/system/menu",api.Menu)
 		group.GET("/system/menu/info",api.Menu.Info)
-		group.GET("/system/menu/treeselect",  api.Menu.MenuTreeData)
-		group.GET("/system/menu/roleMenuTreeselect",  api.Menu.RoleMenuTreeData)
 
 		// 部门
 		group.REST("/system/dept",api.Dept)
 		group.GET("/system/dept/info",api.Dept.Info)
-		group.GET("/system/dept/treeselect",  api.Dept.TreeData) // 用户列表树形列表
-		group.GET("/system/dept/roleDeptTreeselect",api.Dept.RoleDeptTreeData)
 
 		// 岗位
 		group.REST("/system/post",api.Post)
@@ -95,7 +82,6 @@ func Init() {
 
 		// 字典数据
 		group.REST("/system/dict/data",api.DictData)
-		group.GET("/system/dict/datas",  api.DictData.GetAll)
 		group.GET("/system/dict/data/info",api.DictData.Info)
 		group.GET("/system/dict/data/export",api.DictData.Export)
 
@@ -103,7 +89,6 @@ func Init() {
 		// 配置文件
 		group.REST("/system/config",api.Config)
 		group.GET("/system/config/info",api.Config.Info)
-		group.GET("/system/configKey",  api.Config.GetValueByKey)
 		group.GET("/system/config/export",  api.Config.Export)
 
 		// 日志

@@ -148,7 +148,7 @@ func (c *GeaClaims) SetCache(cacheKey string, userId string) string {
 		gcache.Set(cacheKey, userId, gconv.Duration(c.RefreshTime)*time.Millisecond*2)
 		break
 	case "redis":
-		g.Redis().DoVar("SETEX", cacheKey, c.RefreshTime, userId)
+		g.Redis().DoVar("SETEX", cacheKey, c.RefreshTime - time.Now().Unix(), userId)
 	}
 	return userId
 }
