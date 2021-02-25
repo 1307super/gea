@@ -25,6 +25,7 @@ func Init() {
 		// 不鉴权
 		group.GET("/captchaImage",api.Login.CaptchaImage)
 		group.POST("/login",api.Login.CheckLogin)
+		group.POST("/logout",api.Login.Logout)
 		// 下载
 		group.GET("/download",utils.Download)
 

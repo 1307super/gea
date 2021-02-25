@@ -149,3 +149,13 @@ func (a *loginApi) CheckLogin(r *ghttp.Request) {
 		"token": ctx.Token,
 	})
 }
+
+//注销
+func (a *loginApi)Logout(r *ghttp.Request) {
+	user := shared.Context.Get(r.Context()).User
+	if user == nil{
+		a.Succ(r)
+	}
+	token.RemoveCache(token.CacheKey + user.LoginName)
+	a.Succ(r)
+}

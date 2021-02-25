@@ -10,6 +10,7 @@ import (
 	"github.com/gogf/gf/encoding/gjson"
 	"github.com/gogf/gf/frame/g"
 	"github.com/gogf/gf/net/ghttp"
+	"github.com/gogf/gf/text/gstr"
 	"github.com/gogf/gf/util/gconv"
 	"strings"
 )
@@ -92,6 +93,7 @@ func (s *middlewareService) Jwt(r *ghttp.Request) {
 }
 
 func (s *middlewareService) Auth(r *ghttp.Request) {
+	prefix := g.Cfg().GetString("admin.prefix")
 	//根据url判断是否有权限
 	url := r.Request.URL.Path
 	//获取用户信息
@@ -99,6 +101,7 @@ func (s *middlewareService) Auth(r *ghttp.Request) {
 	if err != nil || user == nil {
 		response.ErrorResp(r).SetStatus(401).SetMsg("用户不存在").WriteJsonExit()
 	}
+	url = gstr.Replace(url,prefix,"")
 	// 如果是不是超管 校验权限
 	if !hasPermissions(user.Permissions) {
 		// casbin校验
