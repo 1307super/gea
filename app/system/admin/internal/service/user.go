@@ -232,7 +232,7 @@ func (s *userService) GetList(param *define.UserApiSelectPageReq) *define.UserSe
 }
 
 func (s *userService) SelectExportList(param *define.UserApiSelectPageReq) (gdb.Result,error) {
-	m := dao.SysUser.As("u").Fields(model.UserListItem{})
+	m := dao.SysUser.As("u").LeftJoin("sys_dept d", "u.dept_id = d.dept_id").Fields("u.login_name, u.user_name, u.email, u.phonenumber, u.sex,d.dept_name, d.leader,  u.status, u.del_flag, u.create_by, u.create_time, u.remark")
 	if param != nil {
 		if param.LoginName != "" {
 			m = m.Where("u.login_name like ?", "%"+param.LoginName+"%")
