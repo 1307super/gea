@@ -4,11 +4,12 @@
     api = false
 
 [admin]
-	Address     = ":8090"
+	Address     = ":8199"
 	ServerRoot  = "public"
 	ServerAgent = "gea"
 	LogPath     = "log/gea/server"
 	DumpRouterMap = true
+    prefix = "/api"
 [api]
 	Address     = ":8090"
 	ServerRoot  = "public"

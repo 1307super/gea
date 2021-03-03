@@ -329,10 +329,10 @@ func (s *genTableService) GetTables(param *define.GenTableApiSelectPageReq) *def
 
 	if param != nil {
 		if param.TableName != "" {
-			whereSlice = append(whereSlice, fmt.Sprintf("lower(table_name) like lower(%s)","%"+param.TableName+"%"))
+			whereSlice = append(whereSlice, fmt.Sprintf("lower(table_name) like lower('%s')","%"+param.TableName+"%"))
 		}
 		if param.TableComment != "" {
-			whereSlice = append(whereSlice, fmt.Sprintf("lower(table_comment) like lower(%s)","%"+param.TableComment+"%"))
+			whereSlice = append(whereSlice, fmt.Sprintf("lower(table_comment) like lower('%s')","%"+param.TableComment+"%"))
 		}
 		if param.BeginTime != "" {
 			whereSlice = append(whereSlice, "date_format(create_time,'%y%m%d') >= date_format('"+param.BeginTime+"','%y%m%d') ")

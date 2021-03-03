@@ -9,6 +9,7 @@ import (
 	"github.com/gogf/gf/frame/g"
 	"github.com/gogf/gf/net/ghttp"
 	"github.com/gogf/gf/text/gstr"
+	"github.com/gogf/gf/util/gconv"
 )
 
 func Init() {
@@ -16,9 +17,11 @@ func Init() {
 	g.View().BindFunc("CamelString",gstr.CamelCase)    // 转驼峰
 	g.View().BindFunc("CamelLower",gstr.CamelLowerCase)    // 转首字母小写驼峰
 	s := g.Server("admin")
-	adminConfig, _ := ghttp.ConfigFromMap(g.Cfg().GetMap("admin"))
-	s.SetConfig(adminConfig)
-	s.Group("/", func(group *ghttp.RouterGroup) {
+	adminConfig := g.Cfg().GetMap("admin")
+	httpConfig, _ := ghttp.ConfigFromMap(adminConfig)
+	s.SetConfig(httpConfig)
+	prefix := gconv.String(adminConfig["prefix"])
+	s.Group(prefix, func(group *ghttp.RouterGroup) {
 		group.Middleware(service.Middleware.CORS)
 		// 上下文
 		group.Middleware(service.Middleware.Ctx)
