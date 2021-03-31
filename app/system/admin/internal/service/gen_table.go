@@ -569,8 +569,8 @@ func (s *genTableService) GenCode(r *ghttp.Request, tableId string) error {
 		}
 
 		template := g.MapStrStr{
-			listTmp:                     strings.Join([]string{curDir, "/template/system/", entity.ModuleName, "/", entity.BusinessName, "/index.vue"}, ""),
-			"vm/js/api.html":            strings.Join([]string{curDir, "/template/system/", entity.ModuleName, "/", entity.BusinessName, "/index.js"}, ""),
+			listTmp:                     strings.Join([]string{curDir, "/template/system/", entity.ModuleName, "/", "business", "/index.vue"}, ""),
+			"vm/js/api.html":            strings.Join([]string{curDir, "/template/system/", entity.ModuleName, "/", "business", "/index.js"}, ""),
 			"vm/go/model.html":          strings.Join([]string{curDir, "/app/model/", entity.TableName, ".go"}, ""),
 			"vm/go/model_internal.html": strings.Join([]string{curDir, "/app/model/", "internal", "/", entity.TableName, ".go"}, ""),
 			"vm/go/dao.html":            strings.Join([]string{curDir, "/app/dao/", entity.TableName, ".go"}, ""),
@@ -579,7 +579,7 @@ func (s *genTableService) GenCode(r *ghttp.Request, tableId string) error {
 			"vm/go/define.html":         strings.Join([]string{curDir, "/app/system/", entity.ModuleName, "/internal/define/", entity.TableName, ".go"}, ""),
 			"vm/go/service.html":        strings.Join([]string{curDir, "/app/system/", entity.ModuleName, "/internal/service/", entity.TableName, ".go"}, ""),
 			//"vm/go/router.html":  strings.Join([]string{curDir, "/app/controller/", entity.ModuleName, "/", entity.BusinessName, "_router.go"}, ""),
-			"vm/sql/sql.html": strings.Join([]string{curDir, "/document/sql/", entity.ModuleName, "/", entity.BusinessName, "_menu.sql"}, ""),
+			"vm/sql/sql.html": strings.Join([]string{curDir, "/document/sql/", "business", "/", entity.BusinessName, "_menu.sql"}, ""),
 		}
 
 		for k, v := range template {

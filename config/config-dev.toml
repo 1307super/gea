@@ -60,7 +60,7 @@
 # Gen
 [gen]
     author        = "1307"
-    moduleName    = "module"
+    moduleName    = "admin"
     packageName   = "gea"
     autoRemovePre = true
     tablePrefix   = "t_,sys_"

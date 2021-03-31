@@ -30,8 +30,8 @@ func initConfig() {
 	switch active {
 	case "dev":
 		g.Cfg().SetFileName("config-dev.toml")
-	case "pro":
-		g.Cfg().SetFileName("config-pro.toml")
+	case "prod":
+		g.Cfg().SetFileName("config-prod.toml")
 	case "local":
 		g.Cfg().SetFileName("config-local.toml")
 	}

@@ -4,7 +4,7 @@ import request from '@/utils/request'
 // 查询{{.table.FunctionName}}列表
 export function list{{$businessName}}(query) {
   return request({
-    url: '/{{.table.ModuleName}}/{{$businessName}}',
+    url: '/business/{{$businessName}}',
     method: 'get',
     params: query
   })
@@ -13,7 +13,7 @@ export function list{{$businessName}}(query) {
 // 查询{{.table.FunctionName}}详细
 export function get{{$businessName}}({{.table.PkColumn.ColumnName}}) {
   return request({
-    url: '/{{.table.ModuleName}}/{{$businessName}}/info?id='+id,
+    url: '/business/{{$businessName}}/info?id='+id,
     method: 'get',
     params: {
      id: {{.table.PkColumn.ColumnName}}
@@ -24,7 +24,7 @@ export function get{{$businessName}}({{.table.PkColumn.ColumnName}}) {
 // 新增{{.table.FunctionName}}
 export function add{{$businessName}}(data) {
   return request({
-    url: '/{{.table.ModuleName}}/{{$businessName}}',
+    url: '/business/{{$businessName}}',
     method: 'post',
     data: data
   })
@@ -33,7 +33,7 @@ export function add{{$businessName}}(data) {
 // 修改{{.table.FunctionName}}
 export function update{{$businessName}}(data) {
   return request({
-    url: '/{{.table.ModuleName}}/{{$businessName}}',
+    url: '/business/{{$businessName}}',
     method: 'put',
     data: data
   })
@@ -42,7 +42,7 @@ export function update{{$businessName}}(data) {
 // 删除{{.table.FunctionName}}
 export function del{{$businessName}}({{.table.PkColumn.ColumnName}}) {
   return request({
-    url: '/{{.table.ModuleName}}/{{$businessName}}/' + {{.table.PkColumn.ColumnName}},
+    url: '/business/{{$businessName}}/' + {{.table.PkColumn.ColumnName}},
     method: 'delete'
   })
 }
@@ -50,7 +50,7 @@ export function del{{$businessName}}({{.table.PkColumn.ColumnName}}) {
 // 导出{{.table.FunctionName}}
 export function export{{$businessName}}(query) {
   return request({
-    url: '/{{.table.ModuleName}}/{{$businessName}}/export',
+    url: '/business/{{$businessName}}/export',
     method: 'get',
     params: query
   })

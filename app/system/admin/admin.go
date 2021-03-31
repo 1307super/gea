@@ -98,12 +98,12 @@ func Init() {
 		// 日志
 		group.REST("/monitor/operlog",api.Operlog)
 		group.DELETE("/monitor/operlog/clean",  api.Operlog.Clean)       // 清空操作日志
-		group.DELETE("/monitor/operlog/export",  api.Operlog.Export)       // 导入操作日志
+		group.GET("/monitor/operlog/export",  api.Operlog.Export)       // 导入操作日志
 
 		// 登录日志
 		group.REST("/monitor/logininfor",api.Logininfor)
 		group.DELETE("/monitor/logininfor/clean", api.Logininfor.Clean)
-		group.DELETE("/monitor/logininfor/export", api.Logininfor.Export)
+		group.GET("/monitor/logininfor/export", api.Logininfor.Export)
 
 		// 在线用户
 		group.REST("/monitor/online",api.Online)
