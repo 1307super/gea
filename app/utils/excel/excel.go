@@ -32,17 +32,21 @@ func CreateFilePath(filePath string) error {
 }
 
 // 下载Excel
-func DownlaodExcel(heads, key []string, data gdb.Result) (string, error) {
+func DownlaodExcel(heads, key []string, data gdb.Result,filename ...string) (string, error) {
 	// 创建路径
 	curDir, err := os.Getwd()
 
 	if err != nil {
 		return "", err
 	}
-	curdate := time.Now().UnixNano()
-	filename := strconv.FormatInt(curdate, 10) + ".xls"
-
-	filePath := curDir + "/public/upload/" + filename
+	var fileName string
+	if len(filename) > 0 && filename[0] != "" {
+		fileName = filename[0]
+	}else{
+		curdate := time.Now().UnixNano()
+		fileName = strconv.FormatInt(curdate, 10) + ".xls"
+	}
+	filePath := curDir + "/public/upload/" + fileName
 
 	err = CreateFilePath(filePath)
 	if err != nil {
@@ -81,7 +85,7 @@ func DownlaodExcel(heads, key []string, data gdb.Result) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	return filename, nil
+	return fileName, nil
 }
 
 // 下载Excel

@@ -1,6 +1,7 @@
 package service
 
 import (
+	"bytes"
 	"context"
 	"fmt"
 	"gea/app/dao"
@@ -9,18 +10,18 @@ import (
 	"gea/app/system/admin/internal/define"
 	"gea/app/utils/convert"
 	"gea/app/utils/page"
+	"gea/app/utils/zip"
 	"github.com/gogf/gf/database/gdb"
 	"github.com/gogf/gf/encoding/gjson"
 	"github.com/gogf/gf/encoding/gparser"
 	"github.com/gogf/gf/errors/gerror"
 	"github.com/gogf/gf/frame/g"
 	"github.com/gogf/gf/net/ghttp"
-	"github.com/gogf/gf/os/gfile"
 	"github.com/gogf/gf/os/gtime"
+	"github.com/gogf/gf/os/gview"
 	"github.com/gogf/gf/text/gstr"
 	"github.com/gogf/gf/util/gconv"
 	"github.com/golang/glog"
-	"os"
 	"strings"
 )
 
@@ -45,7 +46,7 @@ func (s *genTableService) Info(id int64) (*model.GenTableExtend, error) {
 }
 
 // 预览
-func (s *genTableService) Preview(r *ghttp.Request, tableId int64) g.Map {
+func (s *genTableService) Preview( tableId int64) g.Map {
 	entity, err := s.Info(tableId)
 	if err != nil || entity == nil {
 		return nil
@@ -78,50 +79,52 @@ func (s *genTableService) Preview(r *ghttp.Request, tableId int64) g.Map {
 	defineValue := ""
 	serviceKey := "vm/go/service.go.vm"
 	serviceValue := ""
-
-	if tmpList, err := r.Response.ParseTpl(listTmp, g.Map{"table": entity}); err == nil {
+	view := g.View()
+	if tmpList, err := view.Parse(listTmp, g.Map{"table": entity}); err == nil {
 		listValue = tmpList
 	}
 
 	if entity.TplCategory == "tree" {
-		if tmpTree, err := r.Response.ParseTpl("vm/vue/index-tree.html", g.Map{"table": entity}); err == nil {
+		if tmpTree, err := view.Parse("vm/vue/index-tree.html", g.Map{"table": entity}); err == nil {
 			treeValue = tmpTree
 		}
 	}
 
-	if tmpAppJs, err := r.Response.ParseTpl(appJsTmp, g.Map{"table": entity}); err == nil {
+	if tmpAppJs, err := view.Parse(appJsTmp, g.Map{"table": entity}); err == nil {
 		appJsValue = tmpAppJs
 	}
 
-	if tmpModel, err := r.Response.ParseTpl("vm/go/model.html", g.Map{"table": entity}); err == nil {
+	if tmpModel, err := view.Parse("vm/go/model.html", g.Map{"table": entity}); err == nil {
 		modelValue = tmpModel
 	}
 
-	if tmpModelInternal, err := r.Response.ParseTpl("vm/go/model_internal.html", g.Map{"table": entity}); err == nil {
+	if tmpModelInternal, err := view.Parse("vm/go/model_internal.html", g.Map{"table": entity}); err == nil {
 		modelInternalValue = tmpModelInternal
 	} else {
 		g.Dump(err.Error())
 	}
 
-	if tmpDao, err := r.Response.ParseTpl("vm/go/dao.html", g.Map{"table": entity}); err == nil {
+	if tmpDao, err := view.Parse("vm/go/dao.html", g.Map{"table": entity}); err == nil {
 		daoValue = tmpDao
 	}
-	if tmpDaoInternal, err := r.Response.ParseTpl("vm/go/dao_internal.html", g.Map{"table": entity}); err == nil {
+	if tmpDaoInternal, err := view.Parse("vm/go/dao_internal.html", g.Map{"table": entity}); err == nil {
 		daolInternalValue = tmpDaoInternal
 	}
 
-	if tmpService, err := r.Response.ParseTpl("vm/go/service.html", g.Map{"table": entity}); err == nil {
+	if tmpService, err := view.Parse("vm/go/service.html", g.Map{"table": entity}); err == nil {
 		serviceValue = tmpService
+	}else{
+		g.Dump(err.Error())
 	}
 
-	if tmpController, err := r.Response.ParseTpl("vm/go/controller.html", g.Map{"table": entity}); err == nil {
+	if tmpController, err := view.Parse("vm/go/controller.html", g.Map{"table": entity}); err == nil {
 		controllerValue = tmpController
 	}
-	if tmpDefine, err := r.Response.ParseTpl("vm/go/define.html", g.Map{"table": entity}); err == nil {
+	if tmpDefine, err := view.Parse("vm/go/define.html", g.Map{"table": entity}); err == nil {
 		defineValue = tmpDefine
 	}
 
-	if tmpSql, err := r.Response.ParseTpl("vm/sql/sql.html", g.Map{"table": entity}); err == nil {
+	if tmpSql, err := view.Parse("vm/sql/sql.html", g.Map{"table": entity}); err == nil {
 		sqlValue = tmpSql
 	}
 
@@ -545,7 +548,7 @@ func (s *genTableService) InitColumnField(column *model.GenTableColumn, table *m
 	}
 }
 
-func (s *genTableService) GenCode(r *ghttp.Request, tableId string) error {
+func (s *genTableService) GenCode(r *ghttp.Request,tableId string) error {
 	tableIds := convert.ToInt64Array(tableId, ",")
 	if len(tableIds) <= 0 {
 		return gerror.New("参数错误")
@@ -562,46 +565,42 @@ func (s *genTableService) GenCode(r *ghttp.Request, tableId string) error {
 			listTmp = "vm/vue/index-tree.html"
 		}
 
-		//获取当前运行时目录
-		curDir, err := os.Getwd()
-		if err != nil {
-			return gerror.New("获取本地路径失败")
-		}
-
 		template := g.MapStrStr{
-			listTmp:                     strings.Join([]string{curDir, "/template/system/", entity.ModuleName, "/", "business", "/index.vue"}, ""),
-			"vm/js/api.html":            strings.Join([]string{curDir, "/template/system/", entity.ModuleName, "/", "business", "/index.js"}, ""),
-			"vm/go/model.html":          strings.Join([]string{curDir, "/app/model/", entity.TableName, ".go"}, ""),
-			"vm/go/model_internal.html": strings.Join([]string{curDir, "/app/model/", "internal", "/", entity.TableName, ".go"}, ""),
-			"vm/go/dao.html":            strings.Join([]string{curDir, "/app/dao/", entity.TableName, ".go"}, ""),
-			"vm/go/dao_internal.html":   strings.Join([]string{curDir, "/app/dao/", "internal", "/", entity.TableName, ".go"}, ""),
-			"vm/go/controller.html":     strings.Join([]string{curDir, "/app/system/", entity.ModuleName, "/internal/api/", entity.TableName, ".go"}, ""),
-			"vm/go/define.html":         strings.Join([]string{curDir, "/app/system/", entity.ModuleName, "/internal/define/", entity.TableName, ".go"}, ""),
-			"vm/go/service.html":        strings.Join([]string{curDir, "/app/system/", entity.ModuleName, "/internal/service/", entity.TableName, ".go"}, ""),
-			//"vm/go/router.html":  strings.Join([]string{curDir, "/app/controller/", entity.ModuleName, "/", entity.BusinessName, "_router.go"}, ""),
-			"vm/sql/sql.html": strings.Join([]string{curDir, "/document/sql/", "business", "/", entity.BusinessName, "_menu.sql"}, ""),
+			listTmp:                     strings.Join([]string{ "/template/system/", "business", "/", entity.BusinessName, "/index.vue"}, ""),
+			"vm/js/api.html":            strings.Join([]string{ "/template/system/", "business", "/", entity.BusinessName, "/index.js"}, ""),
+			"vm/go/model.html":          strings.Join([]string{ "/app/model/", entity.TableName, ".go"}, ""),
+			"vm/go/model_internal.html": strings.Join([]string{ "/app/model/", "internal", "/", entity.TableName, ".go"}, ""),
+			"vm/go/dao.html":            strings.Join([]string{ "/app/dao/", entity.TableName, ".go"}, ""),
+			"vm/go/dao_internal.html":   strings.Join([]string{ "/app/dao/", "internal", "/", entity.TableName, ".go"}, ""),
+			"vm/go/controller.html":     strings.Join([]string{ "/app/system/", entity.ModuleName, "/internal/api/", entity.TableName, ".go"}, ""),
+			"vm/go/define.html":         strings.Join([]string{ "/app/system/", entity.ModuleName, "/internal/define/", entity.TableName, ".go"}, ""),
+			"vm/go/service.html":        strings.Join([]string{ "/app/system/", entity.ModuleName, "/internal/service/", entity.TableName, ".go"}, ""),
+			//"vm/go/router.html":  strings.Join([]string{ "/app/controller/", entity.ModuleName, "/", entity.BusinessName, "_router.go"}, ""),
+			"vm/sql/sql.html": strings.Join([]string{ "/document/sql/", "business", "/", entity.BusinessName, "_menu.sql"}, ""),
 		}
 
+		view := g.View()
+		buf := new(bytes.Buffer)
+		zipUtil := zip.New(buf)
 		for k, v := range template {
-			s.genFile(r, &define.GenTableServiceGenFile{
+			s.genFile(view,zipUtil,&define.GenTableServiceGenFile{
 				TemplatePath:   k,
 				GenTableEntity: entity,
 				GenFileName:    v,
 			})
 		}
+		zipUtil.Close()
+		r.Response.Header().Set("Content-Type", "application/zip")
+		r.Response.Header().Set("Content-Disposition", fmt.Sprintf("attachment; filename=\"%s\"", "gea.zip"))
+		r.Response.WriteExit(buf.Bytes())
 	}
 	return nil
 }
 
-func (s *genTableService) genFile(r *ghttp.Request, genParam *define.GenTableServiceGenFile) {
-	if tmpList, err := r.Response.ParseTpl(genParam.TemplatePath, g.Map{"table": genParam.GenTableEntity}); err == nil {
-		if !gfile.Exists(genParam.GenFileName) {
-			f, err := gfile.Create(genParam.GenFileName)
-			if err == nil {
-				f.WriteString(tmpList)
-			}
-			f.Close()
-		}
+func (s *genTableService) genFile(view *gview.View,zip *zip.ZipUtils,genParam *define.GenTableServiceGenFile) {
+	if tmpList, err := view.Parse(genParam.TemplatePath, g.Map{"table": genParam.GenTableEntity}); err == nil {
+		//生成zip
+		zip.PackToBuffer(genParam.GenFileName,gconv.Bytes(tmpList))
 	}
 }
 
