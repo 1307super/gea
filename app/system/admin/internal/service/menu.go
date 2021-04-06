@@ -18,14 +18,26 @@ import (
 )
 
 const AdminAuthMenu = "AdminAuthMenu"
+
 // 登陆用户的菜单列表缓存前缀
 const MENU_CACHE = "menu_cache"
 
 const MENU_TREE_CACHE = "menu_tree_cache"
 
+const (
+	YES_FRAME   = 0            // 是否菜单外链 是
+	NO_FRAME    = 1            // 是否菜单外链（否）
+	TYPE_DIR    = "M"          // 菜单类型（目录）
+	TYPE_MENU   = "C"          //  菜单类型（菜单）
+	TYPE_BUTTON = "F"          // 菜单类型（按钮）
+	LAYOUT      = "Layout"     // Layout组件标识
+	PARENT_VIEW = "ParentView" // ParentView组件标识
+)
+
 var Menu = &menuService{}
 
-type menuService struct{}
+type menuService struct {
+}
 
 func (s *menuService) GetAll(param *define.MenuApiSelectPageReq) ([]*model.SysMenuExtend, error) {
 	m := dao.SysMenu.As("m")
@@ -64,8 +76,8 @@ func (s *menuService) Create(ctx context.Context, req *define.MenuApiCreateReq) 
 	menu.CreateBy = user.UserExtend.LoginName
 
 	var editReq *define.MenuApiEditReq
-	gconv.Struct(req,&editReq)
-	return s.save(&menu,editReq)
+	gconv.Struct(req, &editReq)
+	return s.save(&menu, editReq)
 }
 
 //修改数据
@@ -84,16 +96,16 @@ func (s *menuService) Update(ctx context.Context, req *define.MenuApiEditReq) (i
 	}
 	menu.UpdateBy = user.UserExtend.LoginName
 	menu.UpdateTime = gtime.Now()
-	return s.save(menu,req)
+	return s.save(menu, req)
 }
 
-func (s *menuService) save(menu *model.SysMenu, req *define.MenuApiEditReq)(int64, error) {
-	if req.MenuType == "F" {
+func (s *menuService) save(menu *model.SysMenu, req *define.MenuApiEditReq) (int64, error) {
+	if req.MenuType == TYPE_BUTTON {
 		req.Component = ""
 		req.Path = ""
 		req.Icon = ""
 	}
-	if req.MenuType == "M" {
+	if req.MenuType == TYPE_DIR {
 		req.Component = ""
 		req.Perms = ""
 	}
@@ -110,8 +122,6 @@ func (s *menuService) save(menu *model.SysMenu, req *define.MenuApiEditReq)(int6
 	menu.OrderNum = req.OrderNum
 	menu.Component = req.Component
 	menu.Status = gconv.Uint(req.Status)
-
-
 
 	var err error
 	tx, err := g.DB().Begin()
@@ -132,9 +142,8 @@ func (s *menuService) save(menu *model.SysMenu, req *define.MenuApiEditReq)(int6
 		}
 	}
 	s.ClearCache()
-	return 1,tx.Commit()
+	return 1, tx.Commit()
 }
-
 
 func (s *menuService) Info(id int64) (*model.SysMenuExtend, error) {
 	var result *model.SysMenuExtend
@@ -239,7 +248,7 @@ func (s *menuService) SelectMenuNormalByUser(ctx context.Context) ([]*model.SysM
 // 获取管理员菜单数据
 func (s *menuService) GettMenuNormalAll() ([]*model.SysMenuExtend, error) {
 	//从缓存读取
-	cache,_ := gcache.Get(MENU_CACHE)
+	cache, _ := gcache.Get(MENU_CACHE)
 	if cache != nil {
 		return cache.([]*model.SysMenuExtend), nil
 	}
@@ -327,31 +336,71 @@ func (s *menuService) BuildMenus(menus []*model.SysMenuExtend) []model.RouterExt
 	for _, menu := range menus {
 		var routerExtend model.RouterExtend
 		routerExtend.Hidden = menu.Visible == 1
-		routerExtend.Name = gstr.UcFirst(menu.Path)
+		routerExtend.Name = s.getRouteName(menu)
 		routerExtend.Path = s.getRouterPath(menu)
-		if gstr.Equal(menu.Component, "") {
-			routerExtend.Component = "Layout"
-		} else {
-			routerExtend.Component = menu.Component
-		}
+		routerExtend.Component = s.getComponent(menu)
 		routerExtend.Meta.Title = menu.MenuName
 		routerExtend.Meta.Icon = menu.Icon
 		cMenus := menu.Children
-		if len(cMenus) > 0 && gstr.Equal(menu.MenuType, "M") {
+		if len(cMenus) > 0 && gstr.Equal(menu.MenuType, TYPE_DIR) {
 			routerExtend.AlwaysShow = true
 			routerExtend.Redirect = "noRedirect"
 			routerExtend.Children = s.BuildMenus(cMenus)
+		} else if s.isMeunFrame(menu) {
+			var childrenExtends []model.RouterExtend
+			var childrenExtend model.RouterExtend
+			childrenExtend.Path = menu.Path
+			childrenExtend.Component = menu.Component
+			childrenExtend.Name = gstr.UcFirst(menu.Path)
+			childrenExtend.Meta.Title = menu.MenuName
+			childrenExtend.Meta.Icon = menu.Icon
+			childrenExtends = append(childrenExtends, childrenExtend)
+			routerExtend.Children = childrenExtends
 		}
 		routerExtends = append(routerExtends, routerExtend)
 	}
 	return routerExtends
 }
 
+// 获取组件信息
+func (s *menuService) getComponent(menu *model.SysMenuExtend) string {
+	component := LAYOUT
+	if menu.Component != "" && s.isMeunFrame(menu) {
+		component = menu.Component
+	} else if menu.Component == "" && s.isParentView(menu) {
+		component = PARENT_VIEW
+	}
+	return component
+}
+
+// 是否为菜单内部跳转
+func (s *menuService) isMeunFrame(menu *model.SysMenuExtend) bool {
+	return menu.ParentId == 0 && TYPE_MENU == menu.MenuType && menu.IsFrame == NO_FRAME
+}
+
+// 是否为parent_view组件
+func (s *menuService) isParentView(menu *model.SysMenuExtend) bool {
+	return menu.ParentId != 0 && menu.MenuType == TYPE_DIR
+}
+
+// 获取路由名称
+func (s *menuService) getRouteName(menu *model.SysMenuExtend) string {
+	routerName := gstr.UcFirst(menu.Path)
+	// 非外链并且是一级目录
+	if s.isMeunFrame(menu) {
+		routerName = ""
+	}
+	return routerName
+}
+
+// 获取路由地址
 func (s *menuService) getRouterPath(menu *model.SysMenuExtend) string {
 	routerPath := menu.Path
 	// 非外链并且是一级目录
-	if 0 == menu.ParentId && menu.IsFrame == 1 {
+	if 0 == menu.ParentId && menu.MenuType == TYPE_DIR && menu.IsFrame == NO_FRAME {
 		routerPath = "/" + menu.Path
+	} else if s.isMeunFrame(menu) {
+		routerPath = "/"
 	}
 	return routerPath
 }
