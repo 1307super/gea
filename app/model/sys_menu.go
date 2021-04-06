@@ -21,7 +21,7 @@ type SysMenuExtend struct {
 
 // 路由
 type RouterExtend struct {
-	AlwaysShow bool           `json:"always_show,omitempty"` // 总是显示
+	AlwaysShow bool           `json:"alwaysShow,omitempty"` // 总是显示
 	Children   []RouterExtend `json:"children,omitempty"`    // 子菜单
 	Component  string         `json:"component"`             // 组件地址
 	Hidden     bool           `json:"hidden"`                // 是否隐藏

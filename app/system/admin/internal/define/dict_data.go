@@ -6,7 +6,7 @@ import "gea/app/model"
 // Fill with you ideas below.
 //分页请求参数
 type DictDataApiSelectPageReq struct {
-	DictType  string `p:"dictType"`  //字典名称
+	DictType  string `p:"dictType" v:"required#字典类型不能为空"`  //字典名称
 	DictLabel string `p:"dictLabel"` //字典标签
 	Status    string `p:"status"`    //状态
 	BeginTime string `p:"beginTime"` //开始时间

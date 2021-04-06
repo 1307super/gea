@@ -14,7 +14,7 @@ import (
 type SysUser internal.SysUser
 
 type SysUserInfo struct {
-	User        *SysUserExtend   `json:"user,omitempty"`
+	UserExtend  *SysUserExtend   `json:"user,omitempty"`
 	Permissions *garray.StrArray `json:"permissions,omitempty"`
 	Roles       g.Array          `json:"roles,omitempty"`
 	RoleIds     []int64          `json:"roleIds,omitempty"`

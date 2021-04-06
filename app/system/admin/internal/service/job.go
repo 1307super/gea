@@ -107,7 +107,7 @@ func (s *jobService)Create(ctx context.Context, req *define.JobApiCreateReq) (in
 	var entity model.SysJob
 	entity.JobGroup = req.JobGroup
 	entity.CreateTime = gtime.Now()
-	entity.CreateBy = user.LoginName
+	entity.CreateBy = user.UserExtend.LoginName
 	var editReq *define.JobApiUpdateReq
 	gconv.Struct(req,&editReq)
 	return s.save(&entity,editReq)
@@ -139,7 +139,7 @@ func (s *jobService)Update(ctx context.Context,req *define.JobApiUpdateReq) (int
 	}
 
 	entity.UpdateTime = gtime.Now()
-	entity.UpdateBy = user.LoginName
+	entity.UpdateBy = user.UserExtend.LoginName
 	return s.save(entity,req)
 }
 

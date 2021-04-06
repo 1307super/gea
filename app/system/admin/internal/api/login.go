@@ -1,21 +1,9 @@
 package api
 
 import (
-
-	"gea/app/dao"
-	"gea/app/model"
-	"gea/app/shared"
-	"gea/app/system/admin/internal/define"
-	"gea/app/system/admin/internal/service"
-	"gea/app/utils/ip"
 	"gea/app/utils/response"
-	"gea/app/utils/token"
-	"github.com/gogf/gf/frame/g"
 	"github.com/gogf/gf/net/ghttp"
-	"github.com/gogf/gf/os/gtime"
-	"github.com/gogf/gf/util/gconv"
 	"github.com/mojocn/base64Captcha"
-	"github.com/mssola/user_agent"
 )
 
 var Login = new(loginApi)
@@ -79,83 +67,4 @@ func (a *loginApi)CaptchaImage(r *ghttp.Request) {
 		Data:  base64stringC,
 		Msg:   "操作成功",
 	})
-}
-
-//验证登陆
-func (a *loginApi) CheckLogin(r *ghttp.Request) {
-	var (
-		req *define.UserApiLoginReq
-		serverLoginReq *define.UserServiceLoginReq
-	)
-	//获取参数
-	if err := r.Parse(&req); err != nil {
-		a.Err(r,err.Error())
-	}
-	//比对验证码
-	verifyResult := base64Captcha.VerifyCaptcha(req.IdKey, req.ValidateCode)
-	if !verifyResult {
-		a.Err(r,"验证码不正确")
-	}
-	if err := gconv.Struct(req, &serverLoginReq); err != nil {
-		a.Err(r,err.Error())
-	}
-
-	//记录日志
-	var logininfor model.SysLogininfor
-	logininfor.LoginName = req.UserName
-	logininfor.Ipaddr = r.GetClientIp()
-	userAgent := r.Header.Get("User-Agent")
-	ua := user_agent.New(userAgent)
-	os := ua.OS()
-	browser, _ := ua.Browser()
-	loginIp := r.GetClientIp()
-	loginLocation := ip.GetCityByIp(loginIp)
-	logininfor.Os = os
-	logininfor.Browser = browser
-	logininfor.LoginTime = gtime.Now()
-	logininfor.LoginLocation = loginLocation
-	if err := service.User.Login(r.Context(),serverLoginReq); err != nil{
-		// 登录失败
-		logininfor.Msg = "账号或密码不正确"
-		logininfor.Status = "1"
-		dao.SysLogininfor.Insert(logininfor)
-
-		errTimes := service.User.SetPasswordCounts(req.UserName)
-		having := 5 - errTimes
-		a.Err(r,"账号或密码不正确,还有" + gconv.String(having) + "次之后账号将锁定")
-	}
-
-	//保存在线状态
-	ctx := shared.Context.Get(r.Context())
-	var userOnline model.SysUserOnline
-	userOnline.Token = token.CacheKey + ctx.User.LoginName
-	userOnline.LoginName = req.UserName
-	userOnline.Browser = browser
-	userOnline.Os = os
-	userOnline.Ipaddr = loginIp
-	userOnline.ExpireTime = g.Cfg().GetInt("jwt.timeout")
-	userOnline.StartTimestamp = gtime.Now()
-	userOnline.LastAccessTime = gtime.Now()
-	userOnline.Status = "on_line"
-	userOnline.LoginLocation = loginLocation
-	dao.SysUserOnline.Save(userOnline)
-
-	// 记录日志
-	logininfor.Msg = "登陆成功"
-	logininfor.Status = "0"
-	dao.SysLogininfor.Insert(logininfor)
-
-	a.Succ(r,g.Map{
-		"token": ctx.Token,
-	})
-}
-
-//注销
-func (a *loginApi)Logout(r *ghttp.Request) {
-	user := shared.Context.Get(r.Context()).User
-	if user == nil{
-		a.Succ(r)
-	}
-	token.RemoveCache(token.CacheKey + user.LoginName)
-	a.Succ(r)
 }

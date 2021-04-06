@@ -29,9 +29,13 @@ func IsAdmin(uid int64) bool {
 }
 
 //根据条件分页查询角色数据
-func (s *roleService)GetList(param *define.RoleApiSelectPageReq) *define.RoleServiceList {
-
-	m := dao.SysRole.As("r").Where(fmt.Sprintf("r.%s",dao.SysRole.Columns.DelFlag),"0")
+func (s *roleService)GetList(ctx context.Context,param *define.RoleApiSelectPageReq) *define.RoleServiceList {
+	m := dao.SysRole.As("r").
+		Fields("distinct r.role_id, r.role_name, r.role_key, r.role_sort, r.data_scope, r.status, r.del_flag, r.create_time, r.remark").
+		LeftJoin("sys_user_role","ur","ur.role_id = r.role_id").
+		LeftJoin("sys_user","u","u.user_id = ur.user_id").
+		LeftJoin("sys_dept","d","u.dept_id = d.dept_id").
+		Where(fmt.Sprintf("r.%s",dao.SysRole.Columns.DelFlag),"0")
 
 	if param.RoleName != "" {
 		m = m.Where("r.role_name like ?", "%"+param.RoleName+"%")
@@ -56,7 +60,11 @@ func (s *roleService)GetList(param *define.RoleApiSelectPageReq) *define.RoleSer
 	if param.EndTime != "" {
 		m = m.Where("date_format(r.create_time,'%y%m%d') <= date_format(?,'%y%m%d') ", param.EndTime)
 	}
-
+	// 获取资源权限
+	dataScope := DataScopeFilter(ctx,"d","")
+	if dataScope != "" {
+		m = m.Where(dataScope)
+	}
 	total, err := m.Count()
 
 	if err != nil {
@@ -101,7 +109,7 @@ func (s *roleService)Create(ctx context.Context,req *define.RoleApiCreateReq) (i
 	role.CreateBy = ""
 	role.DelFlag = "0"
 	role.DataScope = "1"
-	role.CreateBy = user.LoginName
+	role.CreateBy = user.UserExtend.LoginName
 	var editReq *define.RoleApiEditReq
 	gconv.Struct(req,&editReq)
 	return s.save(&role,editReq)
@@ -134,8 +142,8 @@ func (s *roleService)Update(ctx context.Context,req *define.RoleApiEditReq) (int
 	role.Status = req.Status
 	role.Remark = req.Remark
 	role.UpdateTime = gtime.Now()
-	role.UpdateBy = user.LoginName
-	role.CreateBy = user.LoginName
+	role.UpdateBy = user.UserExtend.LoginName
+	role.CreateBy = user.UserExtend.LoginName
 	return s.save(role,req)
 }
 
@@ -271,9 +279,9 @@ func (s *roleService)AuthDataScope(ctx context.Context,req *define.RoleApiDataSc
 	if req.DataScope != "" {
 		role.DataScope = req.DataScope
 	}
-	role.UpdateBy = user.LoginName
+	role.UpdateBy = user.UserExtend.LoginName
 	role.UpdateTime = gtime.Now()
-	role.UpdateBy = user.LoginName
+	role.UpdateBy = user.UserExtend.LoginName
 
 	tx, err := g.DB().Begin()
 	if err != nil {
@@ -327,11 +335,19 @@ func (s *roleService)ChangeStatus(roleId int64, status string) error {
 func (s *roleService) GetRolePermission(ctx context.Context) g.Array {
 	customCtx := shared.Context.Get(ctx)
 	var roles g.Array
-	if IsAdmin(customCtx.User.UserId) {
+	if IsAdmin(customCtx.Uid) {
 		roles = append(roles,"admin" )
 	}else{
 		var roleEntitys []model.SysRoleFlag
-		if err := dao.SysRole.As("r").LeftJoin("sys_user_role ur", "ur.role_id = r.role_id").LeftJoin("sys_user u", "u.user_id = ur.user_id").Where("r.del_flag = '0' and u.del_flag = '0'").Where("ur.user_id = ?", customCtx.User.UserId).Structs(&roleEntitys); err != nil {
+		if err := dao.SysRole.As("r").
+			Fields("distinct r.role_id, r.role_name, r.role_key, r.role_sort, r.data_scope,r.status, r.del_flag, r.create_time, r.remark").
+			LeftJoin("sys_user_role","ur","ur.role_id = r.role_id").
+			LeftJoin("sys_user","u","u.user_id = ur.user_id").
+			LeftJoin("sys_dept","d","u.dept_id = d.dept_id").
+			Where("r.del_flag = '0' and u.del_flag = '0'").
+			Where("ur.user_id = ?", customCtx.Uid).
+			Structs(&roleEntitys);
+			err != nil {
 			return roles
 		}
 		for _,roleEntity := range roleEntitys  {
@@ -347,7 +363,11 @@ func (s *roleService) GetRolePermission(ctx context.Context) g.Array {
 //查询角色
 func (s *roleService)SelectRoleContact() (g.Array, error) {
 	var userRoleFlags []model.SysRoleFlag
-	if err := dao.SysRole.As("r").Fields("distinct r.role_id, r.role_name, r.role_key, r.role_sort, r.data_scope,r.status, r.del_flag, r.create_time, r.remark").Where("r.del_flag = '0'").Structs(&userRoleFlags);err != nil{
+	if err := dao.SysRole.As("r").
+		Fields("distinct r.role_id, r.role_name, r.role_key, r.role_sort, r.data_scope,r.status, r.del_flag, r.create_time, r.remark").
+		Where("r.del_flag = '0'").
+		Structs(&userRoleFlags);
+		err != nil{
 		return nil,gerror.New("未查询到用户角色数据")
 	}
 	var userRoles g.Array

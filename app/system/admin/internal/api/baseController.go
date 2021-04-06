@@ -20,7 +20,7 @@ func (c *BaseController) Err(r *ghttp.Request, msg string, data ...interface{}) 
 	if msg == "" {
 		msg = "操作失败"
 	}
-	resp := response.ErrorResp(r).SetCode(0).SetMsg("操作成功").SetModule(c.Module)
+	resp := response.ErrorResp(r).SetModule(c.Module)
 	resp.SetCode(500).SetMsg(msg)
 	if len(data) > 0 {
 		resp.SetData(data[0])

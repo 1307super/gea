@@ -92,13 +92,13 @@ func (s *operLogService) Create(r *ghttp.Request, title, inContent string, outCo
 	} else {
 		operLog.Status = 1
 	}
-	operLog.OperName = user.LoginName
+	operLog.OperName = user.UserExtend.LoginName
 	operLog.RequestMethod = r.Method
 	//获取用户部门
 	//dept := deptServic.SelectDeptById(user.DeptId)
 
 	//if user.DeptName != "" {
-	operLog.DeptName = user.Dept.DeptName
+	operLog.DeptName = user.UserExtend.Dept.DeptName
 	//} else {
 	//	operLog.DeptName = ""
 	//}

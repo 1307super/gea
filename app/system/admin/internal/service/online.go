@@ -2,9 +2,10 @@ package service
 
 import (
 	"gea/app/dao"
+	"gea/app/shared"
 	"gea/app/system/admin/internal/define"
 	"gea/app/utils/page"
-	"gea/app/utils/token"
+	"github.com/gogf/gf/frame/g"
 )
 
 var Online = &onlineService{}
@@ -79,7 +80,23 @@ func (s *onlineService) GetList(param *define.OnlineApiSelectPageReq) *define.On
 
 // 强退
 func (s *onlineService)ForceLogout(tokenStr string) {
-	token.RemoveCache(tokenStr)
+	// 清除token
+	shared.GfAdminToken.RemoveToken(tokenStr)
 	// 修改状态
-	dao.SysUserOnline.Delete(dao.SysUserOnline.Columns.Token,tokenStr)
+	dao.SysUserOnline.Data(g.Map{
+		dao.SysUserOnline.Columns.Status:"off_line",
+	}).Where(dao.SysUserOnline.Columns.Token,tokenStr).Update()
+}
+
+// 离线
+func (s *onlineService) OffLine(loginname string)  {
+	online,_ := dao.SysUserOnline.Fields(dao.SysUserOnline.Columns.Token).
+		Where(dao.SysUserOnline.Columns.LoginName,loginname).
+		Order("start_timestamp asc").One()
+	if online != nil{
+		// 修改状态
+		dao.SysUserOnline.Data(g.Map{
+			dao.SysUserOnline.Columns.Status:"off_line",
+		}).Where(dao.SysUserOnline.Columns.Token,online.Token).Update()
+	}
 }

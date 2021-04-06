@@ -107,7 +107,7 @@ func (s *dictTypeService)Create(ctx context.Context,req *define.DictTypeApiCreat
 	user := shared.Context.Get(ctx).User
 	var entity model.SysDictType
 	entity.CreateTime = gtime.Now()
-	entity.CreateBy = user.LoginName
+	entity.CreateBy = user.UserExtend.LoginName
 
 	var editReq *define.DictTypeApiUpdateReq
 	gconv.Struct(req,&editReq)
@@ -129,7 +129,7 @@ func (s *dictTypeService)Update(ctx context.Context, req *define.DictTypeApiUpda
 	}
 
 	entity.UpdateTime = gtime.Now()
-	entity.UpdateBy = user.LoginName
+	entity.UpdateBy = user.UserExtend.LoginName
 	return s.save(entity,req)
 }
 
@@ -204,13 +204,17 @@ func (s *dictTypeService)Export(param *define.DictTypeApiSelectPageReq) (string,
 //批量删除数据记录
 func (s *dictTypeService)Delete(ids string) int64 {
 	idarr := convert.ToInt64Array(ids, ",")
+	dictTypes,_ := dao.SysDictType.Fields(dao.SysDictType.Columns.DictType).Where("dict_id in (?)",idarr).FindAll()
 	result, err := dao.SysDictType.Delete("dict_id in (?)", idarr)
 	if err != nil {
 		return 0
 	}
-
+	if len(dictTypes) > 0 {
+		for _, dictType := range dictTypes {
+			g.DB().GetCache().Remove("sys_dict:"+dictType.DictType)
+		}
+	}
 	nums, _ := result.RowsAffected()
-
 	return nums
 }
 

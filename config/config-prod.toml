@@ -8,14 +8,14 @@
 	ServerRoot  = "public"
 	ServerAgent = "gea"
 	LogPath     = "log/gea/server"
-	DumpRouterMap = true
+	DumpRouterMap = false
     prefix = "/api"
 [api]
 	Address     = ":8090"
 	ServerRoot  = "public"
 	ServerAgent = "gea"
 	LogPath     = "log/gea/api"
-	DumpRouterMap = true
+	DumpRouterMap = false
 
 #jwt配置
 [jwt]
@@ -26,13 +26,20 @@
     #安全密钥
     encryptKey = "geazxc0123lk0912"
     cache = "redis"   # default/redis
+[gtoken]
+    CacheMode = 2
+    Timeout =  0
+    MaxRefresh = 0
+    EncryptKey = "geazxc0123lk0912"
+    AuthFailMsg = "登录超时，请重新登录"
+    MultiLogin = true
 
 # Logger.
 [logger]
     AppName     = "gea-local"
     Path        = "log/gea"
-    Level       = "all"
-    Stdout      = true
+    Level       = "PROD"
+    Stdout      = false
     RotateSize  = "2M"
     RotateBackupLimit    = 10
     RotateBackupExpire   = "7d"
@@ -48,11 +55,11 @@
 [database]
     [database.default]
         link  = "mysql:root:@tcp(127.0.0.1:3306)/gea"
-        debug = true
+        debug = false
     [database.logger]
         Path   = "log/gea/sql"
-        Level  = "all"
-        Stdout = true
+        Level  = "PROD"
+        Stdout = false
 [casbin]
     driverName = "mysql"
     dataSourceName = "root:@tcp(127.0.0.1:3306)/gea"

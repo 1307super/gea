@@ -14,7 +14,7 @@ type SysRole struct {
     RoleName   string      `orm:"role_name"       json:"role_name"`   // 角色名称                                                                               
     RoleKey    string      `orm:"role_key"        json:"role_key"`    // 角色权限字符串                                                                         
     RoleSort   int         `orm:"role_sort"       json:"role_sort"`   // 显示顺序                                                                               
-    DataScope  string      `orm:"data_scope"      json:"data_scope"`  // 数据范围（1：全部数据权限 2：自定数据权限 3：本部门数据权限 4：本部门及以下数据权限）  
+    DataScope  string      `orm:"data_scope"      json:"dataScope"`  // 数据范围（1：全部数据权限 2：自定数据权限 3：本部门数据权限 4：本部门及以下数据权限）
     Status     string      `orm:"status"          json:"status"`      // 角色状态（0正常 1停用）                                                                
     DelFlag    string      `orm:"del_flag"        json:"del_flag"`    // 删除标志（0代表存在 2代表删除）                                                        
     CreateBy   string      `orm:"create_by"       json:"create_by"`   // 创建者                                                                                 

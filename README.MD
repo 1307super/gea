@@ -12,6 +12,8 @@
 > 若依前端组件   RuoYi-Vue           v2.2.0
 >
 > 权限组件       casbin/v2     v2.8.6
+> 
+> gtoken       goflyfox/gtoken    v1.4.1
 >
 > 导出excel文件  tealeg/xlsx    v1.0.5   
 >

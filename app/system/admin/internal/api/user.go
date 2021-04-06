@@ -28,9 +28,9 @@ func (a *userApi) Get(r *ghttp.Request) {
 	if err := r.Parse(&req); err != nil {
 		a.Err(r,err.Error())
 	}
-	resp := service.User.GetList(req)
+	resp := service.User.GetList(r.Context(),req)
 	if resp == nil{
-		 a.SuccTable(r,0,nil)
+		a.SuccTable(r,0,nil)
 	}
 
 	a.SuccTable(r,resp.Total,resp.List)
@@ -101,7 +101,7 @@ func (a *userApi) Info(r *ghttp.Request) {
 			a.Err(r,err.Error())
 		}
 		userInfo.RoleIds = roleIds
-		userInfo.User = user
+		userInfo.UserExtend = user
 		userInfo.PostIds = postIds
 	}
 	userInfo.Roles = roles
@@ -204,16 +204,15 @@ func (a *userApi) UpdatePassword(r *ghttp.Request) {
 
 // 用户修改头像
 func (a *userApi) UpdateAvatar(r *ghttp.Request) {
-	var req *define.UserApiAvatarUploadReq
-	//获取参数
-	if err := r.Parse(&req); err != nil {
-		a.Err(r,err.Error())
+	file := r.GetUploadFile("avatarfile")
+	if file == nil {
+		a.Err(r,"请选择需要上传的文件")
 	}
-	err := service.User.UpdateAvatar(r.Context(),req)
+	avatar, err := service.User.UpdateAvatar(r.Context(),&define.UserApiAvatarUploadReq{Avatarfile: file})
 	if err != nil{
 		a.Err(r,err.Error())
 	}
-	a.Succ(r)
+	a.Succ(r,avatar)
 }
 
 

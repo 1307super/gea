@@ -26,7 +26,7 @@ func (a *roleApi)Get(r *ghttp.Request) {
 	if err := r.Parse(&req); err != nil {
 		a.Err(r,err.Error())
 	}
-	result := service.Role.GetList(req)
+	result := service.Role.GetList(r.Context(),req)
 	a.SuccTable(r,result.Total,result.List)
 }
 

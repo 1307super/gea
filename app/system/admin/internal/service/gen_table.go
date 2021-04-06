@@ -199,7 +199,7 @@ func (s *genTableService) GetList(param *define.GenTableApiSelectPageReq) *defin
 // 添加
 func (s *genTableService) Create(ctx context.Context, tables string) error {
 	user := shared.Context.Get(ctx).User
-	operName := user.LoginName
+	operName := user.UserExtend.LoginName
 	tableArr := strings.Split(tables, ",")
 	tableList, err := s.GetAllByName(tableArr)
 	if err != nil {
@@ -256,7 +256,7 @@ func (s *genTableService) Update(ctx context.Context, req *define.GenTableApiUpd
 	if req.Params != "" {
 		table.Options = req.Params
 	}
-	table.UpdateBy = user.LoginName
+	table.UpdateBy = user.UserExtend.LoginName
 	table.UpdateTime = gtime.Now()
 
 	tx, err := g.DB().Begin()

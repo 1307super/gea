@@ -19,7 +19,7 @@ var Dept = &deptService{}
 type deptService struct{}
 
 //查询部门管理数据
-func (s *deptService)GetAll(param *define.DeptApiSelectPageReq) ([]*model.SysDeptExtend, error) {
+func (s *deptService)GetAll(ctx context.Context,param *define.DeptApiSelectPageReq) ([]*model.SysDeptExtend, error) {
 	m := dao.SysDept.As("d").Where(dao.SysDept.Columns.DelFlag,"0")
 	var result []*model.SysDeptExtend
 	if param != nil {
@@ -33,9 +33,14 @@ func (s *deptService)GetAll(param *define.DeptApiSelectPageReq) ([]*model.SysDep
 			m = m.Where("d.status = ?", param.Status)
 		}
 	}
+	// 获取资源权限
+	dataScope := DataScopeFilter(ctx,"d","")
+	if dataScope != "" {
+		m = m.Where(dataScope)
+	}
 	m = m.Order("d.parent_id, d.order_num")
 	err := m.Structs(&result)
-	return result, err
+	return s.BuildDeptTree(result), err
 }
 
 
@@ -46,17 +51,16 @@ func (s *deptService)Create(ctx context.Context, req *define.DeptApiCreateReq) (
 	}
 	user := shared.Context.Get(ctx).User
 	var dept model.SysDept
-	pdept, err := dao.SysDept.FindOne(dao.SysDept.Columns.DeptId,req.ParentId)
-	if err == nil && pdept != nil {
-		if pdept.Status != "0" {
-			return 0, gerror.New("部门停用，不允许新增")
-		} else {
-			dept.Ancestors = pdept.Ancestors + "," + gconv.String(pdept.DeptId)
+	if req.ParentId != 0 {
+		pdept, err := dao.SysDept.FindOne(dao.SysDept.Columns.DeptId,req.ParentId)
+		if err == nil && pdept != nil {
+			if pdept.Status != "0" {
+				return 0, gerror.New("部门停用，不允许新增")
+			} else {
+				dept.Ancestors = pdept.Ancestors + "," + gconv.String(pdept.DeptId)
+			}
 		}
-	} else {
-		return 0, gerror.New("父部门不能为空")
 	}
-
 	dept.DeptName = req.DeptName
 	dept.Status = req.Status
 	dept.ParentId = req.ParentId
@@ -65,7 +69,7 @@ func (s *deptService)Create(ctx context.Context, req *define.DeptApiCreateReq) (
 	dept.Leader = req.Leader
 	dept.Phone = req.Phone
 	dept.OrderNum = req.OrderNum
-	dept.CreateBy = user.LoginName
+	dept.CreateBy = user.UserExtend.LoginName
 	dept.CreateTime = gtime.Now()
 	rs, err := dao.SysDept.Data(dept).Insert()
 	if err != nil {
@@ -86,7 +90,7 @@ func (s *deptService)Update(ctx context.Context,req *define.DeptApiUpdateReq) (i
 		return 0, gerror.New("数据不存在")
 	}
 	var pdept *model.SysDept
-	if dept.DeptId == 100 {
+	if dept.ParentId == 0 {
 		// 顶级部门
 		pdept = dept
 	}else{
@@ -107,7 +111,7 @@ func (s *deptService)Update(ctx context.Context,req *define.DeptApiUpdateReq) (i
 			dept.Leader = req.Leader
 			dept.Phone = req.Phone
 			dept.OrderNum = req.OrderNum
-			dept.UpdateBy = user.LoginName
+			dept.UpdateBy = user.UserExtend.LoginName
 			dept.UpdateTime = gtime.Now()
 			dao.SysDept.Data(dept).Save()
 			return 1, nil
@@ -173,8 +177,8 @@ func (s *deptService)Info(deptId int64) (*model.SysDept) {
 }
 
 //加载部门列表树
-func (s *deptService)DeptTree(parentId int64, deptName, status string) ([]*model.SysDeptExtend, error) {
-	list, err := s.GetAll(&define.DeptApiSelectPageReq{
+func (s *deptService)DeptTree(ctx context.Context,parentId int64, deptName, status string) ([]*model.SysDeptExtend, error) {
+	list, err := s.GetAll(ctx,&define.DeptApiSelectPageReq{
 		ParentId:  parentId,
 		DeptName:  "",
 		Status:    "",
@@ -182,16 +186,13 @@ func (s *deptService)DeptTree(parentId int64, deptName, status string) ([]*model
 	if err != nil {
 		return nil, err
 	}
-
-	list = s.BuildDeptTree(list)
-	//return InitZtree(list, nil), nil
 	return list,nil
 }
 
 // 加载角色部门（数据权限）列表树
-func (s *deptService)RoleDeptTreeData(roleId int64) (*define.DeptServiceRoleTreeData,error) {
+func (s *deptService)RoleDeptTreeData(ctx context.Context,roleId int64) (*define.DeptServiceRoleTreeData,error) {
 	// 1 先查出所有部门
-	result, err := s.DeptTree(0,"","")
+	result, err := s.DeptTree(ctx,0,"","")
 	if err != nil {
 		return nil,gerror.New("获取角色权限失败")
 	}
@@ -201,7 +202,7 @@ func (s *deptService)RoleDeptTreeData(roleId int64) (*define.DeptServiceRoleTree
 		return nil,gerror.New("获取角色权限失败")
 	}
 	return &define.DeptServiceRoleTreeData{
-		Depts:result,
+		Depts:s.BuildDepts(result),
 		CheckedKeys:deptIds,
 	},nil
 }

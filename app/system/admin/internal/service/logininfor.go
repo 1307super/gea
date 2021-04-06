@@ -3,10 +3,14 @@ package service
 import (
 	"fmt"
 	"gea/app/dao"
+	"gea/app/model"
 	"gea/app/system/admin/internal/define"
 	"gea/app/utils/convert"
 	"gea/app/utils/excel"
+	"gea/app/utils/ip"
 	"gea/app/utils/page"
+	"github.com/gogf/gf/os/gtime"
+	"github.com/mssola/user_agent"
 )
 
 var Logininfor = &logininforService{}
@@ -14,7 +18,7 @@ var Logininfor = &logininforService{}
 type logininforService struct{}
 
 // 根据条件分页查询列表
-func (s *logininforService)GetList(param *define.LogininforApiSelectPageReq) *define.LogininforServiceList {
+func (s *logininforService) GetList(param *define.LogininforApiSelectPageReq) *define.LogininforServiceList {
 
 	m := dao.SysLogininfor.As("t")
 
@@ -46,7 +50,7 @@ func (s *logininforService)GetList(param *define.LogininforApiSelectPageReq) *de
 	m = m.Fields("info_id,login_name,ipaddr,login_location,browser,os,status,msg,login_time")
 	m = m.Order("login_time desc")
 	m = m.Limit(page.StartNum, page.Pagesize)
-	result :=  &define.LogininforServiceList{
+	result := &define.LogininforServiceList{
 		Page:  page.PageNum,
 		Size:  page.Pagesize,
 		Total: page.Total,
@@ -57,10 +61,27 @@ func (s *logininforService)GetList(param *define.LogininforApiSelectPageReq) *de
 	return result
 }
 
+func (s *logininforService) Create(status, username, ipaddr, userAgent, msg string) {
+	var logininfor model.SysLogininfor
+	logininfor.Status = status
+	logininfor.LoginName = username
+	logininfor.Ipaddr = ipaddr
+	ua := user_agent.New(userAgent)
+	os := ua.OS()
+	browser, _ := ua.Browser()
+	loginLocation := ip.GetCityByIp(ipaddr)
+	logininfor.Os = os
+	logininfor.Browser = browser
+	logininfor.LoginTime = gtime.Now()
+	logininfor.LoginLocation = loginLocation
+	logininfor.Msg = msg
+	dao.SysLogininfor.Insert(logininfor)
+}
+
 //批量删除记录
-func (s *logininforService)Delete(ids string) int64 {
+func (s *logininforService) Delete(ids string) int64 {
 	idarr := convert.ToInt64Array(ids, ",")
-	result, err := dao.SysLogininfor.Delete(fmt.Sprintf("%s in(?)",dao.SysLogininfor.Columns.InfoId),idarr)
+	result, err := dao.SysLogininfor.Delete(fmt.Sprintf("%s in(?)", dao.SysLogininfor.Columns.InfoId), idarr)
 	if err != nil {
 		return 0
 	}
@@ -69,8 +90,8 @@ func (s *logininforService)Delete(ids string) int64 {
 }
 
 //清空记录
-func (s *logininforService)Clean() int64 {
-	result, err := dao.SysLogininfor.Delete(fmt.Sprintf("%s > ?",dao.SysLogininfor.Columns.InfoId),"0")
+func (s *logininforService) Clean() int64 {
+	result, err := dao.SysLogininfor.Delete(fmt.Sprintf("%s > ?", dao.SysLogininfor.Columns.InfoId), "0")
 	if err != nil {
 		return 0
 	}
@@ -108,7 +129,7 @@ func (s *logininforService) Export(param *define.LogininforApiSelectPageReq) (st
 		return "", err
 	}
 	head := []string{"访问编号", "用户名称", "登录地址", "登录地点", "浏览器", "操作系统", "登录状态", "操作信息", "登录日期"}
-	key := []string{"info_id","login_name","ipaddr","login_location","browser","os","status","msg","login_time"}
+	key := []string{"info_id", "login_name", "ipaddr", "login_location", "browser", "os", "status", "msg", "login_time"}
 	url, err := excel.DownlaodExcel(head, key, result)
 	if err != nil {
 		return "", err

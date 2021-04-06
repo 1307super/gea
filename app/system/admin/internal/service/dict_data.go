@@ -11,6 +11,7 @@ import (
 	"gea/app/utils/page"
 	"github.com/gogf/gf/database/gdb"
 	"github.com/gogf/gf/errors/gerror"
+	"github.com/gogf/gf/frame/g"
 	"github.com/gogf/gf/os/gtime"
 	"github.com/gogf/gf/util/gconv"
 )
@@ -66,25 +67,9 @@ func (s *dictDataService)GetList(param *define.DictDataApiSelectPageReq) *define
 
 //获取所有数据
 func (s *dictDataService)GetAll(param *define.DictDataApiSelectPageReq) ([]model.SysDictData, error) {
-	m := dao.SysDictData.As("t")
-	if param != nil {
-		if param.DictLabel != "" {
-			m = m.Where("t.dict_label like ?", "%"+param.DictLabel+"%")
-		}
-		if param.Status != "" {
-			m = m.Where("t.status = ", param.Status)
-		}
-		if param.DictType != "" {
-			m = m.Where("t.dict_type like ?", "%"+param.DictType+"%")
-		}
-		if param.BeginTime != "" {
-			m = m.Where("date_format(t.create_time,'%y%m%d') >= date_format(?,'%y%m%d') ", param.BeginTime)
-		}
-		if param.EndTime != "" {
-			m = m.Where("date_format(t.create_time,'%y%m%d') <= date_format(?,'%y%m%d') ", param.EndTime)
-		}
-	}
-
+	m := dao.SysDictData.As("t").Cache(0,"sys_dict:"+param.DictType)
+	m = m.Where("t.dict_type like ?", "%"+param.DictType+"%")
+	m = m.Where("t.status = ?", "0")
 	var result []model.SysDictData
 	if err := m.Structs(&result); err != nil {
 		return nil,gerror.New("未获取到数据")
@@ -97,7 +82,7 @@ func (s *dictDataService)Create(ctx context.Context, req *define.DictDataApiCrea
 	user := shared.Context.Get(ctx).User
 	var entity model.SysDictData
 	entity.CreateTime = gtime.Now()
-	entity.CreateBy = user.LoginName
+	entity.CreateBy = user.UserExtend.LoginName
 	var editReq *define.DictDataApiUpdateReq
 	gconv.Struct(req,&editReq)
 	return s.save(&entity,editReq)
@@ -114,7 +99,7 @@ func (s *dictDataService)Update(ctx context.Context, req *define.DictDataApiUpda
 		return 0, gerror.New("数据不存在")
 	}
 	entity.UpdateTime = gtime.Now()
-	entity.UpdateBy = user.LoginName
+	entity.UpdateBy = user.UserExtend.LoginName
 	return s.save(entity,req)
 }
 
@@ -129,7 +114,7 @@ func (s *dictDataService) save(dictData *model.SysDictData, req *define.DictData
 	dictData.DictSort = req.DictSort
 	dictData.DictValue = req.DictValue
 	dictData.Remark = req.Remark
-	result, err := dao.SysDictData.Data(dictData).Save()
+	result, err := dao.SysDictData.Data(dictData).Cache(-1,"sys_dict:"+req.DictType).Save()
 	if err != nil {
 		return 0, err
 	}
@@ -147,9 +132,13 @@ func (s *dictDataService) save(dictData *model.SysDictData, req *define.DictData
 
 func (s *dictDataService) Delete(ids string) int64 {
 	idarr := convert.ToInt64Array(ids, ",")
+	dictData,_ := dao.SysDictData.FindOne(dao.SysDictData.Columns.DictCode,idarr[0])
 	result, err := dao.SysDictData.Delete(fmt.Sprintf("%s in(?)",dao.SysDictData.Columns.DictCode),idarr)
 	if err != nil {
 		return 0
+	}
+	if dictData != nil {
+		g.DB().GetCache().Remove("sys_dict:"+dictData.DictType)
 	}
 	nums, _ := result.RowsAffected()
 	return nums

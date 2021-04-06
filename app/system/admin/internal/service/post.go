@@ -43,6 +43,7 @@ func (s *postService) GetList(param *define.PostApiPageReq) *define.PostServiceL
 			m = m.Where("date_format(p.create_time,'%y%m%d') <= date_format(?,'%y%m%d') ", param.EndTime)
 		}
 	}
+
 	total, err := m.Count()
 	if err != nil {
 		return nil
@@ -144,7 +145,7 @@ func (s *postService) Create(ctx context.Context, req *define.PostApiCreateReq) 
 	user := shared.Context.Get(ctx).User
 	var post model.SysPost
 	post.CreateTime = gtime.Now()
-	post.CreateBy = user.LoginName
+	post.CreateBy = user.UserExtend.LoginName
 	var editReq *define.PostApiUpdateReq
 	gconv.Struct(req, &editReq)
 	return s.save(&post, editReq)
@@ -169,7 +170,7 @@ func (s *postService) Update(ctx context.Context, req *define.PostApiUpdateReq) 
 	}
 
 	post.UpdateTime = gtime.Now()
-	post.UpdateBy = user.LoginName
+	post.UpdateBy = user.UserExtend.LoginName
 	return s.save(post, req)
 }
 

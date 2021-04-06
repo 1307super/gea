@@ -75,7 +75,7 @@ func (s *configService) Create(ctx context.Context, req *define.ConfigApiCreateR
 	user := shared.Context.Get(ctx).User
 	var entity model.SysConfig
 	entity.CreateTime = gtime.Now()
-	entity.CreateBy = user.LoginName
+	entity.CreateBy = user.UserExtend.LoginName
 	var editReq *define.ConfigApiUpdateReq
 	gconv.Struct(req, &editReq)
 	return s.save(&entity, editReq)
@@ -95,7 +95,7 @@ func (s *configService) Update(ctx context.Context, req *define.ConfigApiUpdateR
 		return 0, gerror.New("数据不存在")
 	}
 	entity.UpdateTime = gtime.Now()
-	entity.UpdateBy = user.LoginName
+	entity.UpdateBy = user.UserExtend.LoginName
 	return s.save(entity, req)
 }
 

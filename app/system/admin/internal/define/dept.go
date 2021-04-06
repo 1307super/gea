@@ -40,12 +40,12 @@ type DeptApiUpdateReq struct {
 // 查询列表返回值
 type DeptServiceList struct {
 	List  []model.SysDeptExtend `json:"list"`
-	Page  int             `json:"page"`
-	Size  int             `json:"size"`
-	Total int             `json:"total"`
+	Page  int                   `json:"page"`
+	Size  int                   `json:"size"`
+	Total int                   `json:"total"`
 }
 
 type DeptServiceRoleTreeData struct {
-	Depts       []*model.SysDeptExtend `json:"depts"`
-	CheckedKeys g.Array                `json:"checked_keys"`
+	Depts       []model.DeptExtend `json:"depts"`
+	CheckedKeys g.Array            `json:"checkedKeys"`
 }

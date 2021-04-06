@@ -25,7 +25,7 @@ func (a *deptApi)Get(r *ghttp.Request) {
 	if err := r.Parse(&req); err != nil {
 		a.Err(r,err.Error())
 	}
-	result, err := service.Dept.GetAll(req)
+	result, err := service.Dept.GetAll(r.Context(),req)
 	if err != nil {
 		a.Err(r,err.Error())
 	}
@@ -95,7 +95,7 @@ func (a *deptApi)Info(r *ghttp.Request) {
 
 //加载部门列表树结构的数据
 func (a *deptApi)TreeData(r *ghttp.Request) {
-	result, err := service.Dept.DeptTree(0, "", "")
+	result, err := service.Dept.DeptTree(r.Context(),0, "", "")
 	if err != nil {
 		a.Err(r,"获取部门列表失败")
 	}
@@ -110,7 +110,7 @@ func (a *deptApi)RoleDeptTreeData(r *ghttp.Request) {
 		a.Err(r,"请选择角色")
 	}
 
-	result, err := service.Dept.RoleDeptTreeData(roleId)
+	result, err := service.Dept.RoleDeptTreeData(r.Context(),roleId)
 	if err != nil {
 		a.Err(r,err.Error())
 	}

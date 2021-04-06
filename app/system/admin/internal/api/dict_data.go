@@ -99,7 +99,7 @@ func (a *dictDataApi) Delete(r *ghttp.Request) {
 
 //数据详情
 func (a *dictDataApi) Info(r *ghttp.Request) {
-	dictId := gconv.Int64(r.Get("dictId"))
+	dictId := gconv.Int64(r.Get("id"))
 	if dictId <= 0 {
 		a.Err(r, "请选择字典类型")
 	}

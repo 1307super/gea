@@ -25,7 +25,14 @@
     refresh = 1800
     #安全密钥
     encryptKey = "geazxc0123lk0912"
-    cache = "redis"   # default/redis
+    cache = "default"   # default/redis
+[gtoken]
+    CacheMode = 1
+    Timeout =  0
+    MaxRefresh = 0
+    EncryptKey = "geazxc0123lk0912"
+    AuthFailMsg = "登录超时，请重新登录"
+    MultiLogin = true
 
 # Logger.
 [logger]

@@ -99,7 +99,7 @@ func (a *genTableApi) Preview(r *ghttp.Request) {
 		a.Err(r,"参数错误")
 	}
 
-	result := service.GenTable.Preview(r,tableId)
+	result := service.GenTable.Preview(tableId)
 	if result != nil{
 		a.Succ(r,result)
 	}

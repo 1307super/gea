@@ -61,7 +61,7 @@ func (s *menuService) Create(ctx context.Context, req *define.MenuApiCreateReq) 
 
 	var menu model.SysMenu
 	menu.CreateTime = gtime.Now()
-	menu.CreateBy = user.LoginName
+	menu.CreateBy = user.UserExtend.LoginName
 
 	var editReq *define.MenuApiEditReq
 	gconv.Struct(req,&editReq)
@@ -82,7 +82,7 @@ func (s *menuService) Update(ctx context.Context, req *define.MenuApiEditReq) (i
 	if menu == nil {
 		return 0, gerror.New("菜单不存在")
 	}
-	menu.UpdateBy = user.LoginName
+	menu.UpdateBy = user.UserExtend.LoginName
 	menu.UpdateTime = gtime.Now()
 	return s.save(menu,req)
 }
@@ -160,7 +160,7 @@ func (s *menuService) Delete(id int64) bool {
 
 //加载所有菜单列表树
 func (s *menuService) MenuTreeData(ctx context.Context) ([]model.RoleMenuTree, error) {
-	userId := shared.Context.Get(ctx).User.UserId
+	userId := shared.Context.Get(ctx).User.UserExtend.UserId
 	var menuList []*model.SysMenuExtend
 	var err error
 	if IsAdmin(userId) {
@@ -208,7 +208,6 @@ func (s *menuService) GetMenusListByUserId(userId int64) ([]*model.SysMenuExtend
 	if err := m.Structs(&result); err != nil {
 		return nil, gerror.New("读取数据失败")
 	}
-	gcache.Set(MENU_TREE_CACHE+gconv.String(userId), result, time.Hour)
 	return result, nil
 }
 
@@ -229,7 +228,7 @@ func (s *menuService) GetMenuIdsByRoleId(roleId int64) (g.Array, error) {
 
 // 获取用户的菜单数据
 func (s *menuService) SelectMenuNormalByUser(ctx context.Context) ([]*model.SysMenuExtend, error) {
-	userId := shared.Context.Get(ctx).User.UserId
+	userId := shared.Context.Get(ctx).Uid
 	if IsAdmin(userId) {
 		return s.GettMenuNormalAll()
 	} else {
@@ -270,14 +269,12 @@ func (s *menuService) GetMenusByUserId(userId int64, router ...bool) ([]*model.S
 	if cache != nil {
 		return cache.([]*model.SysMenuExtend), nil
 	}
-
 	//从数据库中读取
 	result, err := s.GetMenusListByUserId(gconv.Int64(userId))
 	if err != nil {
 		return nil, err
 	}
 	result = s.getChildPerms(result, 0)
-	//g.Dump(result)
 	//存入缓存
 	gcache.Set(MENU_CACHE+gconv.String(userId), result, time.Hour)
 	return result, nil
@@ -378,17 +375,17 @@ func (s *menuService) BuildRoleMenus(menus []*model.SysMenuExtend) []model.RoleM
 func (s *menuService) GetMenuPermission(ctx context.Context) *garray.StrArray {
 	customCtx := shared.Context.Get(ctx)
 	perms := garray.NewStrArray()
-	if IsAdmin(customCtx.User.UserId) {
+	if IsAdmin(customCtx.Uid) {
 		perms.Append("*:*:*")
 	} else {
 		// 缓存
 		//从缓存读取
-		cache, _ := gcache.Get(AdminAuthMenu + gconv.String(customCtx.User.UserId))
+		cache, _ := gcache.Get(AdminAuthMenu + gconv.String(customCtx.Uid))
 		if cache != nil {
 			return cache.(*garray.StrArray)
 		}
 		var Entity []*model.SysMenu
-		if err := dao.SysMenu.As("m").LeftJoin("sys_role_menu rm", "m.menu_id = rm.menu_id").LeftJoin("sys_user_role ur", "rm.role_id = ur.role_id").LeftJoin("sys_role ro", "ur.role_id = ro.role_id").Fields("distinct m.perms,m.method").Where("m.status = '0' and ro.status = '0' and ur.user_id = ?", customCtx.User.UserId).Structs(&Entity); err == nil {
+		if err := dao.SysMenu.As("m").LeftJoin("sys_role_menu rm", "m.menu_id = rm.menu_id").LeftJoin("sys_user_role ur", "rm.role_id = ur.role_id").LeftJoin("sys_role ro", "ur.role_id = ro.role_id").Fields("distinct m.perms,m.method").Where("m.status = '0' and ro.status = '0' and ur.user_id = ?", customCtx.Uid).Structs(&Entity); err == nil {
 			if len(Entity) > 0 {
 				for _, entity := range Entity {
 					if entity.Perms != "" {
@@ -396,7 +393,7 @@ func (s *menuService) GetMenuPermission(ctx context.Context) *garray.StrArray {
 					}
 				}
 				// 设置缓存
-				gcache.Set(AdminAuthMenu+gconv.String(customCtx.User.UserId), perms, 0)
+				gcache.Set(AdminAuthMenu+gconv.String(customCtx.Uid), perms, 0)
 			}
 		}
 	}
