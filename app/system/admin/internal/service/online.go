@@ -58,6 +58,7 @@ func (s *onlineService) GetList(param *define.OnlineApiSelectPageReq) *define.On
 		}
 	}
 
+	m = m.Order("t.id desc")
 	total, err := m.Count()
 	if err != nil {
 		return nil

@@ -44,6 +44,7 @@ func (s *dictDataService)GetList(param *define.DictDataApiSelectPageReq) *define
 		}
 	}
 
+	m = m.Order("t.dict_sort asc")
 	total, err := m.Count()
 
 	if err != nil {
@@ -70,6 +71,7 @@ func (s *dictDataService)GetAll(param *define.DictDataApiSelectPageReq) ([]model
 	m := dao.SysDictData.As("t").Cache(0,"sys_dict:"+param.DictType)
 	m = m.Where("t.dict_type like ?", "%"+param.DictType+"%")
 	m = m.Where("t.status = ?", "0")
+	m = m.Order("t.dict_sort asc")
 	var result []model.SysDictData
 	if err := m.Structs(&result); err != nil {
 		return nil,gerror.New("未获取到数据")

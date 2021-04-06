@@ -58,6 +58,7 @@ func (s *menuService) GetAll(param *define.MenuApiSelectPageReq) ([]*model.SysMe
 			m = m.Where("date_format(m.create_time,'%y%m%d') <= date_format(?,'%y%m%d') ", param.EndTime)
 		}
 	}
+	m = m.Order("m.order_num asc")
 	var result []*model.SysMenuExtend
 	err := m.Structs(&result)
 	return result, err
