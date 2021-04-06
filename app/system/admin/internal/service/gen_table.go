@@ -566,8 +566,8 @@ func (s *genTableService) GenCode(r *ghttp.Request,tableId string) error {
 		}
 
 		template := g.MapStrStr{
-			listTmp:                     strings.Join([]string{ "/template/system/", "business", "/", entity.BusinessName, "/index.vue"}, ""),
-			"vm/js/api.html":            strings.Join([]string{ "/template/system/", "business", "/", entity.BusinessName, "/index.js"}, ""),
+			listTmp:                     strings.Join([]string{ "/template/", "business", "/", entity.BusinessName, "/index.vue"}, ""),
+			"vm/js/api.html":            strings.Join([]string{ "/template/", "business", "/", entity.BusinessName, "/index.js"}, ""),
 			"vm/go/model.html":          strings.Join([]string{ "/app/model/", entity.TableName, ".go"}, ""),
 			"vm/go/model_internal.html": strings.Join([]string{ "/app/model/", "internal", "/", entity.TableName, ".go"}, ""),
 			"vm/go/dao.html":            strings.Join([]string{ "/app/dao/", entity.TableName, ".go"}, ""),
