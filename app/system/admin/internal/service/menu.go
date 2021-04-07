@@ -366,7 +366,7 @@ func (s *menuService) BuildMenus(menus []*model.SysMenuExtend) []model.RouterExt
 // 获取组件信息
 func (s *menuService) getComponent(menu *model.SysMenuExtend) string {
 	component := LAYOUT
-	if menu.Component != "" && s.isMeunFrame(menu) {
+	if menu.Component != "" && !s.isMeunFrame(menu) {
 		component = menu.Component
 	} else if menu.Component == "" && s.isParentView(menu) {
 		component = PARENT_VIEW

@@ -11,7 +11,7 @@
  Target Server Version : 50729
  File Encoding         : 65001
 
- Date: 01/03/2021 08:19:21
+ Date: 07/04/2021 19:43:28
 */
 
 SET NAMES utf8mb4;
@@ -120,6 +120,8 @@ INSERT INTO `casbin_rule` VALUES ('p', 'admin', '/system/dict/data/info', 'GET',
 INSERT INTO `casbin_rule` VALUES ('p', 'admin', '/monitor/operlog/clean', 'DELETE', '', '', '');
 INSERT INTO `casbin_rule` VALUES ('p', 'admin', '/monitor/logininfor/clean', 'DELETE', '', '', '');
 INSERT INTO `casbin_rule` VALUES ('g', '测试测试2', 'pop', '', '', '', '');
+INSERT INTO `casbin_rule` VALUES ('g', 'test008', 'admin', '', '', '', '');
+INSERT INTO `casbin_rule` VALUES ('g', 'test007', 'admin', '', '', '', '');
 INSERT INTO `casbin_rule` VALUES ('p', 'pop', '/monitor/online', 'GET', '', '', '');
 INSERT INTO `casbin_rule` VALUES ('p', 'pop', '/monitor/job', 'GET', '', '', '');
 INSERT INTO `casbin_rule` VALUES ('p', 'pop', '/monitor/server', 'GET', '', '', '');
@@ -135,8 +137,6 @@ INSERT INTO `casbin_rule` VALUES ('p', 'pop', '/monitor/job/run', 'PUT', '', '',
 INSERT INTO `casbin_rule` VALUES ('p', 'pop', '/monitor/jobLog', 'GET', '', '', '');
 INSERT INTO `casbin_rule` VALUES ('p', 'pop', '/monitor/jobLog', 'DELETE', '', '', '');
 INSERT INTO `casbin_rule` VALUES ('p', 'pop', '/monitor/jobLog/clean', 'DELETE', '', '', '');
-INSERT INTO `casbin_rule` VALUES ('g', 'test008', 'admin', '', '', '', '');
-INSERT INTO `casbin_rule` VALUES ('g', 'test007', 'admin', '', '', '', '');
 COMMIT;
 
 -- ----------------------------
@@ -344,7 +344,7 @@ CREATE TABLE `sys_dept` (
   `update_by` varchar(64) DEFAULT '' COMMENT '更新者',
   `update_time` datetime DEFAULT NULL COMMENT '更新时间',
   PRIMARY KEY (`dept_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=111 DEFAULT CHARSET=utf8 COMMENT='部门表';
+) ENGINE=InnoDB AUTO_INCREMENT=114 DEFAULT CHARSET=utf8 COMMENT='部门表';
 
 -- ----------------------------
 -- Records of sys_dept
@@ -352,6 +352,9 @@ CREATE TABLE `sys_dept` (
 BEGIN;
 INSERT INTO `sys_dept` VALUES (100, 0, '0', 'gea', 0, 'admin', '', '110@qq.com', '0', '0', 'admin', '2018-03-16 11:33:00', 'admin', '2020-06-21 00:21:53');
 INSERT INTO `sys_dept` VALUES (110, 100, '0,100', '测试部门', 1, '1307', '', '', '0', '0', 'admin', '2019-12-02 17:07:02', 'admin', '2020-07-18 11:34:19');
+INSERT INTO `sys_dept` VALUES (111, 0, '', 'gea分部', 1, '1307', '', '', '0', '0', 'admin', '2021-04-06 09:12:38', '', NULL);
+INSERT INTO `sys_dept` VALUES (112, 111, ',111', '营销公司', 1, '1307', '', '', '0', '0', 'admin', '2021-04-06 09:12:51', '', NULL);
+INSERT INTO `sys_dept` VALUES (113, 111, ',111', '信息部', 2, '', '', '', '0', '0', 'admin', '2021-04-06 09:13:06', '', NULL);
 COMMIT;
 
 -- ----------------------------
@@ -512,72 +515,7 @@ CREATE TABLE `sys_logininfor` (
   `msg` varchar(255) DEFAULT '' COMMENT '提示消息',
   `login_time` datetime DEFAULT NULL COMMENT '访问时间',
   PRIMARY KEY (`info_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=323 DEFAULT CHARSET=utf8 COMMENT='系统访问记录';
-
--- ----------------------------
--- Records of sys_logininfor
--- ----------------------------
-BEGIN;
-INSERT INTO `sys_logininfor` VALUES (264, 'admin', '127.0.0.1', '内网IP', 'Chrome', 'Intel Mac OS X 10_15_1', '0', '登陆成功', '2020-07-18 13:10:00');
-INSERT INTO `sys_logininfor` VALUES (265, 'admin', '127.0.0.1', '内网IP', 'Chrome', 'Intel Mac OS X 10_15_1', '0', '账号或密码不正确', '2020-07-18 13:13:05');
-INSERT INTO `sys_logininfor` VALUES (266, 'admin', '127.0.0.1', '内网IP', 'Chrome', 'Intel Mac OS X 10_15_1', '0', '登陆成功', '2020-07-18 13:13:12');
-INSERT INTO `sys_logininfor` VALUES (267, 'admin', '127.0.0.1', '内网IP', 'Chrome', 'Intel Mac OS X 10_15_1', '0', '登陆成功', '2020-07-20 09:03:59');
-INSERT INTO `sys_logininfor` VALUES (268, 'admin', '127.0.0.1', '内网IP', 'Chrome', 'Intel Mac OS X 10_15_1', '0', '登陆成功', '2020-07-20 20:53:45');
-INSERT INTO `sys_logininfor` VALUES (269, 'admin', '127.0.0.1', '内网IP', 'Chrome', 'Intel Mac OS X 10_15_1', '0', '登陆成功', '2020-07-20 23:20:52');
-INSERT INTO `sys_logininfor` VALUES (270, 'admin', '127.0.0.1', '内网IP', 'Chrome', 'Intel Mac OS X 10_15_1', '0', '登陆成功', '2020-07-20 23:33:00');
-INSERT INTO `sys_logininfor` VALUES (271, 'admin', '127.0.0.1', '内网IP', 'Chrome', 'Intel Mac OS X 10_15_1', '0', '登陆成功', '2020-07-20 23:36:33');
-INSERT INTO `sys_logininfor` VALUES (272, 'admin', '127.0.0.1', '内网IP', 'Chrome', 'Intel Mac OS X 10_15_1', '0', '登陆成功', '2020-07-20 23:39:04');
-INSERT INTO `sys_logininfor` VALUES (273, 'admin', '127.0.0.1', '内网IP', 'Chrome', 'Intel Mac OS X 10_15_1', '0', '登陆成功', '2020-07-20 23:41:55');
-INSERT INTO `sys_logininfor` VALUES (274, 'admin', '127.0.0.1', '内网IP', 'Chrome', 'Intel Mac OS X 10_15_1', '0', '登陆成功', '2020-07-21 09:00:50');
-INSERT INTO `sys_logininfor` VALUES (275, 'admin', '127.0.0.1', '内网IP', 'Chrome', 'Intel Mac OS X 10_15_1', '0', '登陆成功', '2020-07-21 10:59:27');
-INSERT INTO `sys_logininfor` VALUES (276, 'admin', '127.0.0.1', '内网IP', 'Chrome', 'Intel Mac OS X 10_15_1', '0', '登陆成功', '2020-07-21 11:00:34');
-INSERT INTO `sys_logininfor` VALUES (277, 'admin', '127.0.0.1', '内网IP', 'Chrome', 'Intel Mac OS X 10_15_1', '0', '登陆成功', '2020-07-21 11:02:11');
-INSERT INTO `sys_logininfor` VALUES (278, 'admin', '127.0.0.1', '内网IP', 'Chrome', 'Intel Mac OS X 10_15_1', '0', '登陆成功', '2020-07-21 11:40:36');
-INSERT INTO `sys_logininfor` VALUES (279, 'testtest', '127.0.0.1', '内网IP', 'Chrome', 'Intel Mac OS X 10_15_1', '1', '账号或密码不正确', '2020-07-21 13:34:33');
-INSERT INTO `sys_logininfor` VALUES (280, 'testtest', '127.0.0.1', '内网IP', 'Chrome', 'Intel Mac OS X 10_15_1', '1', '账号或密码不正确', '2020-07-21 13:34:40');
-INSERT INTO `sys_logininfor` VALUES (281, '测试测试2', '127.0.0.1', '内网IP', 'Chrome', 'Intel Mac OS X 10_15_1', '1', '账号或密码不正确', '2020-07-21 13:35:38');
-INSERT INTO `sys_logininfor` VALUES (282, 'admin', '127.0.0.1', '内网IP', 'Chrome', 'Intel Mac OS X 10_15_1', '0', '登陆成功', '2020-07-21 13:35:51');
-INSERT INTO `sys_logininfor` VALUES (283, '测试测试2', '127.0.0.1', '内网IP', 'Chrome', 'Intel Mac OS X 10_15_1', '0', '登陆成功', '2020-07-21 13:36:40');
-INSERT INTO `sys_logininfor` VALUES (284, '测试测试2', '127.0.0.1', '内网IP', 'Chrome', 'Intel Mac OS X 10_15_1', '0', '登陆成功', '2020-07-21 13:39:44');
-INSERT INTO `sys_logininfor` VALUES (285, 'admin', '127.0.0.1', '内网IP', 'Chrome', 'Intel Mac OS X 10_15_1', '0', '登陆成功', '2020-07-21 14:43:00');
-INSERT INTO `sys_logininfor` VALUES (286, 'admin', '127.0.0.1', '内网IP', 'Chrome', 'Intel Mac OS X 10_15_1', '0', '登陆成功', '2020-07-21 14:44:51');
-INSERT INTO `sys_logininfor` VALUES (287, 'admin', '127.0.0.1', '内网IP', 'Chrome', 'Intel Mac OS X 10_15_1', '0', '登陆成功', '2020-07-21 14:52:31');
-INSERT INTO `sys_logininfor` VALUES (288, 'admin', '127.0.0.1', '内网IP', 'Chrome', 'Intel Mac OS X 10_15_1', '0', '登陆成功', '2020-07-21 15:08:39');
-INSERT INTO `sys_logininfor` VALUES (289, 'admin', '127.0.0.1', '内网IP', 'Chrome', 'Intel Mac OS X 10_15_1', '0', '登陆成功', '2020-07-21 15:18:29');
-INSERT INTO `sys_logininfor` VALUES (290, 'admin', '172.17.0.1', '', 'Chrome', 'Intel Mac OS X 10_15_1', '0', '登陆成功', '2021-01-22 10:14:18');
-INSERT INTO `sys_logininfor` VALUES (291, 'admin', '172.17.0.1', '', 'Chrome', 'Intel Mac OS X 10_15_1', '0', '登陆成功', '2021-01-22 10:15:40');
-INSERT INTO `sys_logininfor` VALUES (292, 'admin', '172.17.0.1', '', 'Chrome', 'Intel Mac OS X 10_15_1', '0', '登陆成功', '2021-01-22 10:17:04');
-INSERT INTO `sys_logininfor` VALUES (293, 'admin', '172.17.0.1', '', 'Chrome', 'Intel Mac OS X 10_15_1', '0', '登陆成功', '2021-01-22 10:18:28');
-INSERT INTO `sys_logininfor` VALUES (294, 'admin', '172.17.0.1', '', 'Chrome', 'Intel Mac OS X 10_15_1', '0', '登陆成功', '2021-01-22 10:25:27');
-INSERT INTO `sys_logininfor` VALUES (295, 'admin', '172.17.0.1', '', 'Chrome', 'Intel Mac OS X 10_15_1', '0', '登陆成功', '2021-01-22 10:35:21');
-INSERT INTO `sys_logininfor` VALUES (296, 'admin', '172.17.0.1', '', 'Chrome', 'Intel Mac OS X 10_15_1', '0', '登陆成功', '2021-01-22 15:32:26');
-INSERT INTO `sys_logininfor` VALUES (297, 'admin', '172.17.0.1', '', 'Chrome', 'Intel Mac OS X 10_15_1', '0', '登陆成功', '2021-01-22 16:33:54');
-INSERT INTO `sys_logininfor` VALUES (298, 'admin', '172.17.0.1', '', 'Chrome', 'Intel Mac OS X 10_15_1', '0', '登陆成功', '2021-01-22 16:35:52');
-INSERT INTO `sys_logininfor` VALUES (299, 'admin', '172.17.0.1', '', 'Chrome', 'Intel Mac OS X 10_15_1', '0', '登陆成功', '2021-01-22 16:38:21');
-INSERT INTO `sys_logininfor` VALUES (300, 'admin', '172.17.0.1', '', 'Chrome', 'Intel Mac OS X 10_15_1', '0', '登陆成功', '2021-01-22 16:46:01');
-INSERT INTO `sys_logininfor` VALUES (301, 'admin', '172.17.0.1', '', 'Chrome', 'Intel Mac OS X 10_15_1', '0', '登陆成功', '2021-01-23 09:21:39');
-INSERT INTO `sys_logininfor` VALUES (302, 'admin', '172.17.0.1', '', 'Chrome', 'Intel Mac OS X 10_15_1', '0', '登陆成功', '2021-01-23 09:22:23');
-INSERT INTO `sys_logininfor` VALUES (303, 'admin', '172.17.0.1', '', 'Chrome', 'Intel Mac OS X 10_15_1', '0', '登陆成功', '2021-01-23 09:22:40');
-INSERT INTO `sys_logininfor` VALUES (304, 'admin', '172.17.0.1', '', 'Chrome', 'Intel Mac OS X 10_15_1', '0', '登陆成功', '2021-01-23 09:23:37');
-INSERT INTO `sys_logininfor` VALUES (305, 'admin', '172.17.0.1', '', 'Chrome', 'Intel Mac OS X 10_15_1', '0', '登陆成功', '2021-01-23 09:57:46');
-INSERT INTO `sys_logininfor` VALUES (306, 'admin', '172.17.0.1', '', 'Chrome', 'Intel Mac OS X 10_15_1', '0', '登陆成功', '2021-01-23 10:03:33');
-INSERT INTO `sys_logininfor` VALUES (307, 'admin', '172.17.0.1', '', 'Chrome', 'Intel Mac OS X 10_15_1', '0', '登陆成功', '2021-01-23 10:08:05');
-INSERT INTO `sys_logininfor` VALUES (308, 'admin', '172.17.0.1', '', 'Chrome', 'Intel Mac OS X 10_15_1', '0', '登陆成功', '2021-01-23 10:10:22');
-INSERT INTO `sys_logininfor` VALUES (309, 'admin', '172.17.0.1', '', 'Chrome', 'Intel Mac OS X 10_15_1', '0', '登陆成功', '2021-01-23 10:14:59');
-INSERT INTO `sys_logininfor` VALUES (310, 'admin', '172.17.0.1', '', 'Chrome', 'Intel Mac OS X 10_15_1', '0', '登陆成功', '2021-01-23 10:23:03');
-INSERT INTO `sys_logininfor` VALUES (311, 'admin', '172.17.0.1', '', 'Chrome', 'Intel Mac OS X 10_15_1', '0', '登陆成功', '2021-01-25 08:16:53');
-INSERT INTO `sys_logininfor` VALUES (312, 'admin', '172.17.0.1', '', 'Chrome', 'Intel Mac OS X 10_15_1', '0', '登陆成功', '2021-01-25 08:28:08');
-INSERT INTO `sys_logininfor` VALUES (313, 'admin', '172.17.0.1', '', 'Chrome', 'Intel Mac OS X 10_15_1', '1', '账号或密码不正确', '2021-01-25 09:22:07');
-INSERT INTO `sys_logininfor` VALUES (314, 'admin', '172.17.0.1', '', 'Chrome', 'Intel Mac OS X 10_15_1', '1', '账号或密码不正确', '2021-01-25 09:23:08');
-INSERT INTO `sys_logininfor` VALUES (315, 'admin', '172.17.0.1', '', 'Chrome', 'Intel Mac OS X 10_15_1', '1', '账号或密码不正确', '2021-01-25 09:26:49');
-INSERT INTO `sys_logininfor` VALUES (316, 'admin', '172.17.0.1', '', 'Chrome', 'Intel Mac OS X 10_15_1', '1', '账号或密码不正确', '2021-01-25 09:27:17');
-INSERT INTO `sys_logininfor` VALUES (317, 'admin', '172.17.0.1', '', 'Chrome', 'Intel Mac OS X 10_15_1', '1', '账号或密码不正确', '2021-01-25 09:28:34');
-INSERT INTO `sys_logininfor` VALUES (318, 'admin', '172.17.0.1', '', 'Chrome', 'Intel Mac OS X 10_15_1', '1', '账号或密码不正确', '2021-01-25 09:29:20');
-INSERT INTO `sys_logininfor` VALUES (319, 'admin', '172.17.0.1', '', 'Chrome', 'Intel Mac OS X 10_15_1', '0', '登陆成功', '2021-01-25 09:39:55');
-INSERT INTO `sys_logininfor` VALUES (320, 'admin', '172.17.0.1', '', 'Chrome', 'Intel Mac OS X 10_15_1', '0', '登陆成功', '2021-01-25 09:42:09');
-INSERT INTO `sys_logininfor` VALUES (321, 'admin', '172.17.0.1', '', 'Chrome', 'Intel Mac OS X 10_15_1', '0', '登陆成功', '2021-01-25 09:51:10');
-INSERT INTO `sys_logininfor` VALUES (322, 'admin', '172.17.0.1', '', 'Chrome', 'Intel Mac OS X 10_15_1', '0', '登陆成功', '2021-02-09 10:38:00');
-COMMIT;
+) ENGINE=InnoDB AUTO_INCREMENT=342 DEFAULT CHARSET=utf8 COMMENT='系统访问记录';
 
 -- ----------------------------
 -- Table structure for sys_menu
@@ -614,78 +552,78 @@ INSERT INTO `sys_menu` VALUES (1, '系统管理', 0, 1, 'system', '', 1, 'M', 0,
 INSERT INTO `sys_menu` VALUES (2, '系统监控', 0, 2, 'monitor', NULL, 1, 'M', 0, 0, '', 'monitor', 'admin', '2018-03-16 11:33:00', 'ry', '2018-03-16 11:33:00', '系统监控目录', NULL, NULL);
 INSERT INTO `sys_menu` VALUES (3, '系统工具', 0, 3, 'tool', NULL, 1, 'M', 0, 0, '', 'tool', 'admin', '2018-03-16 11:33:00', 'ry', '2018-03-16 11:33:00', '系统工具目录', NULL, NULL);
 INSERT INTO `sys_menu` VALUES (4, '若依官网', 0, 4, 'http://www.truckgogo.com2', '', 0, 'M', 0, 0, '', 'guide', '', '2021-01-25 09:56:46', 'admin', '2018-03-16 11:33:00', '', '', '');
-INSERT INTO `sys_menu` VALUES (100, '用户管理', 1, 1, 'user', 'system/user/index', 0, 'C', 0, 0, '/system/user', 'user', '', '2020-07-20 23:39:10', 'ry', '2018-03-16 11:33:00', '', 'GET:/system/user', 'GET');
-INSERT INTO `sys_menu` VALUES (101, '角色管理', 1, 2, 'role', 'system/role/index', 0, 'C', 0, 0, '/system/role', 'peoples', '', '2020-07-20 23:42:13', 'ry', '2018-03-16 11:33:00', '', 'GET:/system/role', 'GET');
-INSERT INTO `sys_menu` VALUES (102, '菜单管理', 1, 3, 'menu', 'system/menu/index', 0, 'C', 0, 0, '/system/menu', 'tree-table', '', '2020-07-20 23:42:23', 'ry', '2018-03-16 11:33:00', '', 'GET:/system/menu', 'GET');
-INSERT INTO `sys_menu` VALUES (103, '部门管理', 1, 4, 'dept', 'system/dept/index', 0, 'C', 0, 0, '/system/dept', 'tree', '', '2020-07-20 23:42:35', 'ry', '2018-03-16 11:33:00', '', 'GET:/system/dept', 'GET');
-INSERT INTO `sys_menu` VALUES (104, '岗位管理', 1, 5, 'post', 'system/post/index', 0, 'C', 0, 0, '/system/post', 'post', '', '2020-07-20 23:42:45', 'ry', '2018-03-16 11:33:00', '', 'GET:/system/post', 'GET');
-INSERT INTO `sys_menu` VALUES (105, '字典管理', 1, 6, 'dict', 'system/dict/index', 0, 'C', 0, 0, '/system/dict/type', 'dict', '', '2020-07-21 11:52:58', 'ry', '2018-03-16 11:33:00', '', 'GET:/system/dict', 'GET');
-INSERT INTO `sys_menu` VALUES (106, '参数设置', 1, 7, 'config', 'system/config/index', 0, 'C', 0, 0, '/system/config', 'edit', '', '2020-07-20 23:43:03', 'ry', '2018-03-16 11:33:00', '', 'GET:/system/config', 'GET');
+INSERT INTO `sys_menu` VALUES (100, '用户管理', 1, 1, 'user', 'system/user/index', 1, 'C', 0, 0, '/system/user', 'user', '', '2020-07-20 23:39:10', 'ry', '2018-03-16 11:33:00', '', 'GET:/system/user', 'GET');
+INSERT INTO `sys_menu` VALUES (101, '角色管理', 1, 2, 'role', 'system/role/index', 1, 'C', 0, 0, '/system/role', 'peoples', '', '2020-07-20 23:42:13', 'ry', '2018-03-16 11:33:00', '', 'GET:/system/role', 'GET');
+INSERT INTO `sys_menu` VALUES (102, '菜单管理', 1, 3, 'menu', 'system/menu/index', 1, 'C', 0, 0, '/system/menu', 'tree-table', '', '2020-07-20 23:42:23', 'ry', '2018-03-16 11:33:00', '', 'GET:/system/menu', 'GET');
+INSERT INTO `sys_menu` VALUES (103, '部门管理', 1, 4, 'dept', 'system/dept/index', 1, 'C', 0, 0, '/system/dept', 'tree', '', '2020-07-20 23:42:35', 'ry', '2018-03-16 11:33:00', '', 'GET:/system/dept', 'GET');
+INSERT INTO `sys_menu` VALUES (104, '岗位管理', 1, 5, 'post', 'system/post/index', 1, 'C', 0, 0, '/system/post', 'post', '', '2020-07-20 23:42:45', 'ry', '2018-03-16 11:33:00', '', 'GET:/system/post', 'GET');
+INSERT INTO `sys_menu` VALUES (105, '字典管理', 1, 6, 'dict', 'system/dict/index', 1, 'C', 0, 0, '/system/dict/type', 'dict', '', '2020-07-21 11:52:58', 'ry', '2018-03-16 11:33:00', '', 'GET:/system/dict', 'GET');
+INSERT INTO `sys_menu` VALUES (106, '参数设置', 1, 7, 'config', 'system/config/index', 1, 'C', 0, 0, '/system/config', 'edit', '', '2020-07-20 23:43:03', 'ry', '2018-03-16 11:33:00', '', 'GET:/system/config', 'GET');
 INSERT INTO `sys_menu` VALUES (108, '日志管理', 1, 9, 'log', 'system/log/index', 1, 'M', 0, 0, '', 'log', 'admin', '2018-03-16 11:33:00', 'ry', '2018-03-16 11:33:00', '日志管理菜单', NULL, NULL);
-INSERT INTO `sys_menu` VALUES (109, '在线用户', 2, 1, 'online', 'monitor/online/index', 0, 'C', 0, 0, '/monitor/online', 'online', '', '2020-06-29 10:04:18', 'ry', '2018-03-16 11:33:00', '', 'GET:/monitor/online', 'GET');
-INSERT INTO `sys_menu` VALUES (110, '定时任务', 2, 2, 'job', 'monitor/job/index', 0, 'C', 0, 0, '/monitor/job', 'job', '', '2020-06-29 10:05:17', 'ry', '2018-03-16 11:33:00', '', 'GET:/monitor/job', 'GET');
+INSERT INTO `sys_menu` VALUES (109, '在线用户', 2, 1, 'online', 'monitor/online/index', 1, 'C', 0, 0, '/monitor/online', 'online', '', '2020-06-29 10:04:18', 'ry', '2018-03-16 11:33:00', '', 'GET:/monitor/online', 'GET');
+INSERT INTO `sys_menu` VALUES (110, '定时任务', 2, 2, 'job', 'monitor/job/index', 1, 'C', 0, 0, '/monitor/job', 'job', '', '2020-06-29 10:05:17', 'ry', '2018-03-16 11:33:00', '', 'GET:/monitor/job', 'GET');
 INSERT INTO `sys_menu` VALUES (111, '数据监控', 2, 3, 'druid', 'monitor/druid/index', 1, 'C', 1, 1, '/monitor/druid', 'druid', '', '2020-07-20 23:54:31', 'ry', '2018-03-16 11:33:00', '', '', 'GET');
-INSERT INTO `sys_menu` VALUES (112, '服务监控', 2, 4, 'server', 'monitor/server/index', 0, 'C', 0, 0, '/monitor/server', 'server', '', '2020-06-29 10:06:33', 'ry', '2018-03-16 11:33:00', '', 'GET:/monitor/server', 'GET');
-INSERT INTO `sys_menu` VALUES (113, '表单构建', 3, 1, 'build', 'tool/build/index', 0, 'C', 0, 0, '/tool/build', 'build', '', '2020-07-20 23:54:41', 'ry', '2018-03-16 11:33:00', '', '', 'GET');
-INSERT INTO `sys_menu` VALUES (114, '代码生成', 3, 2, 'gen', 'tool/gen/index', 0, 'C', 0, 0, '/tool/gen', 'code', '', '2020-06-29 10:07:41', 'ry', '2018-03-16 11:33:00', '', 'GET:/tool/gen', 'GET');
-INSERT INTO `sys_menu` VALUES (115, '系统接口', 3, 3, 'swagger', '', 0, 'C', 1, 1, '/tool/swagger', 'swagger', '', '2020-06-23 08:44:22', 'ry', '2018-03-16 11:33:00', '', NULL, NULL);
-INSERT INTO `sys_menu` VALUES (500, '操作日志', 108, 1, 'operlog', 'monitor/operlog/index', 0, 'C', 0, 0, '/monitor/operlog', 'form', '', '2020-06-29 10:01:51', 'ry', '2018-03-16 11:33:00', '', 'GET:/monitor/operlog', 'GET');
-INSERT INTO `sys_menu` VALUES (501, '登录日志', 108, 2, 'logininfor', 'monitor/logininfor/index', 0, 'C', 0, 0, '/monitor/logininfor', 'logininfor', '', '2020-06-29 10:02:06', 'ry', '2018-03-16 11:33:00', '', 'GET:/monitor/logininfor', 'GET');
-INSERT INTO `sys_menu` VALUES (1001, '用户查询', 100, 1, '', '', 0, 'F', 0, 0, '/system/user/info', '', '', '2020-07-20 23:43:33', 'ry', '2018-03-16 11:33:00', '', 'GET:/system/user/info', 'GET');
-INSERT INTO `sys_menu` VALUES (1002, '用户新增', 100, 2, '', '', 0, 'F', 0, 0, '/system/user', '', '', '2020-07-20 23:43:37', 'ry', '2018-03-16 11:33:00', '', 'POST:/system/user', 'POST');
-INSERT INTO `sys_menu` VALUES (1003, '用户修改', 100, 3, '', '', 0, 'F', 0, 0, '/system/user', '', '', '2020-07-20 23:43:41', 'ry', '2018-03-16 11:33:00', '', 'PUT:/system/user', 'PUT');
-INSERT INTO `sys_menu` VALUES (1004, '用户删除', 100, 4, '', '', 0, 'F', 0, 0, '/system/user', '', '', '2020-07-20 23:43:53', 'ry', '2018-03-16 11:33:00', '', 'DELETE:/system/user', 'DELETE');
-INSERT INTO `sys_menu` VALUES (1005, '用户导出', 100, 5, '', '', 0, 'F', 0, 0, '/system/user/export', '', '', '2020-07-20 23:48:43', 'ry', '2018-03-16 11:33:00', '', 'GET:/system/user/export', 'GET');
-INSERT INTO `sys_menu` VALUES (1006, '用户导入', 100, 6, '', '', 0, 'F', 0, 0, '/system/user/import', '', '', '2020-07-20 23:48:50', 'ry', '2018-03-16 11:33:00', '', 'GET:/system/user/import', 'GET');
-INSERT INTO `sys_menu` VALUES (1007, '重置密码', 100, 7, '', '', 0, 'F', 0, 0, '/system/user/resetPwd', '', '', '2020-07-20 23:48:55', 'ry', '2018-03-16 11:33:00', '', 'PUT:/system/user/resetPwd', 'PUT');
-INSERT INTO `sys_menu` VALUES (1008, '角色查询', 101, 1, '', '', 0, 'F', 0, 0, '/system/role/info', '', '', '2020-07-20 23:49:18', 'ry', '2018-03-16 11:33:00', '', 'GET:/system/role/info', 'GET');
-INSERT INTO `sys_menu` VALUES (1009, '角色新增', 101, 2, '', '', 0, 'F', 0, 0, '/system/role', '', '', '2020-07-20 23:49:14', 'ry', '2018-03-16 11:33:00', '', 'POST:/system/role', 'POST');
-INSERT INTO `sys_menu` VALUES (1010, '角色修改', 101, 3, '', '', 0, 'F', 0, 0, '/system/role', '', '', '2020-07-20 23:49:27', 'ry', '2018-03-16 11:33:00', '', 'PUT:/system/role', 'PUT');
-INSERT INTO `sys_menu` VALUES (1011, '角色删除', 101, 4, '', '', 0, 'F', 0, 0, '/system/role', '', '', '2020-07-20 23:49:33', 'ry', '2018-03-16 11:33:00', '', 'DELETE:/system/role', 'DELETE');
-INSERT INTO `sys_menu` VALUES (1012, '角色导出', 101, 5, '', '', 0, 'F', 0, 0, '/system/role/export', '', '', '2020-07-20 23:49:38', 'ry', '2018-03-16 11:33:00', '', 'GET:/system/role/export', 'GET');
-INSERT INTO `sys_menu` VALUES (1013, '菜单查询', 102, 1, '', '', 0, 'F', 0, 0, '/system/menu/info', '', '', '2020-07-20 23:49:51', 'ry', '2018-03-16 11:33:00', '', 'GET:/system/menu/info', 'GET');
-INSERT INTO `sys_menu` VALUES (1014, '菜单新增', 102, 2, '', '', 0, 'F', 0, 0, '/system/menu', '', '', '2020-07-20 23:50:20', 'ry', '2018-03-16 11:33:00', '', 'POST:/system/menu', 'POST');
-INSERT INTO `sys_menu` VALUES (1015, '菜单修改', 102, 3, '', '', 0, 'F', 0, 0, '/system/menu', '', '', '2020-07-20 23:50:25', 'ry', '2018-03-16 11:33:00', '', 'PUT:/system/menu', 'PUT');
-INSERT INTO `sys_menu` VALUES (1016, '菜单删除', 102, 4, '', '', 0, 'F', 0, 0, '/system/menu', '', '', '2020-07-20 23:50:31', 'ry', '2018-03-16 11:33:00', '', 'DELETE:/system/menu', 'DELETE');
-INSERT INTO `sys_menu` VALUES (1017, '部门查询', 103, 1, '', '', 0, 'F', 0, 0, '/system/dept/info', '', '', '2020-07-20 23:50:45', 'ry', '2018-03-16 11:33:00', '', 'GET:/system/dept/info', 'GET');
-INSERT INTO `sys_menu` VALUES (1018, '部门新增', 103, 2, '', '', 0, 'F', 0, 0, '/system/dept', '', '', '2020-07-20 23:50:51', 'ry', '2018-03-16 11:33:00', '', 'POST:/system/dept', 'POST');
-INSERT INTO `sys_menu` VALUES (1019, '部门修改', 103, 3, '', '', 0, 'F', 0, 0, '/system/dept', '', '', '2020-07-20 23:50:55', 'ry', '2018-03-16 11:33:00', '', 'PUT:/system/dept', 'PUT');
-INSERT INTO `sys_menu` VALUES (1020, '部门删除', 103, 4, '', '', 0, 'F', 0, 0, '/system/dept', '', '', '2020-07-20 23:51:00', 'ry', '2018-03-16 11:33:00', '', 'DELETE:/system/dept', 'DELETE');
-INSERT INTO `sys_menu` VALUES (1021, '岗位查询', 104, 1, '', '', 0, 'F', 0, 0, '/system/post/info', '', '', '2020-07-20 23:51:08', 'ry', '2018-03-16 11:33:00', '', 'GET:/system/post/info', 'GET');
-INSERT INTO `sys_menu` VALUES (1022, '岗位新增', 104, 2, '', '', 0, 'F', 0, 0, '/system/post', '', '', '2020-07-20 23:51:14', 'ry', '2018-03-16 11:33:00', '', 'POST:/system/post', 'POST');
-INSERT INTO `sys_menu` VALUES (1023, '岗位修改', 104, 3, '', '', 0, 'F', 0, 0, '/system/post', '', '', '2020-07-20 23:51:19', 'ry', '2018-03-16 11:33:00', '', 'PUT:/system/post', 'PUT');
-INSERT INTO `sys_menu` VALUES (1024, '岗位删除', 104, 4, '', '', 0, 'F', 0, 0, '/system/post', '', '', '2020-07-20 23:51:25', 'ry', '2018-03-16 11:33:00', '', 'DELETE:/system/post', 'DELETE');
-INSERT INTO `sys_menu` VALUES (1025, '岗位导出', 104, 5, '', '', 0, 'F', 0, 0, '/system/post/export', '', '', '2020-07-20 23:51:30', 'ry', '2018-03-16 11:33:00', '', 'GET:/system/post/export', 'GET');
-INSERT INTO `sys_menu` VALUES (1026, '字典查询', 105, 1, '', '', 0, 'F', 0, 0, '/system/dict/type/info', '', '', '2020-07-21 11:53:08', 'ry', '2018-03-16 11:33:00', '', 'GET:/system/dict/info', 'GET');
-INSERT INTO `sys_menu` VALUES (1027, '字典新增', 105, 2, '', '', 0, 'F', 0, 0, '/system/dict/type', '', '', '2020-07-21 11:53:14', 'ry', '2018-03-16 11:33:00', '', 'POST:/system/dict', 'POST');
-INSERT INTO `sys_menu` VALUES (1028, '字典修改', 105, 3, '', '', 0, 'F', 0, 0, '/system/dict/type', '', '', '2020-07-21 11:53:20', 'ry', '2018-03-16 11:33:00', '', 'PUT:/system/dict', 'PUT');
-INSERT INTO `sys_menu` VALUES (1029, '字典删除', 105, 4, '', '', 0, 'F', 0, 0, '/system/dict/type', '', '', '2020-07-21 11:53:24', 'ry', '2018-03-16 11:33:00', '', 'DELETE:/system/dict', 'DELETE');
-INSERT INTO `sys_menu` VALUES (1030, '字典导出', 105, 5, '', '', 0, 'F', 0, 0, '/system/dict/type/export', '', '', '2020-07-21 11:53:28', 'ry', '2018-03-16 11:33:00', '', 'GET:/system/dict/export', 'GET');
-INSERT INTO `sys_menu` VALUES (1031, '参数查询', 106, 1, '', '', 0, 'F', 0, 0, '/system/config/info', '', '', '2020-07-20 23:52:07', 'ry', '2018-03-16 11:33:00', '', 'GET:/system/config/info', 'GET');
-INSERT INTO `sys_menu` VALUES (1032, '参数新增', 106, 2, '', '', 0, 'F', 0, 0, '/system/config', '', '', '2020-07-20 23:52:11', 'ry', '2018-03-16 11:33:00', '', 'POST:/system/config', 'POST');
-INSERT INTO `sys_menu` VALUES (1033, '参数修改', 106, 3, '', '', 0, 'F', 0, 0, '/system/config', '', '', '2020-07-20 23:52:17', 'ry', '2018-03-16 11:33:00', '', 'PUT:/system/config', 'PUT');
-INSERT INTO `sys_menu` VALUES (1034, '参数删除', 106, 4, '', '', 0, 'F', 0, 0, '/system/config', '', '', '2020-07-20 23:52:23', 'ry', '2018-03-16 11:33:00', '', 'DELETE:/system/config', 'DELETE');
-INSERT INTO `sys_menu` VALUES (1035, '参数导出', 106, 5, '', '', 0, 'F', 0, 0, '/system/config/export', '', '', '2020-07-20 23:52:28', 'ry', '2018-03-16 11:33:00', '', 'GET:/system/config/export', 'GET');
-INSERT INTO `sys_menu` VALUES (1040, '操作查询', 500, 1, '', '', 0, 'F', 0, 0, '/monitor/operlog/info', '', '', '2020-07-20 23:52:46', 'ry', '2018-03-16 11:33:00', '', '', 'GET');
-INSERT INTO `sys_menu` VALUES (1041, '操作删除', 500, 2, '', '', 0, 'F', 0, 0, '/monitor/operlog', '', '', '2020-06-29 10:03:10', 'ry', '2018-03-16 11:33:00', '', 'DELETE:/monitor/operlog', 'DELETE');
-INSERT INTO `sys_menu` VALUES (1042, '日志导出', 500, 4, '', '', 0, 'F', 0, 0, '/monitor/operlog/export', '', '', '2020-07-20 23:52:58', 'ry', '2018-03-16 11:33:00', '', 'GET:/monitor/operlog/export', 'GET');
-INSERT INTO `sys_menu` VALUES (1043, '登录查询', 501, 1, '', '', 0, 'F', 0, 0, '/monitor/logininfor/info', '', '', '2020-07-20 23:53:11', 'ry', '2018-03-16 11:33:00', '', '', 'GET');
-INSERT INTO `sys_menu` VALUES (1044, '登录删除', 501, 2, '', '', 0, 'F', 0, 0, '/monitor/logininfor', '', '', '2020-07-20 23:53:18', 'ry', '2018-03-16 11:33:00', '', 'DELETE:/monitor/logininfor', 'DELETE');
-INSERT INTO `sys_menu` VALUES (1045, '日志导出', 501, 3, '', '', 0, 'F', 0, 0, '/monitor/logininfor/export', '', '', '2020-07-20 23:53:23', 'ry', '2018-03-16 11:33:00', '', 'GET:/monitor/logininfor/export', 'GET');
-INSERT INTO `sys_menu` VALUES (1047, '批量强退', 109, 2, '', '', 0, 'F', 0, 0, '/monitor/online/batchLogout', '', '', '2020-07-20 23:53:41', 'ry', '2018-03-16 11:33:00', '', 'PUT:/monitor/online', 'PUT');
-INSERT INTO `sys_menu` VALUES (1048, '单条强退', 109, 3, '', '', 0, 'F', 0, 0, '/monitor/online', '', '', '2020-07-21 11:58:16', 'ry', '2018-03-16 11:33:00', '', 'PUT:/monitor/online', 'DELETE');
-INSERT INTO `sys_menu` VALUES (1049, '任务查询', 110, 1, '', '', 0, 'F', 0, 0, '/monitor/job/info', '', '', '2020-07-20 23:53:57', 'ry', '2018-03-16 11:33:00', '', 'GET:/monitor/job/info', 'GET');
-INSERT INTO `sys_menu` VALUES (1050, '任务新增', 110, 2, '', '', 0, 'F', 0, 0, '/monitor/job', '', '', '2020-07-20 23:54:01', 'ry', '2018-03-16 11:33:00', '', 'POST:/monitor/job', 'POST');
-INSERT INTO `sys_menu` VALUES (1051, '任务修改', 110, 3, '', '', 0, 'F', 0, 0, '/monitor/job', '', '', '2020-07-20 23:54:10', 'ry', '2018-03-16 11:33:00', '', 'PUT:/monitor/job', 'PUT');
-INSERT INTO `sys_menu` VALUES (1052, '任务删除', 110, 4, '', '', 0, 'F', 0, 0, '/monitor/job', '', '', '2020-07-20 23:54:15', 'ry', '2018-03-16 11:33:00', '', 'DELETE:/monitor/job', 'DELETE');
-INSERT INTO `sys_menu` VALUES (1053, '状态修改', 110, 5, '', '', 0, 'F', 0, 0, '/monitor/job/changeStatus', '', '', '2020-07-20 23:54:20', 'ry', '2018-03-16 11:33:00', '', 'PUT:/monitor/job/changeStatus', 'PUT');
-INSERT INTO `sys_menu` VALUES (1054, '任务导出', 110, 7, '', '', 0, 'F', 0, 0, '/monitor/job/export', '', '', '2020-07-20 23:54:26', 'ry', '2018-03-16 11:33:00', '', 'GET:/monitor/job/export', 'GET');
-INSERT INTO `sys_menu` VALUES (1055, '生成查询', 114, 1, '', '', 0, 'F', 0, 0, '/tool/gen/info', '', '', '2020-06-29 10:07:55', 'ry', '2018-03-16 11:33:00', '', 'GET:/tool/gen/info', 'GET');
-INSERT INTO `sys_menu` VALUES (1056, '生成修改', 114, 2, '', '', 0, 'F', 0, 0, '/tool/gen', '', '', '2020-07-20 23:55:56', 'ry', '2018-03-16 11:33:00', '', 'PUT:/tool/gen', 'PUT');
-INSERT INTO `sys_menu` VALUES (1057, '生成删除', 114, 3, '', '', 0, 'F', 0, 0, '/tool/gen', '', '', '2020-06-29 10:08:09', 'ry', '2018-03-16 11:33:00', '', 'DELETE:/tool/gen', 'DELETE');
-INSERT INTO `sys_menu` VALUES (1058, '导入代码', 114, 2, '', '', 0, 'F', 0, 0, '/tool/gen', '', '', '2020-07-20 23:57:08', 'ry', '2018-03-16 11:33:00', '', 'POST:/tool/gen/importTable', 'POST');
-INSERT INTO `sys_menu` VALUES (1059, '预览代码', 114, 4, '', '', 0, 'F', 0, 0, '/tool/gen/preview', '', '', '2020-07-20 23:57:22', 'ry', '2018-03-16 11:33:00', '', 'GET:/tool/gen/preview', 'GET');
-INSERT INTO `sys_menu` VALUES (1060, '生成代码', 114, 5, '', '', 0, 'F', 0, 0, '/tool/gen/batchGenCode', '', '', '2020-07-20 23:57:38', 'ry', '2018-03-16 11:33:00', '', 'GET:/tool/gen/batchGenCode', 'GET');
+INSERT INTO `sys_menu` VALUES (112, '服务监控', 2, 4, 'server', 'monitor/server/index', 1, 'C', 0, 0, '/monitor/server', 'server', '', '2020-06-29 10:06:33', 'ry', '2018-03-16 11:33:00', '', 'GET:/monitor/server', 'GET');
+INSERT INTO `sys_menu` VALUES (113, '表单构建', 3, 1, 'build', 'tool/build/index', 1, 'C', 0, 0, '/tool/build', 'build', '', '2020-07-20 23:54:41', 'ry', '2018-03-16 11:33:00', '', '', 'GET');
+INSERT INTO `sys_menu` VALUES (114, '代码生成', 3, 2, 'gen', 'tool/gen/index', 1, 'C', 0, 0, '/tool/gen', 'code', '', '2020-06-29 10:07:41', 'ry', '2018-03-16 11:33:00', '', 'GET:/tool/gen', 'GET');
+INSERT INTO `sys_menu` VALUES (115, '系统接口', 3, 3, 'swagger', '', 1, 'C', 1, 1, '/tool/swagger', 'swagger', '', '2020-06-23 08:44:22', 'ry', '2018-03-16 11:33:00', '', NULL, NULL);
+INSERT INTO `sys_menu` VALUES (500, '操作日志', 108, 1, 'operlog', 'monitor/operlog/index', 1, 'C', 0, 0, '/monitor/operlog', 'form', '', '2020-06-29 10:01:51', 'ry', '2018-03-16 11:33:00', '', 'GET:/monitor/operlog', 'GET');
+INSERT INTO `sys_menu` VALUES (501, '登录日志', 108, 2, 'logininfor', 'monitor/logininfor/index', 1, 'C', 0, 0, '/monitor/logininfor', 'logininfor', '', '2020-06-29 10:02:06', 'ry', '2018-03-16 11:33:00', '', 'GET:/monitor/logininfor', 'GET');
+INSERT INTO `sys_menu` VALUES (1001, '用户查询', 100, 1, '', '', 1, 'F', 0, 0, '/system/user/info', '', '', '2020-07-20 23:43:33', 'ry', '2018-03-16 11:33:00', '', 'GET:/system/user/info', 'GET');
+INSERT INTO `sys_menu` VALUES (1002, '用户新增', 100, 2, '', '', 1, 'F', 0, 0, '/system/user', '', '', '2020-07-20 23:43:37', 'ry', '2018-03-16 11:33:00', '', 'POST:/system/user', 'POST');
+INSERT INTO `sys_menu` VALUES (1003, '用户修改', 100, 3, '', '', 1, 'F', 0, 0, '/system/user', '', '', '2020-07-20 23:43:41', 'ry', '2018-03-16 11:33:00', '', 'PUT:/system/user', 'PUT');
+INSERT INTO `sys_menu` VALUES (1004, '用户删除', 100, 4, '', '', 1, 'F', 0, 0, '/system/user', '', '', '2020-07-20 23:43:53', 'ry', '2018-03-16 11:33:00', '', 'DELETE:/system/user', 'DELETE');
+INSERT INTO `sys_menu` VALUES (1005, '用户导出', 100, 5, '', '', 1, 'F', 0, 0, '/system/user/export', '', '', '2020-07-20 23:48:43', 'ry', '2018-03-16 11:33:00', '', 'GET:/system/user/export', 'GET');
+INSERT INTO `sys_menu` VALUES (1006, '用户导入', 100, 6, '', '', 1, 'F', 0, 0, '/system/user/import', '', '', '2020-07-20 23:48:50', 'ry', '2018-03-16 11:33:00', '', 'GET:/system/user/import', 'GET');
+INSERT INTO `sys_menu` VALUES (1007, '重置密码', 100, 7, '', '', 1, 'F', 0, 0, '/system/user/resetPwd', '', '', '2020-07-20 23:48:55', 'ry', '2018-03-16 11:33:00', '', 'PUT:/system/user/resetPwd', 'PUT');
+INSERT INTO `sys_menu` VALUES (1008, '角色查询', 101, 1, '', '', 1, 'F', 0, 0, '/system/role/info', '', '', '2020-07-20 23:49:18', 'ry', '2018-03-16 11:33:00', '', 'GET:/system/role/info', 'GET');
+INSERT INTO `sys_menu` VALUES (1009, '角色新增', 101, 2, '', '', 1, 'F', 0, 0, '/system/role', '', '', '2020-07-20 23:49:14', 'ry', '2018-03-16 11:33:00', '', 'POST:/system/role', 'POST');
+INSERT INTO `sys_menu` VALUES (1010, '角色修改', 101, 3, '', '', 1, 'F', 0, 0, '/system/role', '', '', '2020-07-20 23:49:27', 'ry', '2018-03-16 11:33:00', '', 'PUT:/system/role', 'PUT');
+INSERT INTO `sys_menu` VALUES (1011, '角色删除', 101, 4, '', '', 1, 'F', 0, 0, '/system/role', '', '', '2020-07-20 23:49:33', 'ry', '2018-03-16 11:33:00', '', 'DELETE:/system/role', 'DELETE');
+INSERT INTO `sys_menu` VALUES (1012, '角色导出', 101, 5, '', '', 1, 'F', 0, 0, '/system/role/export', '', '', '2020-07-20 23:49:38', 'ry', '2018-03-16 11:33:00', '', 'GET:/system/role/export', 'GET');
+INSERT INTO `sys_menu` VALUES (1013, '菜单查询', 102, 1, '', '', 1, 'F', 0, 0, '/system/menu/info', '', '', '2020-07-20 23:49:51', 'ry', '2018-03-16 11:33:00', '', 'GET:/system/menu/info', 'GET');
+INSERT INTO `sys_menu` VALUES (1014, '菜单新增', 102, 2, '', '', 1, 'F', 0, 0, '/system/menu', '', '', '2020-07-20 23:50:20', 'ry', '2018-03-16 11:33:00', '', 'POST:/system/menu', 'POST');
+INSERT INTO `sys_menu` VALUES (1015, '菜单修改', 102, 3, '', '', 1, 'F', 0, 0, '/system/menu', '', '', '2020-07-20 23:50:25', 'ry', '2018-03-16 11:33:00', '', 'PUT:/system/menu', 'PUT');
+INSERT INTO `sys_menu` VALUES (1016, '菜单删除', 102, 4, '', '', 1, 'F', 0, 0, '/system/menu', '', '', '2020-07-20 23:50:31', 'ry', '2018-03-16 11:33:00', '', 'DELETE:/system/menu', 'DELETE');
+INSERT INTO `sys_menu` VALUES (1017, '部门查询', 103, 1, '', '', 1, 'F', 0, 0, '/system/dept/info', '', '', '2020-07-20 23:50:45', 'ry', '2018-03-16 11:33:00', '', 'GET:/system/dept/info', 'GET');
+INSERT INTO `sys_menu` VALUES (1018, '部门新增', 103, 2, '', '', 1, 'F', 0, 0, '/system/dept', '', '', '2020-07-20 23:50:51', 'ry', '2018-03-16 11:33:00', '', 'POST:/system/dept', 'POST');
+INSERT INTO `sys_menu` VALUES (1019, '部门修改', 103, 3, '', '', 1, 'F', 0, 0, '/system/dept', '', '', '2020-07-20 23:50:55', 'ry', '2018-03-16 11:33:00', '', 'PUT:/system/dept', 'PUT');
+INSERT INTO `sys_menu` VALUES (1020, '部门删除', 103, 4, '', '', 1, 'F', 0, 0, '/system/dept', '', '', '2020-07-20 23:51:00', 'ry', '2018-03-16 11:33:00', '', 'DELETE:/system/dept', 'DELETE');
+INSERT INTO `sys_menu` VALUES (1021, '岗位查询', 104, 1, '', '', 1, 'F', 0, 0, '/system/post/info', '', '', '2020-07-20 23:51:08', 'ry', '2018-03-16 11:33:00', '', 'GET:/system/post/info', 'GET');
+INSERT INTO `sys_menu` VALUES (1022, '岗位新增', 104, 2, '', '', 1, 'F', 0, 0, '/system/post', '', '', '2020-07-20 23:51:14', 'ry', '2018-03-16 11:33:00', '', 'POST:/system/post', 'POST');
+INSERT INTO `sys_menu` VALUES (1023, '岗位修改', 104, 3, '', '', 1, 'F', 0, 0, '/system/post', '', '', '2020-07-20 23:51:19', 'ry', '2018-03-16 11:33:00', '', 'PUT:/system/post', 'PUT');
+INSERT INTO `sys_menu` VALUES (1024, '岗位删除', 104, 4, '', '', 1, 'F', 0, 0, '/system/post', '', '', '2020-07-20 23:51:25', 'ry', '2018-03-16 11:33:00', '', 'DELETE:/system/post', 'DELETE');
+INSERT INTO `sys_menu` VALUES (1025, '岗位导出', 104, 5, '', '', 1, 'F', 0, 0, '/system/post/export', '', '', '2020-07-20 23:51:30', 'ry', '2018-03-16 11:33:00', '', 'GET:/system/post/export', 'GET');
+INSERT INTO `sys_menu` VALUES (1026, '字典查询', 105, 1, '', '', 1, 'F', 0, 0, '/system/dict/type/info', '', '', '2020-07-21 11:53:08', 'ry', '2018-03-16 11:33:00', '', 'GET:/system/dict/info', 'GET');
+INSERT INTO `sys_menu` VALUES (1027, '字典新增', 105, 2, '', '', 1, 'F', 0, 0, '/system/dict/type', '', '', '2020-07-21 11:53:14', 'ry', '2018-03-16 11:33:00', '', 'POST:/system/dict', 'POST');
+INSERT INTO `sys_menu` VALUES (1028, '字典修改', 105, 3, '', '', 1, 'F', 0, 0, '/system/dict/type', '', '', '2020-07-21 11:53:20', 'ry', '2018-03-16 11:33:00', '', 'PUT:/system/dict', 'PUT');
+INSERT INTO `sys_menu` VALUES (1029, '字典删除', 105, 4, '', '', 1, 'F', 0, 0, '/system/dict/type', '', '', '2020-07-21 11:53:24', 'ry', '2018-03-16 11:33:00', '', 'DELETE:/system/dict', 'DELETE');
+INSERT INTO `sys_menu` VALUES (1030, '字典导出', 105, 5, '', '', 1, 'F', 0, 0, '/system/dict/type/export', '', '', '2020-07-21 11:53:28', 'ry', '2018-03-16 11:33:00', '', 'GET:/system/dict/export', 'GET');
+INSERT INTO `sys_menu` VALUES (1031, '参数查询', 106, 1, '', '', 1, 'F', 0, 0, '/system/config/info', '', '', '2020-07-20 23:52:07', 'ry', '2018-03-16 11:33:00', '', 'GET:/system/config/info', 'GET');
+INSERT INTO `sys_menu` VALUES (1032, '参数新增', 106, 2, '', '', 1, 'F', 0, 0, '/system/config', '', '', '2020-07-20 23:52:11', 'ry', '2018-03-16 11:33:00', '', 'POST:/system/config', 'POST');
+INSERT INTO `sys_menu` VALUES (1033, '参数修改', 106, 3, '', '', 1, 'F', 0, 0, '/system/config', '', '', '2020-07-20 23:52:17', 'ry', '2018-03-16 11:33:00', '', 'PUT:/system/config', 'PUT');
+INSERT INTO `sys_menu` VALUES (1034, '参数删除', 106, 4, '', '', 1, 'F', 0, 0, '/system/config', '', '', '2020-07-20 23:52:23', 'ry', '2018-03-16 11:33:00', '', 'DELETE:/system/config', 'DELETE');
+INSERT INTO `sys_menu` VALUES (1035, '参数导出', 106, 5, '', '', 1, 'F', 0, 0, '/system/config/export', '', '', '2020-07-20 23:52:28', 'ry', '2018-03-16 11:33:00', '', 'GET:/system/config/export', 'GET');
+INSERT INTO `sys_menu` VALUES (1040, '操作查询', 500, 1, '', '', 1, 'F', 0, 0, '/monitor/operlog/info', '', '', '2020-07-20 23:52:46', 'ry', '2018-03-16 11:33:00', '', '', 'GET');
+INSERT INTO `sys_menu` VALUES (1041, '操作删除', 500, 2, '', '', 1, 'F', 0, 0, '/monitor/operlog', '', '', '2020-06-29 10:03:10', 'ry', '2018-03-16 11:33:00', '', 'DELETE:/monitor/operlog', 'DELETE');
+INSERT INTO `sys_menu` VALUES (1042, '日志导出', 500, 4, '', '', 1, 'F', 0, 0, '/monitor/operlog/export', '', '', '2020-07-20 23:52:58', 'ry', '2018-03-16 11:33:00', '', 'GET:/monitor/operlog/export', 'GET');
+INSERT INTO `sys_menu` VALUES (1043, '登录查询', 501, 1, '', '', 1, 'F', 0, 0, '/monitor/logininfor/info', '', '', '2020-07-20 23:53:11', 'ry', '2018-03-16 11:33:00', '', '', 'GET');
+INSERT INTO `sys_menu` VALUES (1044, '登录删除', 501, 2, '', '', 1, 'F', 0, 0, '/monitor/logininfor', '', '', '2020-07-20 23:53:18', 'ry', '2018-03-16 11:33:00', '', 'DELETE:/monitor/logininfor', 'DELETE');
+INSERT INTO `sys_menu` VALUES (1045, '日志导出', 501, 3, '', '', 1, 'F', 0, 0, '/monitor/logininfor/export', '', '', '2020-07-20 23:53:23', 'ry', '2018-03-16 11:33:00', '', 'GET:/monitor/logininfor/export', 'GET');
+INSERT INTO `sys_menu` VALUES (1047, '批量强退', 109, 2, '', '', 1, 'F', 0, 0, '/monitor/online/batchLogout', '', '', '2020-07-20 23:53:41', 'ry', '2018-03-16 11:33:00', '', 'PUT:/monitor/online', 'PUT');
+INSERT INTO `sys_menu` VALUES (1048, '单条强退', 109, 3, '', '', 1, 'F', 0, 0, '/monitor/online', '', '', '2020-07-21 11:58:16', 'ry', '2018-03-16 11:33:00', '', 'PUT:/monitor/online', 'DELETE');
+INSERT INTO `sys_menu` VALUES (1049, '任务查询', 110, 1, '', '', 1, 'F', 0, 0, '/monitor/job/info', '', '', '2020-07-20 23:53:57', 'ry', '2018-03-16 11:33:00', '', 'GET:/monitor/job/info', 'GET');
+INSERT INTO `sys_menu` VALUES (1050, '任务新增', 110, 2, '', '', 1, 'F', 0, 0, '/monitor/job', '', '', '2020-07-20 23:54:01', 'ry', '2018-03-16 11:33:00', '', 'POST:/monitor/job', 'POST');
+INSERT INTO `sys_menu` VALUES (1051, '任务修改', 110, 3, '', '', 1, 'F', 0, 0, '/monitor/job', '', '', '2020-07-20 23:54:10', 'ry', '2018-03-16 11:33:00', '', 'PUT:/monitor/job', 'PUT');
+INSERT INTO `sys_menu` VALUES (1052, '任务删除', 110, 4, '', '', 1, 'F', 0, 0, '/monitor/job', '', '', '2020-07-20 23:54:15', 'ry', '2018-03-16 11:33:00', '', 'DELETE:/monitor/job', 'DELETE');
+INSERT INTO `sys_menu` VALUES (1053, '状态修改', 110, 5, '', '', 1, 'F', 0, 0, '/monitor/job/changeStatus', '', '', '2020-07-20 23:54:20', 'ry', '2018-03-16 11:33:00', '', 'PUT:/monitor/job/changeStatus', 'PUT');
+INSERT INTO `sys_menu` VALUES (1054, '任务导出', 110, 7, '', '', 1, 'F', 0, 0, '/monitor/job/export', '', '', '2020-07-20 23:54:26', 'ry', '2018-03-16 11:33:00', '', 'GET:/monitor/job/export', 'GET');
+INSERT INTO `sys_menu` VALUES (1055, '生成查询', 114, 1, '', '', 1, 'F', 0, 0, '/tool/gen/info', '', '', '2020-06-29 10:07:55', 'ry', '2018-03-16 11:33:00', '', 'GET:/tool/gen/info', 'GET');
+INSERT INTO `sys_menu` VALUES (1056, '生成修改', 114, 2, '', '', 1, 'F', 0, 0, '/tool/gen', '', '', '2020-07-20 23:55:56', 'ry', '2018-03-16 11:33:00', '', 'PUT:/tool/gen', 'PUT');
+INSERT INTO `sys_menu` VALUES (1057, '生成删除', 114, 3, '', '', 1, 'F', 0, 0, '/tool/gen', '', '', '2020-06-29 10:08:09', 'ry', '2018-03-16 11:33:00', '', 'DELETE:/tool/gen', 'DELETE');
+INSERT INTO `sys_menu` VALUES (1058, '导入代码', 114, 2, '', '', 1, 'F', 0, 0, '/tool/gen', '', '', '2020-07-20 23:57:08', 'ry', '2018-03-16 11:33:00', '', 'POST:/tool/gen/importTable', 'POST');
+INSERT INTO `sys_menu` VALUES (1059, '预览代码', 114, 4, '', '', 1, 'F', 0, 0, '/tool/gen/preview', '', '', '2020-07-20 23:57:22', 'ry', '2018-03-16 11:33:00', '', 'GET:/tool/gen/preview', 'GET');
+INSERT INTO `sys_menu` VALUES (1060, '生成代码', 114, 5, '', '', 1, 'F', 0, 0, '/tool/gen/batchGenCode', '', '', '2020-07-20 23:57:38', 'ry', '2018-03-16 11:33:00', '', 'GET:/tool/gen/batchGenCode', 'GET');
 INSERT INTO `sys_menu` VALUES (1061, '表查询', 114, 6, '', '', 1, 'F', 0, 0, '/tool/gen/db/list', '', 'admin', '2020-07-20 23:59:35', '', NULL, '', '', 'GET');
 INSERT INTO `sys_menu` VALUES (1064, '执行一次', 110, 8, '', '', 1, 'F', 0, 0, '/monitor/job/run', '', 'admin', '2020-07-21 11:43:11', '', NULL, '', '', 'PUT');
 INSERT INTO `sys_menu` VALUES (1065, '任务日志', 110, 0, '', '', 1, 'F', 0, 0, '/monitor/jobLog', '', 'admin', '2020-07-21 11:44:24', '', NULL, '', '', 'GET');
@@ -742,7 +680,7 @@ CREATE TABLE `sys_oper_log` (
   `error_msg` varchar(2000) DEFAULT '' COMMENT '错误消息',
   `oper_time` datetime DEFAULT NULL COMMENT '操作时间',
   PRIMARY KEY (`oper_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1883 DEFAULT CHARSET=utf8 COMMENT='操作日志记录';
+) ENGINE=InnoDB AUTO_INCREMENT=1892 DEFAULT CHARSET=utf8 COMMENT='操作日志记录';
 
 -- ----------------------------
 -- Records of sys_oper_log
@@ -919,6 +857,15 @@ INSERT INTO `sys_oper_log` VALUES (1879, '代码生成管理', 2, '/tool/gen', '
 INSERT INTO `sys_oper_log` VALUES (1880, '代码生成管理', 2, '/tool/gen', 'PUT', 1, 'admin', '测试部门', '/tool/gen', '172.17.0.1', '', '{\"business_name\":\"tq\",\"class_name\":\"tq\",\"columns\":\"[{\\\"column_id\\\":439,\\\"table_id\\\":43,\\\"column_name\\\":\\\"id\\\",\\\"column_comment\\\":\\\"ID\\\",\\\"column_type\\\":\\\"int(11)\\\",\\\"go_type\\\":\\\"int64\\\",\\\"go_field\\\":\\\"Id\\\",\\\"html_field\\\":\\\"id\\\",\\\"is_pk\\\":\\\"1\\\",\\\"is_increment\\\":\\\"0\\\",\\\"is_required\\\":\\\"0\\\",\\\"is_insert\\\":\\\"1\\\",\\\"is_edit\\\":\\\"0\\\",\\\"is_list\\\":\\\"0\\\",\\\"is_query\\\":\\\"0\\\",\\\"query_type\\\":\\\"EQ\\\",\\\"html_type\\\":\\\"input\\\",\\\"dict_type\\\":\\\"\\\",\\\"sort\\\":1,\\\"create_by\\\":\\\"admin\\\",\\\"create_time\\\":null,\\\"update_by\\\":\\\"\\\",\\\"update_time\\\":null},{\\\"column_id\\\":440,\\\"table_id\\\":43,\\\"column_name\\\":\\\"test_name\\\",\\\"column_comment\\\":\\\"测试名称\\\",\\\"column_type\\\":\\\"varchar(255)\\\",\\\"go_type\\\":\\\"string\\\",\\\"go_field\\\":\\\"TestName\\\",\\\"html_field\\\":\\\"testName\\\",\\\"is_pk\\\":\\\"0\\\",\\\"is_increment\\\":\\\"0\\\",\\\"is_required\\\":\\\"1\\\",\\\"is_insert\\\":\\\"1\\\",\\\"is_edit\\\":\\\"1\\\",\\\"is_list\\\":\\\"1\\\",\\\"is_query\\\":\\\"1\\\",\\\"query_type\\\":\\\"LIKE\\\",\\\"html_type\\\":\\\"input\\\",\\\"dict_type\\\":\\\"\\\",\\\"sort\\\":2,\\\"create_by\\\":\\\"admin\\\",\\\"create_time\\\":null,\\\"update_by\\\":\\\"\\\",\\\"update_time\\\":null},{\\\"column_id\\\":441,\\\"table_id\\\":43,\\\"column_name\\\":\\\"test_phone\\\",\\\"column_comment\\\":\\\"测试手机号\\\",\\\"column_type\\\":\\\"varchar(255)\\\",\\\"go_type\\\":\\\"string\\\",\\\"go_field\\\":\\\"TestPhone\\\",\\\"html_field\\\":\\\"testPhone\\\",\\\"is_pk\\\":\\\"0\\\",\\\"is_increment\\\":\\\"0\\\",\\\"is_required\\\":\\\"0\\\",\\\"is_insert\\\":\\\"1\\\",\\\"is_edit\\\":\\\"1\\\",\\\"is_list\\\":\\\"1\\\",\\\"is_query\\\":\\\"1\\\",\\\"query_type\\\":\\\"EQ\\\",\\\"html_type\\\":\\\"input\\\",\\\"dict_type\\\":\\\"\\\",\\\"sort\\\":3,\\\"create_by\\\":\\\"admin\\\",\\\"create_time\\\":null,\\\"update_by\\\":\\\"\\\",\\\"update_time\\\":null}]\",\"create_by\":\"admin\",\"create_time\":\"2021-02-01 15:27:56\",\"function_author\":\"1307\",\"function_name\":\"测试1\",\"module_name\":\"admin\",\"options\":\"{\\\"treeCode\\\":\\\"\\\",\\\"treeName\\\":\\\"\\\",\\\"treeParentCode\\\":\\\"\\\"}\",\"package_name\":\"gea\",\"params\":\"{\\\"treeCode\\\":\\\"\\\",\\\"treeName\\\":\\\"\\\",\\\"treeParentCode\\\":\\\"\\\"}\",\"pkColumn\":{\"column_comment\":\"\",\"column_id\":0,\"column_name\":\"\",\"column_type\":\"\",\"create_by\":\"\",\"create_time\":null,\"dict_type\":\"\",\"go_field\":\"\",\"go_type\":\"\",\"html_field\":\"\",\"html_type\":\"\",\"is_edit\":\"\",\"is_increment\":\"\",\"is_insert\":\"\",\"is_list\":\"\",\"is_pk\":\"\",\"is_query\":\"\",\"is_required\":\"\",\"query_type\":\"\",\"sort\":0,\"table_id\":0,\"update_by\":\"\",\"update_time\":null},\"remark\":\"\",\"table_comment\":\"测试表\",\"table_id\":43,\"table_name\":\"t_tq\",\"tpl_category\":\"crud\",\"treeCode\":\"\",\"treeName\":\"\",\"treeParentCode\":\"\",\"update_by\":\"admin\",\"update_time\":\"2021-02-01 15:40:58\"}', '{\"code\":0,\"msg\":\"操作成功\",\"data\":\"\",\"otype\":0,\"module\":\"代码生成管理\"}', 0, '', '2021-02-01 16:33:14');
 INSERT INTO `sys_oper_log` VALUES (1881, '用户管理', 2, '/api/system/user/changeStatus', 'PUT', 1, 'admin', '测试部门', '/api/system/user/changeStatus', '172.17.0.1', '', '{\"status\":\"1\",\"userId\":4}', '{\"code\":0,\"msg\":\"操作成功\",\"data\":\"\",\"otype\":0,\"module\":\"用户管理\"}', 0, '', '2021-02-09 10:43:31');
 INSERT INTO `sys_oper_log` VALUES (1882, '用户管理', 2, '/api/system/user/changeStatus', 'PUT', 1, 'admin', '测试部门', '/api/system/user/changeStatus', '172.17.0.1', '', '{\"status\":\"0\",\"userId\":4}', '{\"code\":0,\"msg\":\"操作成功\",\"data\":\"\",\"otype\":0,\"module\":\"用户管理\"}', 0, '', '2021-02-09 10:43:39');
+INSERT INTO `sys_oper_log` VALUES (1883, '角色管理', 2, '/api/system/role', 'PUT', 1, 'admin', '信息部', '/api/system/role', '172.17.0.1', '', '{\"create_by\":\"admin\",\"create_time\":\"2020-04-16 14:34:27\",\"data_scope\":\"5\",\"del_flag\":\"0\",\"menuIds\":\"110,1049,1050,1051,1052,1053,1054,1064,1065,1066,1067,111,112,2\",\"remark\":\"普通员工\",\"role_id\":3,\"role_key\":\"pop\",\"role_name\":\"员工\",\"role_sort\":0,\"status\":\"0\",\"update_by\":\"admin\",\"update_time\":\"2021-01-25 13:51:36\"}', '{\"code\":0,\"msg\":\"操作成功\",\"data\":\"\",\"otype\":0,\"module\":\"角色管理\"}', 0, '', '2021-04-06 09:11:37');
+INSERT INTO `sys_oper_log` VALUES (1884, '角色管理', 2, '/api/system/role', 'PUT', 1, 'admin', '信息部', '/api/system/role', '172.17.0.1', '', '{\"create_by\":\"admin\",\"create_time\":\"2020-04-16 14:34:27\",\"data_scope\":\"5\",\"del_flag\":\"0\",\"menuIds\":\"2,109,1047,1048,110,1049,1050,1051,1052,1053,1054,1064,1065,1066,1067,111,112\",\"remark\":\"普通员工\",\"role_id\":3,\"role_key\":\"pop\",\"role_name\":\"员工\",\"role_sort\":0,\"status\":\"0\",\"update_by\":\"admin\",\"update_time\":\"2021-04-06 09:11:36\"}', '{\"code\":0,\"msg\":\"操作成功\",\"data\":\"\",\"otype\":0,\"module\":\"角色管理\"}', 0, '', '2021-04-06 09:12:14');
+INSERT INTO `sys_oper_log` VALUES (1885, '部门管理', 1, '/api/system/dept', 'POST', 1, 'admin', '信息部', '/api/system/dept', '172.17.0.1', '', '{\"dept_name\":\"gea分部\",\"leader\":\"1307\",\"order_num\":1,\"status\":\"0\"}', '{\"code\":0,\"msg\":\"操作成功\",\"data\":\"\",\"otype\":0,\"module\":\"部门管理\"}', 0, '', '2021-04-06 09:12:38');
+INSERT INTO `sys_oper_log` VALUES (1886, '部门管理', 1, '/api/system/dept', 'POST', 1, 'admin', '信息部', '/api/system/dept', '172.17.0.1', '', '{\"dept_name\":\"营销公司\",\"leader\":\"1307\",\"order_num\":1,\"parent_id\":111,\"status\":\"0\"}', '{\"code\":0,\"msg\":\"操作成功\",\"data\":\"\",\"otype\":0,\"module\":\"部门管理\"}', 0, '', '2021-04-06 09:12:51');
+INSERT INTO `sys_oper_log` VALUES (1887, '部门管理', 1, '/api/system/dept', 'POST', 1, 'admin', '信息部', '/api/system/dept', '172.17.0.1', '', '{\"dept_name\":\"信息部\",\"order_num\":2,\"parent_id\":111,\"status\":\"0\"}', '{\"code\":0,\"msg\":\"操作成功\",\"data\":\"\",\"otype\":0,\"module\":\"部门管理\"}', 0, '', '2021-04-06 09:13:06');
+INSERT INTO `sys_oper_log` VALUES (1888, '角色管理', 4, '/api/system/role/dataScope', 'PUT', 1, 'admin', '信息部', '/api/system/role/dataScope', '172.17.0.1', '', '{\"create_by\":\"admin\",\"create_time\":\"2020-04-16 14:34:27\",\"dataScope\":\"2\",\"data_scope\":\"5\",\"del_flag\":\"0\",\"deptIds\":\"113,111\",\"remark\":\"普通员工\",\"role_id\":3,\"role_key\":\"pop\",\"role_name\":\"员工\",\"role_sort\":0,\"status\":\"0\",\"update_by\":\"admin\",\"update_time\":\"2021-04-06 09:12:14\"}', '{\"code\":0,\"msg\":\"操作成功\",\"data\":\"\",\"otype\":4,\"module\":\"角色管理\"}', 0, '', '2021-04-06 09:13:17');
+INSERT INTO `sys_oper_log` VALUES (1889, '角色管理', 4, '/api/system/role/dataScope', 'PUT', 1, 'admin', '信息部', '/api/system/role/dataScope', '172.17.0.1', '', '{\"create_by\":\"admin\",\"create_time\":\"2020-04-16 14:34:27\",\"dataScope\":\"2\",\"del_flag\":\"0\",\"deptIds\":\"111,112,113\",\"remark\":\"普通员工\",\"role_id\":3,\"role_key\":\"pop\",\"role_name\":\"员工\",\"role_sort\":0,\"status\":\"0\",\"update_by\":\"admin\",\"update_time\":\"2021-04-06 09:13:17\"}', '{\"code\":0,\"msg\":\"操作成功\",\"data\":\"\",\"otype\":4,\"module\":\"角色管理\"}', 0, '', '2021-04-06 09:19:03');
+INSERT INTO `sys_oper_log` VALUES (1890, '角色管理', 4, '/api/system/role/dataScope', 'PUT', 1, 'admin', '信息部', '/api/system/role/dataScope', '172.17.0.1', '', '{\"create_by\":\"admin\",\"create_time\":\"2020-04-16 14:34:27\",\"dataScope\":\"2\",\"del_flag\":\"0\",\"deptIds\":\"112,111\",\"remark\":\"普通员工\",\"role_id\":3,\"role_key\":\"pop\",\"role_name\":\"员工\",\"role_sort\":0,\"status\":\"0\",\"update_by\":\"admin\",\"update_time\":\"2021-04-06 09:19:03\"}', '{\"code\":0,\"msg\":\"操作成功\",\"data\":\"\",\"otype\":4,\"module\":\"角色管理\"}', 0, '', '2021-04-06 09:19:12');
+INSERT INTO `sys_oper_log` VALUES (1891, '角色管理', 4, '/api/system/role/dataScope', 'PUT', 1, 'admin', '信息部', '/api/system/role/dataScope', '172.17.0.1', '', '{\"create_by\":\"admin\",\"create_time\":\"2020-04-16 14:34:27\",\"dataScope\":\"2\",\"del_flag\":\"0\",\"deptIds\":\"112,111\",\"remark\":\"普通员工\",\"role_id\":3,\"role_key\":\"pop\",\"role_name\":\"员工\",\"role_sort\":0,\"status\":\"0\",\"update_by\":\"admin\",\"update_time\":\"2021-04-06 09:19:12\"}', '{\"code\":0,\"msg\":\"操作成功\",\"data\":\"\",\"otype\":4,\"module\":\"角色管理\"}', 0, '', '2021-04-06 09:20:39');
 COMMIT;
 
 -- ----------------------------
@@ -972,7 +919,7 @@ CREATE TABLE `sys_role` (
 -- ----------------------------
 BEGIN;
 INSERT INTO `sys_role` VALUES (1, '管理员', 'admin', 1, '1', '0', '0', 'admin', '2018-03-16 11:33:00', '', '2020-07-21 12:06:26', '管理员');
-INSERT INTO `sys_role` VALUES (3, '员工', 'pop', 0, '5', '0', '0', 'admin', '2020-04-16 14:34:27', 'admin', '2021-01-25 13:51:36', '普通员工');
+INSERT INTO `sys_role` VALUES (3, '员工', 'pop', 0, '2', '0', '0', 'admin', '2020-04-16 14:34:27', 'admin', '2021-04-06 09:20:39', '普通员工');
 COMMIT;
 
 -- ----------------------------
@@ -989,8 +936,8 @@ CREATE TABLE `sys_role_dept` (
 -- Records of sys_role_dept
 -- ----------------------------
 BEGIN;
-INSERT INTO `sys_role_dept` VALUES (3, 100);
-INSERT INTO `sys_role_dept` VALUES (3, 110);
+INSERT INTO `sys_role_dept` VALUES (3, 111);
+INSERT INTO `sys_role_dept` VALUES (3, 112);
 COMMIT;
 
 -- ----------------------------
@@ -1148,7 +1095,7 @@ CREATE TABLE `sys_user` (
 -- Records of sys_user
 -- ----------------------------
 BEGIN;
-INSERT INTO `sys_user` VALUES (1, 110, 'admin', '超级管理员', '00', '1307@qq.com', '123', '0', '/upload/avatar/1/c3o6k3bwvquw6qiwrz', '9eb3cbe1c7c81a8d5982f295361ea4b2', 'Sp6Jqx', '0', '0', '127.0.0.1', '2020-01-13 13:20:40', 'admin', '2018-03-16 11:33:00', 'admin', '2020-01-27 08:53:05', '管理员');
+INSERT INTO `sys_user` VALUES (1, 110, 'admin', '超级管理员', '00', '1307@qq.com', '18983690292', '0', '/static/upload/avatar/1/cag8kqap2o20xbrkmk.png', '9eb3cbe1c7c81a8d5982f295361ea4b2', 'Sp6Jqx', '0', '0', '172.17.0.1', '2021-04-07 19:40:46', 'admin', '2018-03-16 11:33:00', 'admin', '2020-01-27 08:53:05', '管理员');
 COMMIT;
 
 -- ----------------------------
@@ -1169,15 +1116,6 @@ CREATE TABLE `sys_user_online` (
   `expire_time` int(5) DEFAULT '0' COMMENT '超时时间，单位为分钟',
   PRIMARY KEY (`token`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='在线用户记录';
-
--- ----------------------------
--- Records of sys_user_online
--- ----------------------------
-BEGIN;
-INSERT INTO `sys_user_online` VALUES ('GJWT1', 'admin', '', '127.0.0.1', '内网IP', 'Chrome', 'Intel Mac OS X 10_15_1', 'on_line', '2020-07-20 09:03:59', '2020-07-20 09:03:59', 3600);
-INSERT INTO `sys_user_online` VALUES ('GJWTadmin', 'admin', '', '172.17.0.1', '', 'Chrome', 'Intel Mac OS X 10_15_1', 'on_line', '2021-02-09 10:38:00', '2021-02-09 10:38:00', 864000);
-INSERT INTO `sys_user_online` VALUES ('GJWT测试测试2', '测试测试2', '', '127.0.0.1', '内网IP', 'Chrome', 'Intel Mac OS X 10_15_1', 'on_line', '2020-07-21 13:39:44', '2020-07-21 13:39:44', 864000);
-COMMIT;
 
 -- ----------------------------
 -- Table structure for sys_user_post
