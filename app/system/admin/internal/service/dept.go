@@ -287,18 +287,24 @@ func (s *deptService)BuildDepts(depts []*model.SysDeptExtend) []model.DeptExtend
 
 //校验部门名称是否唯一
 func (s *deptService)CheckDeptNameUniqueAll(deptName string, parentId int64) bool {
-	dept, err := dao.SysDept.FindOne(g.Map{
+	// 根据部门名称和父id查找是否有同名的部门
+	depts,err :=  dao.SysDept.FindAll(g.Map{
 		dao.SysDept.Columns.DeptName: deptName,
 		dao.SysDept.Columns.ParentId: parentId,
 	})
 	if err != nil {
 		return true
 	}
-	if dept != nil && dept.DeptId > 0 {
-		return true
-	} else {
-		return false
+	for _,item := range depts {
+		// 如果是自身则判断不唯一
+		if item.DeptId == deptId {
+			return false
+		}
 	}
+	if len(depts) > 0 {
+		return true
+	}
+	return false
 }
 
 //校验部门名称是否唯一
