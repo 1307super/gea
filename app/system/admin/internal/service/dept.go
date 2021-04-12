@@ -304,14 +304,13 @@ func (s *deptService)CheckDeptNameUniqueAll(deptName string, parentId int64) boo
 //校验部门名称是否唯一
 func (s *deptService)CheckDeptNameUnique(deptName string, deptId, parentId int64) bool {
 	dept, err := dao.SysDept.FindOne(g.Map{
-		dao.SysDept.Columns.DeptId: deptId,
 		dao.SysDept.Columns.DeptName: deptName,
 		dao.SysDept.Columns.ParentId: parentId,
 	})
 	if err != nil {
 		return true
 	}
-	if dept != nil && dept.DeptId > 0 {
+	if dept != nil && dept.DeptId != deptId {
 		return true
 	} else {
 		return false
