@@ -207,7 +207,6 @@ func (s *menuService) SelectMenuAll() ([]*model.SysMenuExtend, error) {
 // 根据用户id获取菜单
 func (s *menuService) GetMenusListByUserId(userId int64) ([]*model.SysMenuExtend, error) {
 	var result []*model.SysMenuExtend
-
 	m := dao.SysMenu.As("m")
 	m = m.LeftJoin("sys_role_menu rm", "m.menu_id = rm.menu_id")
 	m = m.LeftJoin("sys_user_role ur", "rm.role_id = ur.role_id")

@@ -254,24 +254,24 @@ func (s *userService) GetProfile(ctx context.Context) (*model.SysUserInfo, error
 			return nil, gerror.New("请登录")
 		}
 	}
+
 	// 获取角色
-	sysRoleDao := dao.SysRole.As("r").
-		LeftJoin("sys_user_role ur", "ur.role_id = r.role_id").
-		LeftJoin("sys_user u", "u.user_id = ur.user_id").
-		Where("r.del_flag = '0' and u.del_flag = '0'").
-		Where("ur.user_id = ?", user.UserId)
-	if err := sysRoleDao.Structs(&roleResult); err != nil {
+	userRoleList,_ := dao.SysUserRole.FindAll(dao.SysUserRole.Columns.UserId,user.UserId)
+	roleDataList,_:=dao.SysRole.Where(dao.SysRole.Columns.DelFlag,"0").FindAll(gdb.ListItemValuesUnique(userRoleList, "RoleId"))
+	if err := gconv.Structs(roleDataList,&roleResult); err != nil {
 		return nil, gerror.New("未获取到角色")
 	}
 	// 获取岗位
-	sysPostDao := dao.SysPost.As("p").
-		LeftJoin("sys_user_post up", "p.post_id = up.post_id").
-		LeftJoin("sys_user u", "u.user_id = up.user_id").
-		Where("u.user_id = ?", user.UserId).
-		Fields("p.post_id, p.post_name, p.post_code")
-	if err := sysPostDao.Structs(&postResult); err != nil {
+	userPostList,_ := dao.SysUserPost.FindAll(dao.SysUserPost.Columns.UserId,user.UserId)
+	postDataList,_:=dao.SysPost.Fields(
+		dao.SysPost.Columns.PostId,
+		dao.SysPost.Columns.PostName,
+		dao.SysPost.Columns.PostCode,
+		).FindAll(gdb.ListItemValuesUnique(userPostList, "PostId"))
+	if err := gconv.Structs(postDataList,&postResult); err != nil {
 		return nil, gerror.New("未获取到岗位")
 	}
+
 	roleNames := garray.New()
 	postNames := garray.New()
 	for _, role := range roleResult {
@@ -395,6 +395,7 @@ func (s *userService) Create(ctx context.Context, req *define.UserApiCreateReq) 
 	newToken = gmd5.MustEncryptString(newToken)
 	user.Salt = newSalt
 	user.Password = newToken
+	user.LoginName = req.LoginName
 	user.CreateTime = gtime.Now()
 	user.CreateBy = adminUser.UserExtend.LoginName
 	user.DelFlag = "0"
@@ -678,10 +679,11 @@ func (s *userService) Export(param *define.UserApiSelectPageReq) (string, error)
 func (s *userService) CheckLoginName(loginName string) bool {
 	if i, err := dao.SysUser.FindCount(g.Map{
 		dao.SysUser.Columns.LoginName: loginName,
+		dao.SysUser.Columns.DelFlag: "0",
 	}); err != nil {
 		return false
 	} else {
-		return i == 1
+		return i > 0
 	}
 }
 
@@ -690,10 +692,11 @@ func (s *userService) CheckEmailUnique(userId int64, email string) bool {
 	if i, err := dao.SysUser.FindCount(g.Map{
 		dao.SysUser.Columns.Email:                        email,
 		fmt.Sprintf("%s <>", dao.SysUser.Columns.UserId): userId,
+		dao.SysUser.Columns.DelFlag: "0",
 	}); err != nil {
 		return false
 	} else {
-		return i > 1
+		return i > 0
 	}
 
 }
@@ -702,10 +705,11 @@ func (s *userService) CheckEmailUnique(userId int64, email string) bool {
 func (s *userService) CheckEmailUniqueAll(email string) bool {
 	if i, err := dao.SysUser.FindCount(g.Map{
 		dao.SysUser.Columns.Email: email,
+		dao.SysUser.Columns.DelFlag: "0",
 	}); err != nil {
 		return false
 	} else {
-		return i > 1
+		return i > 0
 	}
 }
 
@@ -714,10 +718,11 @@ func (s *userService) CheckPhoneUnique(userId int64, phone string) bool {
 	if i, err := dao.SysUser.FindCount(g.Map{
 		dao.SysUser.Columns.Phonenumber:                  phone,
 		fmt.Sprintf("%s <>", dao.SysUser.Columns.UserId): userId,
+		dao.SysUser.Columns.DelFlag: "0",
 	}); err != nil {
 		return false
 	} else {
-		return i > 1
+		return i > 0
 	}
 }
 
@@ -725,10 +730,11 @@ func (s *userService) CheckPhoneUnique(userId int64, phone string) bool {
 func (s *userService) CheckPhoneUniqueAll(phone string) bool {
 	if i, err := dao.SysUser.FindCount(g.Map{
 		dao.SysUser.Columns.Phonenumber: phone,
+		dao.SysUser.Columns.DelFlag: "0",
 	}); err != nil {
 		return false
 	} else {
-		return i > 1
+		return i > 0
 	}
 }
 

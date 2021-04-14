@@ -14,7 +14,6 @@ func Register() {
 	casbinConfig := g.Cfg().GetMapStrStr("casbin")
 	a, err := gdbadapter.NewAdapter(casbinConfig["driverName"], casbinConfig["dataSourceName"])
 	if err != nil {
-		log.Println(err.Error())
 		log.Fatalln("casbin 初始化失败")
 	}
 	Enforcer, err = casbin.NewEnforcer(AuthConf, a)

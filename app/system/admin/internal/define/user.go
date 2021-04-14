@@ -30,7 +30,7 @@ type UserApiSelectPageReq struct {
 }
 
 type UserApiCreateBase struct {
-	UserName    string `p:"userName"  v:"required|length:1,30#请输入用户名称|用户名称长度为:min到:max位"`
+	UserName    string `p:"user_name"  v:"required|length:1,30#请输入用户名称|用户名称长度为:min到:max位"`
 	Phonenumber string `p:"phonenumber"  v:"required|phone#请输入手机号码|请输入正确的手机号码"`
 	Email       string `p:"email"  v:"required|email#请输入邮箱地址|请输入正确的电子邮箱"`
 	DeptId      int64  `p:"deptId" v:"required#请选择部门"`
@@ -43,7 +43,7 @@ type UserApiCreateBase struct {
 //新增用户资料请求参数
 type UserApiCreateReq struct {
 	UserApiCreateBase
-	LoginName   string `p:"loginName"  v:"required#请输入登陆名"`
+	LoginName   string `p:"login_name"  v:"required#请输入登陆名"`
 	Password    string `p:"password"  v:"required|length:5,30#请输入密码|用户密码长度为:min到:max位"`
 }
 //修改用户资料请求参数
@@ -65,7 +65,7 @@ type UserApiResetPwdReq struct {
 
 //修改用户资料请求参数
 type UserApiProfileReq struct {
-	UserName    string `p:"userName"  v:"required|length:5,30#请输入用户名称|用户名称长度为:min到:max位"`
+	UserName    string `p:"user_name"  v:"required|length:5,30#请输入用户名称|用户名称长度为:min到:max位"`
 	Phonenumber string `p:"phonenumber"  v:"required|phone#请输入手机号码|请输入正确的手机号码"`
 	Email       string `p:"email"  v:"required|email#请输入邮箱地址|请输入正确的电子邮箱"`
 	Sex         string `p:"sex"  v:"required#请输入用户名称"`
