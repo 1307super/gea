@@ -9,18 +9,8 @@
             size="small"
             @keyup.enter.native="handleQuery"
         />
-      </el-form-item>{{else if and (eq $column.HtmlType "select" "radio") (ne $column.HtmlType "")}}
-      <el-form-item label="{{$column.ColumnComment}}" prop="{{$column.ColumnName}}">
-        <el-select v-model="queryParams.{{$column.ColumnName}}" placeholder="请选择{{$column.ColumnComment}}" clearable size="small">
-            <el-option
-                v-for="dict in {{$column.ColumnName}}Options"
-                :key="dict.dict_value"
-                :label="dict.dict_label"
-                :value="dict.dict_value"
-            />
-        </el-select>
       </el-form-item>{{else if eq $column.HtmlType "select" "radio"}}{{if ne $column.DictType ""}}
-      <el-form-item label="{{$column.ColumnComment}}" prop="{{$column.ColumnName}}">
+      <el-form-item label="{{$column.ColumnComment}}2" prop="{{$column.ColumnName}}">
         <el-select v-model="queryParams.{{$column.ColumnName}}" placeholder="请选择{{$column.ColumnComment}}" clearable size="small">
             <el-option
                 v-for="dict in {{$column.ColumnName}}Options"

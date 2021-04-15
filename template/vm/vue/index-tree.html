@@ -1,4 +1,4 @@
-<template>
+<template>{{$lens := .table.Columns|len}}
   <div class="app-container">
     <el-form :model="queryParams" ref="queryForm" :inline="true" label-width="68px">{{range $index, $column := .table.Columns}}{{if eq $column.IsQuery "1"}}{{if eq $column.HtmlType "input"}}
         <el-form-item label="{{$column.ColumnComment}}" prop="{{$column.ColumnName}}">
@@ -9,16 +9,6 @@
                 size="small"
                 @keyup.enter.native="handleQuery"
             />
-        </el-form-item>{{else if eq $column.HtmlType "select" "radio" and ne $column.HtmlType ""}}
-        <el-form-item label="{{$column.ColumnComment}}" prop="{{$column.ColumnName}}">
-            <el-select v-model="queryParams.{{$column.ColumnName}}" placeholder="请选择{{$column.ColumnComment}}" clearable size="small">
-                <el-option
-                    v-for="dict in {{$column.ColumnName}}Options"
-                    :key="dict.dict_value"
-                    :label="dict.dict_label"
-                    :value="dict.dict_value"
-                />
-            </el-select>
         </el-form-item>{{else if eq $column.HtmlType "select" "radio"}}{{if ne $column.DictType ""}}
         <el-form-item label="{{$column.ColumnComment}}" prop="{{$column.ColumnName}}">
             <el-select v-model="queryParams.{{$column.ColumnName}}" placeholder="请选择{{$column.ColumnComment}}" clearable size="small">
@@ -69,13 +59,13 @@
       default-expand-all
       :tree-props="{children: 'children', hasChildren: 'hasChildren'}"
     >{{range $index, $column := .table.Columns}}{{if eq $column.IsPk "1"}}
-        <el-table-column label="{{$column.ColumnComment}}" align="center" prop="{{$column.ColumnName}}" />{{else if eq $column.IsList "1" and eq $column.HtmlType "datetime"}}
+        <el-table-column label="{{$column.ColumnComment}}" align="center" prop="{{$column.ColumnName}}" />{{else if and (eq $column.IsList "1") (eq $column.HtmlType "datetime")}}
         <el-table-column label="{{$column.ColumnComment}}" align="center" prop="{{$column.ColumnName}}" width="180">
             <template slot-scope="scope">
                 <span>\{\{ parseTime(scope.row.{{$column.ColumnName}}, {y}-{m}-{d}) \}\}</span>
             </template>
-        </el-table-column>{{else if eq $column.IsList "1" and ne $column.DictType ""}}
-        <el-table-column label="{{$column.ColumnComment}}" align="center" prop="{{$column.ColumnName}}" :formatter="{{$column.ColumnName}}Format" />{{else if eq $column.IsList "1" and ne $column.ColumnName ""}}
+        </el-table-column>{{else if and (eq $column.IsList "1") (ne $column.DictType "")}}
+        <el-table-column label="{{$column.ColumnComment}}" align="center" prop="{{$column.ColumnName}}" :formatter="{{$column.ColumnName}}Format" />{{else if and (eq $column.IsList "1") (ne $column.ColumnName "")}}
         <el-table-column label="{{$column.ColumnComment}}" align="center" prop="{{$column.ColumnName}}" />{{end}}{{end}}
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
@@ -101,11 +91,11 @@
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">{{range $index, $column := .table.Columns}}{{if and (eq $column.IsInsert "1") (ne $column.IsPk "1")}}{{if and (ne $treeParentCode "") (eq $column.ColumnName $treeParentCode)}}
           <el-form-item label="{{$column.ColumnComment}}" prop="{{$treeParentCode}}">
-              <treeselect v-model="form.{{$treeParentCode}}" :options="{{.table.BusinessName}}Options" :normalizer="normalizer" placeholder="请选择{{$column.ColumnComment}}" />
+              <treeselect v-model="form.{{$treeParentCode}}" :options="{{$businessName}}Options" :normalizer="normalizer" placeholder="请选择{{$column.ColumnComment}}" />
           </el-form-item>{{else if eq $column.HtmlType "input"}}
           <el-form-item label="{{$column.ColumnComment}}" prop="{{$column.ColumnName}}">
               <el-input v-model="form.{{$column.ColumnName}}" placeholder="请输入{{$column.ColumnComment}}" />
-          </el-form-item>{{else if eq $column.Htmltype "select" }}{{if ne $column.DictType ""}}
+          </el-form-item>{{else if eq $column.HtmlType "select" }}{{if ne $column.DictType ""}}
           <el-form-item label="{{$column.ColumnComment}}">
               <el-select v-model="form.{{$column.ColumnName}}" placeholder="请选择{{$column.ColumnComment}}">
                   <el-option
@@ -121,7 +111,7 @@
               <el-select v-model="form.{{$column.ColumnName}}" placeholder="请选择{{$column.ColumnComment}}">
                   <el-option label="请选择字典生成" value="" />
               </el-select>
-          </el-form-item>{{end}}{{else if eq $column.Htmltype "radio" }}{{if ne $column.DictType ""}}
+          </el-form-item>{{end}}{{else if eq $column.HtmlType "radio" }}{{if ne $column.DictType ""}}
           <el-form-item label="{{$column.ColumnComment}}">
               <el-radio-group v-model="form.{{$column.ColumnName}}">
                   <el-radio
@@ -177,12 +167,12 @@ export default {
       // 弹出层标题
       title: "",
       // 是否显示弹出层
-      open: false,{{range $index, $column := .table.Columns}}{{if ne $column.dictType ""}}
+      open: false,{{range $index, $column := .table.Columns}}{{if ne $column.DictType ""}}
       // $comment字典
       {{$column.ColumnName}}Options: [],{{end}}{{end}}
       // 查询参数
       queryParams: { {{range $index, $column := .table.Columns}}{{if eq $column.IsQuery "1"}}
-        {{$column.ColumnName}}: undefined{{if ne .table.Columns|len $index}},{{end}}{{end}}{{end}}
+        {{$column.ColumnName}}: undefined{{if ne $lens $index}},{{end}}{{end}}{{end}}
       },
       // 表单参数
       form: {},
@@ -190,7 +180,7 @@ export default {
       rules: { {{range $index, $column := .table.Columns}}{{if eq $column.IsRequired "1"}}
         {{$column.ColumnName}} : [
           { required: true, message: "{{$column.ColumnComment}}不能为空", trigger: "blur" }
-        ]{{if ne .table.Columns|len $index}},{{end}}{{end}}{{end}}
+        ]{{if ne $lens $index}},{{end}}{{end}}{{end}}
       }
     };
   },
@@ -241,8 +231,8 @@ export default {
     // 表单重置
     reset() {
       this.form = { {{range $index, $column := .table.Columns}}{{if eq $column.HtmlType "radio"}}
-        {{$column.ColumnName}}: "0"{{if ne .table.Columns|len $index}},{{end}}{{else}}
-        {{$column.ColumnName}}: undefined{{if ne .table.Columns|len $index}},{{end}}{{end}}{{end}}
+        {{$column.ColumnName}}: "0"{{if ne $lens $index}},{{end}}{{else}}
+        {{$column.ColumnName}}: undefined{{if ne $lens $index}},{{end}}{{end}}{{end}}
       };
       this.resetForm("form");
     },

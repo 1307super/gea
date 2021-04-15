@@ -58,8 +58,8 @@ func (s *genTableService) Preview( tableId int64) g.Map {
 	appJsKey := "vm/js/api.js.vm"
 	appJsValue := ""
 	appJsTmp := "vm/js/api.html"
-	treeKey := "vm/vue/tree.html.vm"
-	treeValue := ""
+	//treeKey := "vm/vue/tree.html.vm"
+	//treeValue := ""
 	if entity.TplCategory == "tree" {
 		listTmp = "vm/vue/index-tree.html"
 	}
@@ -84,11 +84,11 @@ func (s *genTableService) Preview( tableId int64) g.Map {
 		listValue = tmpList
 	}
 
-	if entity.TplCategory == "tree" {
-		if tmpTree, err := view.Parse("vm/vue/index-tree.html", g.Map{"table": entity}); err == nil {
-			treeValue = tmpTree
-		}
-	}
+	//if entity.TplCategory == "tree" {
+	//	if tmpTree, err := view.Parse("vm/vue/index-tree.html", g.Map{"table": entity}); err == nil {
+	//		treeValue = tmpTree
+	//	}
+	//}
 
 	if tmpAppJs, err := view.Parse(appJsTmp, g.Map{"table": entity}); err == nil {
 		appJsValue = tmpAppJs
@@ -100,8 +100,6 @@ func (s *genTableService) Preview( tableId int64) g.Map {
 
 	if tmpModelInternal, err := view.Parse("vm/go/model_internal.html", g.Map{"table": entity}); err == nil {
 		modelInternalValue = tmpModelInternal
-	} else {
-		g.Dump(err.Error())
 	}
 
 	if tmpDao, err := view.Parse("vm/go/dao.html", g.Map{"table": entity}); err == nil {
@@ -113,8 +111,6 @@ func (s *genTableService) Preview( tableId int64) g.Map {
 
 	if tmpService, err := view.Parse("vm/go/service.html", g.Map{"table": entity}); err == nil {
 		serviceValue = tmpService
-	}else{
-		g.Dump(err.Error())
 	}
 
 	if tmpController, err := view.Parse("vm/go/controller.html", g.Map{"table": entity}); err == nil {
@@ -132,7 +128,7 @@ func (s *genTableService) Preview( tableId int64) g.Map {
 		return g.Map{
 			listKey:          listValue,
 			appJsKey:         appJsValue,
-			treeKey:          treeValue,
+			//treeKey:          treeValue,
 			sqlKey:           sqlValue,
 			modelKey:         modelValue,
 			modelInternalKey: modelInternalValue,
