@@ -31,11 +31,19 @@ func (a *{{.table.BusinessName | CamelLower}}Api) Get(r *ghttp.Request) {
 	    a.Err(r,err.Error())
     }
     result := service.{{.table.BusinessName | CamelString}}.GetList(req)
+    {{if eq .table.TplCategory "tree"}}
+    if result != nil {
+        a.Succ(r, result)
+    } else {
+        a.Succ(r, 0, nil)
+    }
+    {{else}}
     if result != nil {
         a.SuccTable(r, result.Total, result.List)
     } else {
         a.SuccTable(r, 0, nil)
     }
+    {{end}}
 }
 
 

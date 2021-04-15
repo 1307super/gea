@@ -32,7 +32,7 @@ func (s *{{.table.BusinessName | CamelLower}}Service) Info(id int64) (*model.{{.
 
 
 //根据条件分页查询数据
-func (s *{{.table.BusinessName | CamelLower}}Service)GetList(param *define.{{.table.BusinessName | CamelString}}ApiSelectPageReq) *define.{{.table.BusinessName | CamelString}}ServiceList {
+func (s *{{.table.BusinessName | CamelLower}}Service)GetList(param *define.{{.table.BusinessName | CamelString}}ApiSelectPageReq) {{if ne .table.TplCategory "tree"}}*define.{{.table.BusinessName | CamelString}}ServiceList{{else}}[]*model.{{.table.TableName | CamelString}}{{end}} {
     m := dao.{{.table.TableName | CamelString}}.As("t")
     if param != nil { {{range $index, $column := .table.Columns}} {{if eq $column.IsQuery "1"}}{{if eq $column.QueryType "LIKE"}}
         if param.{{$column.GoField}} != "" {
@@ -51,6 +51,7 @@ func (s *{{.table.BusinessName | CamelLower}}Service)GetList(param *define.{{.ta
             m = m.Where("date_format(t.create_time,'%y%m%d') <= date_format(?,'%y%m%d') ", param.EndTime)
         }
     }
+    {{if ne .table.TplCategory "tree"}}
     total, err := m.Count()
     if err != nil {
         return nil
@@ -68,6 +69,12 @@ func (s *{{.table.BusinessName | CamelLower}}Service)GetList(param *define.{{.ta
     if err = m.Structs(&result.List); err != nil {
         return nil
     }
+    {{else}}
+    result := []*model.{{.table.TableName | CamelString}}
+    if err := m.Structs(&result); err != nil {
+        return nil
+    }
+    {{end}}
     return result
 }
 
