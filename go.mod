@@ -13,4 +13,4 @@ require (
 	github.com/goflyfox/gtoken v1.4.1
 )
 
-go 1.13
+go 1.14

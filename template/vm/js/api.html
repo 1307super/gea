@@ -13,7 +13,7 @@ export function list{{$businessName}}(query) {
 // 查询{{.table.FunctionName}}详细
 export function get{{$businessName}}({{.table.PkColumn.ColumnName}}) {
   return request({
-    url: '/business/{{$businessName}}/info?id='+id,
+    url: '/business/{{$businessName}}/info',
     method: 'get',
     params: {
      id: {{.table.PkColumn.ColumnName}}
@@ -42,8 +42,11 @@ export function update{{$businessName}}(data) {
 // 删除{{.table.FunctionName}}
 export function del{{$businessName}}({{.table.PkColumn.ColumnName}}) {
   return request({
-    url: '/business/{{$businessName}}/' + {{.table.PkColumn.ColumnName}},
-    method: 'delete'
+    url: '/business/{{$businessName}}',
+    method: 'delete',
+    params: {
+      ids: {{.table.PkColumn.ColumnName}}
+    }
   })
 }
 
