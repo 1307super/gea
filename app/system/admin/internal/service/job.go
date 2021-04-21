@@ -12,6 +12,7 @@ import (
 	"gea/app/utils/page"
 	"github.com/gogf/gf/errors/gerror"
 	"github.com/gogf/gf/os/gcron"
+	"github.com/gogf/gf/os/glog"
 	"github.com/gogf/gf/os/gtime"
 	"github.com/gogf/gf/util/gconv"
 	"strings"
@@ -307,4 +308,24 @@ func (s *jobService)Stop(job *model.SysJob) error {
 	job.Status = "1"
 	dao.SysJob.Data(job).Save()
 	return nil
+}
+
+// 重启任务
+func (s *jobService) Restart() bool {
+	entitys, err := dao.SysJob.Where(dao.SysJob.Columns.Status, "0").
+		Where(dao.SysJob.Columns.MisfirePolicy, "1").
+		All()
+	if err != nil {
+		glog.Error("重启定时任务失败")
+		return false
+	}
+	if len(entitys) == 0 {
+		return true
+	}
+	for _, entity := range entitys {
+		if err := s.Start(entity); err != nil {
+			glog.Errorf("定时任务：[%s] 启动失败， 请手动启动", entity.JobName)
+		}
+	}
+	return true
 }

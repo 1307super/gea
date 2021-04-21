@@ -157,6 +157,7 @@ func Init() {
 	})
 	initCasbin()
 	initSysDict()
+	initTask()
 	s.Start()
 }
 
@@ -181,4 +182,7 @@ func initSysDict() {
 		}
 	}
 }
-
+// 初始化定时任务
+func initTask()  {
+	service.Job.Restart()
+}
