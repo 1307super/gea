@@ -52,7 +52,7 @@
 [前端项目](https://github.com/1307super/gea-ui)
 
 ```
-1. git clone git@github.com:1307super/gea.git
+1. git clone https://github.com/1307super/gea.git
 2. 导入document/sql/gea.sql
 3. 修改配置文件
 4. go run main.go 启动
