@@ -3,7 +3,7 @@ module gea
 require (
 	github.com/1307super/gdb-adapter v1.0.2
 	github.com/casbin/casbin/v2 v2.8.6
-	github.com/gogf/gf v1.15.3
+	github.com/gogf/gf v1.16.1
 	github.com/golang/glog v0.0.0-20160126235308-23def4e6c14b
 	github.com/mojocn/base64Captcha v1.2.2
 	github.com/mssola/user_agent v0.5.1

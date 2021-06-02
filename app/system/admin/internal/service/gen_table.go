@@ -80,47 +80,47 @@ func (s *genTableService) Preview( tableId int64) g.Map {
 	serviceKey := "vm/go/service.go.vm"
 	serviceValue := ""
 	view := g.View()
-	if tmpList, err := view.Parse(listTmp, g.Map{"table": entity}); err == nil {
+	if tmpList, err := view.Parse(context.TODO(),listTmp, g.Map{"table": entity}); err == nil {
 		listValue = tmpList
 	}
 
 	//if entity.TplCategory == "tree" {
-	//	if tmpTree, err := view.Parse("vm/vue/index-tree.html", g.Map{"table": entity}); err == nil {
+	//	if tmpTree, err := view.Parse(context.TODO(),"vm/vue/index-tree.html", g.Map{"table": entity}); err == nil {
 	//		treeValue = tmpTree
 	//	}
 	//}
 
-	if tmpAppJs, err := view.Parse(appJsTmp, g.Map{"table": entity}); err == nil {
+	if tmpAppJs, err := view.Parse(context.TODO(),appJsTmp, g.Map{"table": entity}); err == nil {
 		appJsValue = tmpAppJs
 	}
 
-	if tmpModel, err := view.Parse("vm/go/model.html", g.Map{"table": entity}); err == nil {
+	if tmpModel, err := view.Parse(context.TODO(),"vm/go/model.html", g.Map{"table": entity}); err == nil {
 		modelValue = tmpModel
 	}
 
-	if tmpModelInternal, err := view.Parse("vm/go/model_internal.html", g.Map{"table": entity}); err == nil {
+	if tmpModelInternal, err := view.Parse(context.TODO(),"vm/go/model_internal.html", g.Map{"table": entity}); err == nil {
 		modelInternalValue = tmpModelInternal
 	}
 
-	if tmpDao, err := view.Parse("vm/go/dao.html", g.Map{"table": entity}); err == nil {
+	if tmpDao, err := view.Parse(context.TODO(),"vm/go/dao.html", g.Map{"table": entity}); err == nil {
 		daoValue = tmpDao
 	}
-	if tmpDaoInternal, err := view.Parse("vm/go/dao_internal.html", g.Map{"table": entity}); err == nil {
+	if tmpDaoInternal, err := view.Parse(context.TODO(),"vm/go/dao_internal.html", g.Map{"table": entity}); err == nil {
 		daolInternalValue = tmpDaoInternal
 	}
 
-	if tmpService, err := view.Parse("vm/go/service.html", g.Map{"table": entity}); err == nil {
+	if tmpService, err := view.Parse(context.TODO(),"vm/go/service.html", g.Map{"table": entity}); err == nil {
 		serviceValue = tmpService
 	}
 
-	if tmpController, err := view.Parse("vm/go/controller.html", g.Map{"table": entity}); err == nil {
+	if tmpController, err := view.Parse(context.TODO(),"vm/go/controller.html", g.Map{"table": entity}); err == nil {
 		controllerValue = tmpController
 	}
-	if tmpDefine, err := view.Parse("vm/go/define.html", g.Map{"table": entity}); err == nil {
+	if tmpDefine, err := view.Parse(context.TODO(),"vm/go/define.html", g.Map{"table": entity}); err == nil {
 		defineValue = tmpDefine
 	}
 
-	if tmpSql, err := view.Parse("vm/sql/sql.html", g.Map{"table": entity}); err == nil {
+	if tmpSql, err := view.Parse(context.TODO(),"vm/sql/sql.html", g.Map{"table": entity}); err == nil {
 		sqlValue = tmpSql
 	}
 
@@ -594,7 +594,7 @@ func (s *genTableService) GenCode(r *ghttp.Request,tableId string) error {
 }
 
 func (s *genTableService) genFile(view *gview.View,zip *zip.ZipUtils,genParam *define.GenTableServiceGenFile) {
-	if tmpList, err := view.Parse(genParam.TemplatePath, g.Map{"table": genParam.GenTableEntity}); err == nil {
+	if tmpList, err := view.Parse(context.TODO(),genParam.TemplatePath, g.Map{"table": genParam.GenTableEntity}); err == nil {
 		//生成zip
 		zip.PackToBuffer(genParam.GenFileName,gconv.Bytes(tmpList))
 	}

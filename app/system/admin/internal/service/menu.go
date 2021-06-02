@@ -369,6 +369,8 @@ func (s *menuService) getComponent(menu *model.SysMenuExtend) string {
 		component = menu.Component
 	} else if menu.Component == "" && s.isParentView(menu) {
 		component = PARENT_VIEW
+	} else if menu.IsFrame == YES_FRAME {
+		component = ""
 	}
 	return component
 }
