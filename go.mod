@@ -11,6 +11,7 @@ require (
 	github.com/shirou/gopsutil v2.19.12+incompatible
 	github.com/tealeg/xlsx v1.0.5
 	github.com/goflyfox/gtoken v1.4.1
+	github.com/streadway/amqp v1.0.0
 )
 
 go 1.14

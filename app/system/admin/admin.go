@@ -7,6 +7,7 @@ import (
 	"gea/app/system/admin/internal/service"
 	"gea/app/utils"
 	"gea/app/utils/convert"
+	"gea/app/utils/rabbitmq/sms"
 	"gea/library/casbin"
 	"github.com/goflyfox/gtoken/gtoken"
 	"github.com/gogf/gf/frame/g"
@@ -17,8 +18,8 @@ import (
 
 func Init() {
 	g.View().BindFunc("Capitalize", convert.Capitalize)  // 首字母大写
-	g.View().BindFunc("CamelString", gstr.CamelCase)     // 转驼峰
-	g.View().BindFunc("CamelLower", gstr.CamelLowerCase) // 转首字母小写驼峰
+	g.View().BindFunc("CamelString", gstr.CaseCamel)     // 转驼峰
+	g.View().BindFunc("CamelLower", gstr.CaseCamelLower) // 转首字母小写驼峰
 	s := g.Server("admin")
 	adminConfig := g.Cfg().GetMap("admin")
 	httpConfig, _ := ghttp.ConfigFromMap(adminConfig)
@@ -26,7 +27,7 @@ func Init() {
 	prefix := gconv.String(adminConfig["prefix"])
 
 	// 设置静态访问目录
-	s.AddStaticPath(prefix+"/static","/public/static")
+	s.AddStaticPath(prefix+"/static", "/public/static")
 
 	shared.GfAdminToken = gtoken.GfToken{
 		ServerName:       "admin",
@@ -158,10 +159,11 @@ func Init() {
 	initCasbin()
 	initSysDict()
 	initTask()
+	initMQ()
 	s.Start()
 }
 
-
+// initCasbin 初始化Casbin
 func initCasbin() {
 	// 注册
 	casbin.Register()
@@ -171,7 +173,7 @@ func initCasbin() {
 	service.Role.LoadRolePolicy("")
 }
 
-// 初始化字典
+// initSysDict 初始化字典
 func initSysDict() {
 	dictTypeList, _ := service.DictType.GetAll(nil)
 	p := &define.DictDataApiSelectPageReq{}
@@ -182,7 +184,19 @@ func initSysDict() {
 		}
 	}
 }
-// 初始化定时任务
-func initTask()  {
+
+// initTask 初始化定时任务
+func initTask() {
 	service.Job.Restart()
+}
+
+// initMQ 初始化mq
+func initMQ() {
+	if !g.Cfg().GetBool("rabbitmq.Enable") {
+		return
+	}
+	key := g.Cfg().GetString("rabbitmq.sms.topic")
+	go func() {
+		sms.SmsRecv(key, key+":exchange")
+	}()
 }

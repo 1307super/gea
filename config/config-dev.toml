@@ -103,3 +103,9 @@
 [redis]
     default  = "127.0.0.1:6379,3"
     cache = "127.0.0.1:6379,4"
+# rabbitmq配置
+[rabbitmq]
+    Enable = false
+    url = "amqp://xxx:xxx@xxxx:5672/"
+    [rabbitmq.sms]
+        topic = "test"

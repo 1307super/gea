@@ -165,7 +165,7 @@ func (s *{{.table.BusinessName | CamelLower}}Service) Export(param *define.{{.ta
     }
     head := []string{ {{range $index, $column := .table.Columns}} {{if eq $index 0}}"{{$column.ColumnComment}}"{{else}},"{{$column.ColumnComment}}"{{end}}{{end}}}
     key := []string{ {{range $index, $column := .table.Columns}} {{if eq $index 0}}"{{$column.ColumnName}}"{{else}},"{{$column.ColumnName}}"{{end}}{{end}}}
-    filename := "{{.table.FunctionName}}导出_"+gtime.Date() + ".xls"
+    filename := "{{.table.FunctionName}}导出_"+gtime.Date() + ".xlsx"
     url, err := excel.DownlaodExcel(head, key, result,filename)
     if err != nil {
         return "", err

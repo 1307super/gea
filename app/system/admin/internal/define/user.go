@@ -43,7 +43,7 @@ type UserApiCreateBase struct {
 //新增用户资料请求参数
 type UserApiCreateReq struct {
 	UserApiCreateBase
-	LoginName   string `p:"login_name"  v:"required|length:5,30#请输入密码#请输入登陆名|登陆名长度为:min到:max位"`
+	LoginName   string `p:"login_name"  v:"required|length:5,30#请输入登陆名#请输入登陆名|登陆名长度为:min到:max位"`
 	Password    string `p:"password"  v:"required|length:5,30#请输入密码|用户密码长度为:min到:max位"`
 }
 //修改用户资料请求参数
