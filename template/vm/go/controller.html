@@ -23,7 +23,7 @@ func (a *{{.table.BusinessName | CamelLower}}Api) Init(r *ghttp.Request) {
     a.Module = "{{.table.FunctionName}}管理"
 }
 
-//列表
+// Get 列表
 func (a *{{.table.BusinessName | CamelLower}}Api) Get(r *ghttp.Request) {
     var req *define.{{.table.BusinessName | CamelString}}ApiSelectPageReq
     //获取参数
@@ -47,7 +47,7 @@ func (a *{{.table.BusinessName | CamelLower}}Api) Get(r *ghttp.Request) {
 }
 
 
-//新增
+// Post 新增
 func (a *{{.table.BusinessName | CamelLower}}Api) Post(r *ghttp.Request) {
     var req *define.{{.table.BusinessName | CamelString}}ApiCreateReq
     //获取参数
@@ -64,7 +64,7 @@ func (a *{{.table.BusinessName | CamelLower}}Api) Post(r *ghttp.Request) {
     a.Succ(r, id)
 }
 
-//修改
+// Put 修改
 func (a *{{.table.BusinessName | CamelLower}}Api) Put(r *ghttp.Request) {
     var req *define.{{.table.BusinessName | CamelString}}ApiUpdateReq
     //获取参数
@@ -81,7 +81,7 @@ func (a *{{.table.BusinessName | CamelLower}}Api) Put(r *ghttp.Request) {
     a.Succ(r, rs)
 }
 
-//删除
+// Delete 删除
 func (a *{{.table.BusinessName | CamelLower}}Api) Delete(r *ghttp.Request) {
     var req *define.{{.table.BusinessName | CamelString}}ApiDeleteReq
     //获取参数
@@ -96,7 +96,7 @@ func (a *{{.table.BusinessName | CamelLower}}Api) Delete(r *ghttp.Request) {
     }
 }
 
-//详情
+// Info 详情
 func (a *{{.table.BusinessName | CamelLower}}Api) Info(r *ghttp.Request) {
     id := r.GetInt64("id")
     if id <= 0 {
@@ -109,7 +109,7 @@ func (a *{{.table.BusinessName | CamelLower}}Api) Info(r *ghttp.Request) {
     a.Succ(r,entity)
 }
 
-//导出
+// Export 导出
 func (a *{{.table.BusinessName | CamelLower}}Api) Export(r *ghttp.Request) {
     r.SetCtxVar(response.ResponseBunissType,response.Buniss_Export)
     var req *define.{{.table.BusinessName | CamelString}}ApiSelectPageReq

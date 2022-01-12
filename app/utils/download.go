@@ -6,7 +6,7 @@ import (
 	"os"
 )
 
-//下载文件
+// Download 下载文件
 func Download(r *ghttp.Request) {
 	fileName := r.GetQueryString("fileName")
 	del := r.GetQueryBool("delete")
@@ -33,7 +33,7 @@ func Download(r *ghttp.Request) {
 		return
 	}
 
-	r.Response.ServeFileDownload(filepath,fileName)
+	r.Response.ServeFileDownload(filepath, fileName)
 	if del {
 		os.Remove(filepath)
 	}

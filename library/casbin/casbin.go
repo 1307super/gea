@@ -26,37 +26,37 @@ func Register() {
 	}
 }
 
-// 添加用户角色关联关系
+// AddRoleForUser 添加用户角色关联关系
 func AddRoleForUser(userName, roleName string) (bool, error) {
 	return Enforcer.AddRoleForUser(userName, roleName)
 }
 
-// 删除用户角色关联关系
+// DeleteRoleForUser 删除用户角色关联关系
 func DeleteRoleForUser(userName, roleName string) (bool, error) {
 	return Enforcer.DeleteRoleForUser(userName, roleName)
 }
 
-// 清空用户角色关联关系
+// DeleteRolesForUser 清空用户角色关联关系
 func DeleteRolesForUser(userName string) (bool, error) {
 	return Enforcer.DeleteRolesForUser(userName)
 }
 
-// 添加角色与资源关系
+// AddPermissionForUser 添加角色与资源关系
 func AddPermissionForUser(roleName, path, method string) (bool, error) {
 	return Enforcer.AddPermissionForUser(roleName, path, method)
 }
 
-// 删除角色与资源关系
+// DeletePermissionForUser 删除角色与资源关系
 func DeletePermissionForUser(roleName, path, method string) (bool, error) {
 	return Enforcer.DeletePermissionForUser(roleName, path, method)
 }
 
-// 清空角色与资源关系
+// DeletePermissionsForUser 清空角色与资源关系
 func DeletePermissionsForUser(roleName string) (bool, error) {
 	return Enforcer.DeletePermissionsForUser(roleName)
 }
 
-// 校验
+// Enforce 校验
 func Enforce(userName, path, method string) (bool, error) {
 	return Enforcer.Enforce(userName, path, method)
 }

@@ -69,7 +69,6 @@ func (t *TaskEntity) after(res interface{}) {
 	jobLog.JobName = t.JobName
 	jobLog.Status = "0"
 	jobLog.CreateTime = gtime.Now()
-	//jobLogService.DeleteRecordById()
 	//获取任务信息
 	job, err := dao.SysJob.FindOne(dao.SysJob.Columns.JobName, t.JobName)
 	if err != nil {

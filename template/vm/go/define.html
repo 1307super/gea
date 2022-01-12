@@ -12,7 +12,7 @@ import (
 
 // ========== api =============
 
-//分页请求参数 {{$pkColumn := .table.PkColumn}}
+// {{.table.BusinessName | CamelString}}ApiSelectPageReq 分页请求参数 {{$pkColumn := .table.PkColumn}}
 type {{.table.BusinessName | CamelString}}ApiSelectPageReq struct { {{range $index, $column := .table.Columns}} {{if eq $column.IsQuery "1"}}
      {{$column.GoField}}  {{if eq $column.GoType "Time"}}*gtime.Time{{else}}{{$column.GoType}}{{end}} `p:"{{$column.HtmlField}}"` //{{$column.ColumnComment}} {{end}} {{end}}
      PageNum     int     `p:"pageNum"`     //当前页码
@@ -21,24 +21,24 @@ type {{.table.BusinessName | CamelString}}ApiSelectPageReq struct { {{range $ind
      IsAsc           string `p:"isAsc"`           //排序方式
 }
 
-//新增页面请求参数
+// {{.table.BusinessName | CamelString}}ApiCreateReq 新增页面请求参数
 type {{.table.BusinessName | CamelString}}ApiCreateReq struct { {{range $index, $column := .table.Columns}}
      {{if and (eq $column.IsInsert "1") (ne $column.IsPk "1")}} {{$column.GoField}}  {{if eq $column.GoType "Time"}}*gtime.Time{{else}}{{$column.GoType}}{{end}}   `p:"{{$column.HtmlField}}" {{if eq $column.IsRequired "1"}}v:"required#{{$column.ColumnComment}}不能为空"{{end}}` {{end}} {{end}}
 }
 
-//修改页面请求参数
+// {{.table.BusinessName | CamelString}}ApiUpdateReq 修改页面请求参数
 type {{.table.BusinessName | CamelString}}ApiUpdateReq struct {
      {{.table.PkColumn.GoField}}     {{.table.PkColumn.GoType}}  `p:"{{.table.PkColumn.HtmlField}}" v:"required#主键ID不能为空"`
      {{.table.BusinessName | CamelString}}ApiCreateReq
 }
 
-//通用的删除请求
+// {{.table.BusinessName | CamelString}}ApiDeleteReq 通用的删除请求
 type {{.table.BusinessName | CamelString}}ApiDeleteReq struct {
      Ids string `p:"ids"  v:"required#请选择要删除的数据记录"`
 }
 
 // ======= service =========
-// 查询列表返回值
+// {{.table.BusinessName | CamelString}}ServiceList 查询列表返回值
 type {{.table.BusinessName | CamelString}}ServiceList struct {
     List  []model.{{.table.TableName | CamelString}} `json:"list"`
     Page  int            `json:"page"`

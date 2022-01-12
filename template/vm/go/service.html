@@ -25,13 +25,13 @@ var {{.table.BusinessName | CamelString}} = new({{.table.BusinessName | CamelLow
 
 type {{.table.BusinessName| CamelLower}}Service struct {}
 
-//根据主键查询数据
+// Info 根据主键查询数据
 func (s *{{.table.BusinessName | CamelLower}}Service) Info(id int64) (*model.{{.table.TableName | CamelString}}, error) {
     return dao.{{.table.TableName | CamelString}}.FindOne(dao.{{.table.TableName | CamelString}}.Columns.{{.table.PkColumn.GoField}},id)
 }
 
 
-//根据条件分页查询数据
+// GetList 根据条件分页查询数据
 func (s *{{.table.BusinessName | CamelLower}}Service)GetList(param *define.{{.table.BusinessName | CamelString}}ApiSelectPageReq) {{if ne .table.TplCategory "tree"}}*define.{{.table.BusinessName | CamelString}}ServiceList{{else}}[]*model.{{.table.TableName | CamelString}}{{end}} {
     m := dao.{{.table.TableName | CamelString}}.As("t")
     if param != nil { {{range $index, $column := .table.Columns}} {{if eq $column.IsQuery "1"}}{{if eq $column.QueryType "LIKE"}}
@@ -78,7 +78,7 @@ func (s *{{.table.BusinessName | CamelLower}}Service)GetList(param *define.{{.ta
     return result
 }
 
-//添加数据
+// Create 添加数据
 func (s *{{.table.BusinessName | CamelLower}}Service) Create(ctx context.Context, req *define.{{.table.BusinessName | CamelString}}ApiCreateReq) (int64, error) {
     user := shared.Context.Get(ctx).User
     var entity model.{{.table.TableName | CamelString}}
@@ -88,7 +88,7 @@ func (s *{{.table.BusinessName | CamelLower}}Service) Create(ctx context.Context
     return s.save(&entity, editReq)
 }
 
-//修改数据
+// Update 修改数据
 func (s *{{.table.BusinessName | CamelLower}}Service) Update(ctx context.Context, req *define.{{.table.BusinessName | CamelString}}ApiUpdateReq) (int64, error) {
     user := shared.Context.Get(ctx).User
     entity, err := dao.{{.table.TableName | CamelString}}.FindOne(dao.{{.table.TableName | CamelString}}.Columns.{{.table.PkColumn.GoField}}, req.{{.table.PkColumn.GoField}})
@@ -125,7 +125,7 @@ func (s *{{.table.BusinessName | CamelLower}}Service) save({{.table.BusinessName
     return rs, nil
 }
 
-//批量删除数据记录
+// Delete 批量删除数据记录
 func (s *{{.table.BusinessName | CamelLower}}Service) Delete(ids string) int64 {
     idarr := convert.ToInt64Array(ids, ",")
     field := fmt.Sprintf("%s in(?)", dao.{{.table.TableName | CamelString}}.Columns.{{.table.PkColumn.GoField}})
@@ -137,7 +137,7 @@ func (s *{{.table.BusinessName | CamelLower}}Service) Delete(ids string) int64 {
     return nums
 }
 
-// 导出excel
+// Export 导出excel
 func (s *{{.table.BusinessName | CamelLower}}Service) Export(param *define.{{.table.BusinessName | CamelString}}ApiSelectPageReq) (string, error) {
     m := dao.{{.table.TableName | CamelString}}.As("t")
     if param != nil { {{range $index, $column := .table.Columns}} {{if eq $column.IsQuery "1"}}{{if eq $column.QueryType "LIKE"}}

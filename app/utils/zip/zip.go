@@ -19,7 +19,7 @@ func New(buf *bytes.Buffer) *ZipUtils {
 	}
 }
 
-// 打包到buufer
+// PackToBuffer 打包到buufer
 func (z *ZipUtils) PackToBuffer(filename string, p []byte) error {
 	zipEntry, err := z.zipWriter.Create(filename)
 	if err != nil {
@@ -33,7 +33,7 @@ func (z *ZipUtils) PackToBuffer(filename string, p []byte) error {
 	return nil
 }
 
-// 打包并生成文件
+// PackToFile 打包并生成文件
 func (z *ZipUtils) PackToFile(filename string, p []byte) error {
 	zipEntry, err := z.zipWriter.Create(filename)
 	if err != nil {
