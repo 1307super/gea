@@ -24,6 +24,7 @@ import (
 	"github.com/gogf/gf/net/ghttp"
 	"github.com/gogf/gf/os/gcache"
 	"github.com/gogf/gf/os/gtime"
+	"github.com/gogf/gf/text/gstr"
 	"github.com/gogf/gf/util/gconv"
 	"github.com/mssola/user_agent"
 	"os"
@@ -256,19 +257,19 @@ func (s *userService) GetProfile(ctx context.Context) (*model.SysUserInfo, error
 	}
 
 	// 获取角色
-	userRoleList,_ := dao.SysUserRole.FindAll(dao.SysUserRole.Columns.UserId,user.UserId)
-	roleDataList,_:=dao.SysRole.Where(dao.SysRole.Columns.DelFlag,"0").FindAll(gdb.ListItemValuesUnique(userRoleList, "RoleId"))
-	if err := gconv.Structs(roleDataList,&roleResult); err != nil {
+	userRoleList, _ := dao.SysUserRole.FindAll(dao.SysUserRole.Columns.UserId, user.UserId)
+	roleDataList, _ := dao.SysRole.Where(dao.SysRole.Columns.DelFlag, "0").FindAll(gdb.ListItemValuesUnique(userRoleList, "RoleId"))
+	if err := gconv.Structs(roleDataList, &roleResult); err != nil {
 		return nil, gerror.New("未获取到角色")
 	}
 	// 获取岗位
-	userPostList,_ := dao.SysUserPost.FindAll(dao.SysUserPost.Columns.UserId,user.UserId)
-	postDataList,_:=dao.SysPost.Fields(
+	userPostList, _ := dao.SysUserPost.FindAll(dao.SysUserPost.Columns.UserId, user.UserId)
+	postDataList, _ := dao.SysPost.Fields(
 		dao.SysPost.Columns.PostId,
 		dao.SysPost.Columns.PostName,
 		dao.SysPost.Columns.PostCode,
-		).FindAll(gdb.ListItemValuesUnique(userPostList, "PostId"))
-	if err := gconv.Structs(postDataList,&postResult); err != nil {
+	).FindAll(gdb.ListItemValuesUnique(userPostList, "PostId"))
+	if err := gconv.Structs(postDataList, &postResult); err != nil {
 		return nil, gerror.New("未获取到岗位")
 	}
 
@@ -581,16 +582,16 @@ func (s *userService) UpdateProfile(ctx context.Context, profile *define.UserApi
 func (s *userService) UpdateAvatar(ctx context.Context, r *define.UserApiAvatarUploadReq) (string, error) {
 	user, err := s.GetUser(ctx)
 	if err != nil {
-		return "",gerror.New("请登录")
+		return "", gerror.New("请登录")
 	}
 	curDir, err := os.Getwd()
 	if err != nil {
-		return "",gerror.New("获取路径失败")
+		return "", gerror.New("获取路径失败")
 	}
 	saveDir := curDir + "/public/" + s.AvatarUploadPath + gconv.String(user.UserId) + "/"
 	filename, err := r.Avatarfile.Save(saveDir, true)
 	if err != nil {
-		return "",gerror.New(err.Error())
+		return "", gerror.New(err.Error())
 	}
 	avatar := s.AvatarUploadPath + gconv.String(user.UserId) + "/" + filename
 	if avatar != "" {
@@ -598,10 +599,10 @@ func (s *userService) UpdateAvatar(ctx context.Context, r *define.UserApiAvatarU
 	}
 	_, err = dao.SysUser.Data(user).Save()
 	if err != nil {
-		return "",gerror.New("保存数据失败")
+		return "", gerror.New("保存数据失败")
 	}
 	s.RemoveUserCache(user.UserId)
-	return avatar,nil
+	return avatar, nil
 }
 
 //修改用户密码
@@ -679,7 +680,7 @@ func (s *userService) Export(param *define.UserApiSelectPageReq) (string, error)
 func (s *userService) CheckLoginName(loginName string) bool {
 	if i, err := dao.SysUser.FindCount(g.Map{
 		dao.SysUser.Columns.LoginName: loginName,
-		dao.SysUser.Columns.DelFlag: "0",
+		dao.SysUser.Columns.DelFlag:   "0",
 	}); err != nil {
 		return false
 	} else {
@@ -692,7 +693,7 @@ func (s *userService) CheckEmailUnique(userId int64, email string) bool {
 	if i, err := dao.SysUser.FindCount(g.Map{
 		dao.SysUser.Columns.Email:                        email,
 		fmt.Sprintf("%s <>", dao.SysUser.Columns.UserId): userId,
-		dao.SysUser.Columns.DelFlag: "0",
+		dao.SysUser.Columns.DelFlag:                      "0",
 	}); err != nil {
 		return false
 	} else {
@@ -704,7 +705,7 @@ func (s *userService) CheckEmailUnique(userId int64, email string) bool {
 //检查邮箱是否存在,存在返回true,否则false
 func (s *userService) CheckEmailUniqueAll(email string) bool {
 	if i, err := dao.SysUser.FindCount(g.Map{
-		dao.SysUser.Columns.Email: email,
+		dao.SysUser.Columns.Email:   email,
 		dao.SysUser.Columns.DelFlag: "0",
 	}); err != nil {
 		return false
@@ -718,7 +719,7 @@ func (s *userService) CheckPhoneUnique(userId int64, phone string) bool {
 	if i, err := dao.SysUser.FindCount(g.Map{
 		dao.SysUser.Columns.Phonenumber:                  phone,
 		fmt.Sprintf("%s <>", dao.SysUser.Columns.UserId): userId,
-		dao.SysUser.Columns.DelFlag: "0",
+		dao.SysUser.Columns.DelFlag:                      "0",
 	}); err != nil {
 		return false
 	} else {
@@ -730,7 +731,7 @@ func (s *userService) CheckPhoneUnique(userId int64, phone string) bool {
 func (s *userService) CheckPhoneUniqueAll(phone string) bool {
 	if i, err := dao.SysUser.FindCount(g.Map{
 		dao.SysUser.Columns.Phonenumber: phone,
-		dao.SysUser.Columns.DelFlag: "0",
+		dao.SysUser.Columns.DelFlag:     "0",
 	}); err != nil {
 		return false
 	} else {
@@ -820,7 +821,18 @@ func (s *userService) SetUserCache(prefix string, userId int64, user interface{}
 }
 
 // 删除用户信息缓存
-func (s *userService) RemoveUserCache(userId int64) {
-	gcache.Remove(fmt.Sprintf(s.UserCachePrefix+"%d", userId))
-	gcache.Remove(fmt.Sprintf(s.UserProfileCachePrefix+"%d", userId))
+func (s *userService) RemoveUserCache(userId ...int64) {
+	if len(userId) > 0 {
+		gcache.Remove(fmt.Sprintf(s.UserCachePrefix+"%d", userId[0]))
+		gcache.Remove(fmt.Sprintf(s.UserProfileCachePrefix+"%d", userId[0]))
+	} else {
+		if cacheKeys, err := gcache.KeyStrings(); err == nil {
+			// 删除跟用户菜单有关的缓存
+			for _, v := range cacheKeys {
+				if gstr.ContainsI(v, "user_cache_") {
+					gcache.Remove(v)
+				}
+			}
+		}
+	}
 }

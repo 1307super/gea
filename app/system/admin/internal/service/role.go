@@ -19,7 +19,7 @@ import (
 
 var Role = &roleService{}
 
-type roleService struct {}
+type roleService struct{}
 
 func IsAdmin(uid int64) bool {
 	if uid == 1 {
@@ -29,13 +29,13 @@ func IsAdmin(uid int64) bool {
 }
 
 //根据条件分页查询角色数据
-func (s *roleService)GetList(ctx context.Context,param *define.RoleApiSelectPageReq) *define.RoleServiceList {
+func (s *roleService) GetList(ctx context.Context, param *define.RoleApiSelectPageReq) *define.RoleServiceList {
 	m := dao.SysRole.As("r").
 		Fields("distinct r.role_id, r.role_name, r.role_key, r.role_sort, r.data_scope, r.status, r.del_flag, r.create_time, r.remark").
-		LeftJoin("sys_user_role","ur","ur.role_id = r.role_id").
-		LeftJoin("sys_user","u","u.user_id = ur.user_id").
-		LeftJoin("sys_dept","d","u.dept_id = d.dept_id").
-		Where(fmt.Sprintf("r.%s",dao.SysRole.Columns.DelFlag),"0")
+		LeftJoin("sys_user_role", "ur", "ur.role_id = r.role_id").
+		LeftJoin("sys_user", "u", "u.user_id = ur.user_id").
+		LeftJoin("sys_dept", "d", "u.dept_id = d.dept_id").
+		Where(fmt.Sprintf("r.%s", dao.SysRole.Columns.DelFlag), "0")
 
 	if param.RoleName != "" {
 		m = m.Where("r.role_name like ?", "%"+param.RoleName+"%")
@@ -61,7 +61,7 @@ func (s *roleService)GetList(ctx context.Context,param *define.RoleApiSelectPage
 		m = m.Where("date_format(r.create_time,'%y%m%d') <= date_format(?,'%y%m%d') ", param.EndTime)
 	}
 	// 获取资源权限
-	dataScope := DataScopeFilter(ctx,"d","")
+	dataScope := DataScopeFilter(ctx, "d", "")
 	if dataScope != "" {
 		m = m.Where(dataScope)
 	}
@@ -89,15 +89,15 @@ func (s *roleService)GetList(ctx context.Context,param *define.RoleApiSelectPage
 }
 
 //添加数据
-func (s *roleService)Create(ctx context.Context,req *define.RoleApiCreateReq) (int64, error) {
+func (s *roleService) Create(ctx context.Context, req *define.RoleApiCreateReq) (int64, error) {
 	user := shared.Context.Get(ctx).User
 
-	if s.CheckRoleNameUniqueAll(req.RoleName){
-		return 0,gerror.New("角色名称已存在")
+	if s.CheckRoleNameUniqueAll(req.RoleName) {
+		return 0, gerror.New("角色名称已存在")
 	}
 
 	if s.CheckRoleKeyUniqueAll(req.RoleKey) {
-		return 0,gerror.New("角色权限已存在")
+		return 0, gerror.New("角色权限已存在")
 	}
 
 	var role model.SysRole
@@ -111,23 +111,23 @@ func (s *roleService)Create(ctx context.Context,req *define.RoleApiCreateReq) (i
 	role.DataScope = "1"
 	role.CreateBy = user.UserExtend.LoginName
 	var editReq *define.RoleApiEditReq
-	gconv.Struct(req,&editReq)
-	return s.save(&role,editReq)
+	gconv.Struct(req, &editReq)
+	return s.save(&role, editReq)
 }
 
 //修改数据
-func (s *roleService)Update(ctx context.Context,req *define.RoleApiEditReq) (int64, error) {
-	if s.CheckRoleNameUnique(req.RoleName, req.RoleId){
-		return 0,gerror.New("角色名称已存在")
+func (s *roleService) Update(ctx context.Context, req *define.RoleApiEditReq) (int64, error) {
+	if s.CheckRoleNameUnique(req.RoleName, req.RoleId) {
+		return 0, gerror.New("角色名称已存在")
 	}
 
-	if s.CheckRoleKeyUnique(req.RoleKey, req.RoleId)  {
-		return 0,gerror.New("角色权限已存在")
+	if s.CheckRoleKeyUnique(req.RoleKey, req.RoleId) {
+		return 0, gerror.New("角色权限已存在")
 	}
 
 	user := shared.Context.Get(ctx).User
 
-	role, err := dao.SysRole.FindOne(dao.SysRole.Columns.RoleId,req.RoleId)
+	role, err := dao.SysRole.FindOne(dao.SysRole.Columns.RoleId, req.RoleId)
 
 	if err != nil {
 		return 0, err
@@ -144,11 +144,11 @@ func (s *roleService)Update(ctx context.Context,req *define.RoleApiEditReq) (int
 	role.UpdateTime = gtime.Now()
 	role.UpdateBy = user.UserExtend.LoginName
 	role.CreateBy = user.UserExtend.LoginName
-	return s.save(role,req)
+	return s.save(role, req)
 }
 
 // 添加 修改统一处理
-func (s *roleService) save(role *model.SysRole,req *define.RoleApiEditReq) (int64, error) {
+func (s *roleService) save(role *model.SysRole, req *define.RoleApiEditReq) (int64, error) {
 	tx, err := g.DB().Begin()
 	if err != nil {
 		return 0, err
@@ -162,11 +162,11 @@ func (s *roleService) save(role *model.SysRole,req *define.RoleApiEditReq) (int6
 			tx.Rollback()
 			return 0, err
 		}
-	}else{
+	} else {
 		// 修改
 		rid = role.RoleId
 	}
-	if req.MenuIds != ""{
+	if req.MenuIds != "" {
 		menus := convert.ToInt64Array(req.MenuIds, ",")
 		if len(menus) > 0 {
 			roleMenus := make([]model.SysRoleMenu, 0)
@@ -180,7 +180,7 @@ func (s *roleService) save(role *model.SysRole,req *define.RoleApiEditReq) (int6
 			}
 			if len(roleMenus) > 0 {
 				if role.RoleId != 0 {
-					dao.SysRoleMenu.TX(tx).Delete(dao.SysRoleMenu.Columns.RoleId,role.RoleId)
+					dao.SysRoleMenu.TX(tx).Delete(dao.SysRoleMenu.Columns.RoleId, role.RoleId)
 				}
 				_, err := dao.SysRoleMenu.TX(tx).Data(roleMenus).Insert()
 				if err != nil {
@@ -191,19 +191,20 @@ func (s *roleService) save(role *model.SysRole,req *define.RoleApiEditReq) (int6
 				go s.ReloadPermissionsForUser(req.RoleKey)
 				// 清空缓存
 				go Menu.ClearCache()
+				go User.RemoveUserCache()
 			}
 		}
 	}
-	return rid,tx.Commit()
+	return rid, tx.Commit()
 }
 
-func (s *roleService)Delete(ids string) bool {
+func (s *roleService) Delete(ids string) bool {
 	idarr := convert.ToInt64Array(ids, ",")
 
-	field := fmt.Sprintf("%s in(?)",dao.SysRole.Columns.RoleId)
-	roles,err := dao.SysRole.FindAll(field,idarr)
+	field := fmt.Sprintf("%s in(?)", dao.SysRole.Columns.RoleId)
+	roles, err := dao.SysRole.FindAll(field, idarr)
 
-	result, err := dao.SysRole.Delete(field,idarr)
+	result, err := dao.SysRole.Delete(field, idarr)
 	if err != nil {
 		return false
 	}
@@ -212,14 +213,15 @@ func (s *roleService)Delete(ids string) bool {
 		go casbin.DeletePermissionsForUser(role.RoleKey)
 	}
 	// 删除对应的权限
-	dao.SysRoleMenu.Delete(field,idarr)
-	dao.SysRoleDept.Delete(field,idarr)
+	dao.SysRoleMenu.Delete(field, idarr)
+	dao.SysRoleDept.Delete(field, idarr)
 	go Menu.ClearCache()
+	go User.RemoveUserCache()
 	return nums > 0
 }
 
 // 导出excel
-func (s *roleService)Export(param *define.RoleApiSelectPageReq) (string, error) {
+func (s *roleService) Export(param *define.RoleApiSelectPageReq) (string, error) {
 	m := dao.SysRole.As("r").Where("r.del_flag = '0'")
 	if param != nil {
 		if param.RoleName != "" {
@@ -261,16 +263,15 @@ func (s *roleService)Export(param *define.RoleApiSelectPageReq) (string, error) 
 }
 
 // 查询角色详情
-func (s *roleService) Info(id int64) (*model.SysRole,error) {
-	return dao.SysRole.FindOne(dao.SysRole.Columns.RoleId,id)
+func (s *roleService) Info(id int64) (*model.SysRole, error) {
+	return dao.SysRole.FindOne(dao.SysRole.Columns.RoleId, id)
 }
 
 //保存数据权限
-func (s *roleService)AuthDataScope(ctx context.Context,req *define.RoleApiDataScopeReq) (int64, error) {
-
+func (s *roleService) AuthDataScope(ctx context.Context, req *define.RoleApiDataScopeReq) (int64, error) {
 	user := shared.Context.Get(ctx).User
 	if IsAdmin(req.RoleId) {
-		return 0,gerror.New("不允许操作超级管理员角色")
+		return 0, gerror.New("不允许操作超级管理员角色")
 	}
 	role, err := s.Info(req.RoleId)
 	if err != nil {
@@ -305,7 +306,7 @@ func (s *roleService)AuthDataScope(ctx context.Context,req *define.RoleApiDataSc
 				}
 			}
 			if len(roleDepts) > 0 {
-				dao.SysRoleDept.TX(tx).Delete(dao.SysRoleDept.Columns.RoleId,role.RoleId)
+				dao.SysRoleDept.TX(tx).Delete(dao.SysRoleDept.Columns.RoleId, role.RoleId)
 				_, err := dao.SysRoleDept.TX(tx).Data(roleDepts).Insert()
 				if err != nil {
 					tx.Rollback()
@@ -318,39 +319,37 @@ func (s *roleService)AuthDataScope(ctx context.Context,req *define.RoleApiDataSc
 
 }
 
-func (s *roleService)ChangeStatus(roleId int64, status string) error {
+func (s *roleService) ChangeStatus(roleId int64, status string) error {
 	if IsAdmin(roleId) {
 		return gerror.New("不能停用超级管理员")
 	}
 	_, err := dao.SysRole.Data(g.Map{
 		"status": status,
-	}).Where(dao.SysRole.Columns.RoleId,roleId).Update()
+	}).Where(dao.SysRole.Columns.RoleId, roleId).Update()
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-
 func (s *roleService) GetRolePermission(ctx context.Context) g.Array {
 	customCtx := shared.Context.Get(ctx)
 	var roles g.Array
 	if IsAdmin(customCtx.Uid) {
-		roles = append(roles,"admin" )
-	}else{
+		roles = append(roles, "admin")
+	} else {
 		var roleEntitys []model.SysRoleFlag
 		if err := dao.SysRole.As("r").
 			Fields("distinct r.role_id, r.role_name, r.role_key, r.role_sort, r.data_scope,r.status, r.del_flag, r.create_time, r.remark").
-			LeftJoin("sys_user_role","ur","ur.role_id = r.role_id").
-			LeftJoin("sys_user","u","u.user_id = ur.user_id").
-			LeftJoin("sys_dept","d","u.dept_id = d.dept_id").
+			LeftJoin("sys_user_role", "ur", "ur.role_id = r.role_id").
+			LeftJoin("sys_user", "u", "u.user_id = ur.user_id").
+			LeftJoin("sys_dept", "d", "u.dept_id = d.dept_id").
 			Where("r.del_flag = '0' and u.del_flag = '0'").
 			Where("ur.user_id = ?", customCtx.Uid).
-			Structs(&roleEntitys);
-			err != nil {
+			Structs(&roleEntitys); err != nil {
 			return roles
 		}
-		for _,roleEntity := range roleEntitys  {
+		for _, roleEntity := range roleEntitys {
 			if roleEntity.RoleKey != "" {
 				roles = append(roles, roleEntity.RoleKey)
 			}
@@ -359,16 +358,14 @@ func (s *roleService) GetRolePermission(ctx context.Context) g.Array {
 	return roles
 }
 
-
 //查询角色
-func (s *roleService)SelectRoleContact() (g.Array, error) {
+func (s *roleService) SelectRoleContact() (g.Array, error) {
 	var userRoleFlags []model.SysRoleFlag
 	if err := dao.SysRole.As("r").
 		Fields("distinct r.role_id, r.role_name, r.role_key, r.role_sort, r.data_scope,r.status, r.del_flag, r.create_time, r.remark").
 		Where("r.del_flag = '0'").
-		Structs(&userRoleFlags);
-		err != nil{
-		return nil,gerror.New("未查询到用户角色数据")
+		Structs(&userRoleFlags); err != nil {
+		return nil, gerror.New("未查询到用户角色数据")
 	}
 	var userRoles g.Array
 	for _, userRoleFlag := range userRoleFlags {
@@ -377,7 +374,7 @@ func (s *roleService)SelectRoleContact() (g.Array, error) {
 	return userRoles, nil
 }
 
-func (s *roleService) GetRoleListByUid(uid int64) ([]int64,error) {
+func (s *roleService) GetRoleListByUid(uid int64) ([]int64, error) {
 	m := dao.SysRole.As("r")
 	m = m.LeftJoin("sys_user_role ur", "ur.role_id = r.role_id")
 	m = m.LeftJoin("sys_user u", "u.user_id = ur.user_id")
@@ -396,11 +393,10 @@ func (s *roleService) GetRoleListByUid(uid int64) ([]int64,error) {
 	return roleIds, nil
 }
 
-
 // ============= 校验操作 ================
 //检查角色名是否唯一
-func (s *roleService)CheckRoleNameUniqueAll(roleName string) bool {
-	role, err := dao.SysRole.FindOne(dao.SysRole.Columns.RoleName,roleName)
+func (s *roleService) CheckRoleNameUniqueAll(roleName string) bool {
+	role, err := dao.SysRole.FindOne(dao.SysRole.Columns.RoleName, roleName)
 	if err == nil && role != nil && role.RoleId > 0 {
 		return true
 	}
@@ -408,8 +404,8 @@ func (s *roleService)CheckRoleNameUniqueAll(roleName string) bool {
 }
 
 //检查角色键是否唯一
-func (s *roleService)CheckRoleKeyUniqueAll(roleKey string) bool {
-	role, err := dao.SysRole.FindOne(dao.SysRole.Columns.RoleKey,roleKey)
+func (s *roleService) CheckRoleKeyUniqueAll(roleKey string) bool {
+	role, err := dao.SysRole.FindOne(dao.SysRole.Columns.RoleKey, roleKey)
 	if err == nil && role != nil && role.RoleId > 0 {
 		return true
 	}
@@ -417,10 +413,10 @@ func (s *roleService)CheckRoleKeyUniqueAll(roleKey string) bool {
 }
 
 //检查角色名是否唯一
-func (s *roleService)CheckRoleNameUnique(roleName string, roleId int64) bool {
+func (s *roleService) CheckRoleNameUnique(roleName string, roleId int64) bool {
 	role, err := dao.SysRole.FindOne(g.Map{
-		dao.SysRole.Columns.RoleName:roleName,
-		fmt.Sprintf("%s <> ",dao.SysRole.Columns.RoleId): roleId,
+		dao.SysRole.Columns.RoleName:                      roleName,
+		fmt.Sprintf("%s <> ", dao.SysRole.Columns.RoleId): roleId,
 	})
 	if err == nil && role != nil && role.RoleId > 0 {
 		return true
@@ -429,10 +425,10 @@ func (s *roleService)CheckRoleNameUnique(roleName string, roleId int64) bool {
 }
 
 //检查角色键是否唯一
-func (s *roleService)CheckRoleKeyUnique(roleKey string, roleId int64) bool {
+func (s *roleService) CheckRoleKeyUnique(roleKey string, roleId int64) bool {
 	role, err := dao.SysRole.FindOne(g.Map{
-		dao.SysRole.Columns.RoleKey:roleKey,
-		fmt.Sprintf("%s <> ",dao.SysRole.Columns.RoleId): roleId,
+		dao.SysRole.Columns.RoleKey:                       roleKey,
+		fmt.Sprintf("%s <> ", dao.SysRole.Columns.RoleId): roleId,
 	})
 	if err == nil && role != nil && role.RoleId > 0 {
 		return true
@@ -440,22 +436,21 @@ func (s *roleService)CheckRoleKeyUnique(roleKey string, roleId int64) bool {
 	return false
 }
 
-
 // 重置角色权限
-func (s *roleService)ReloadPermissionsForUser(roleName string) {
+func (s *roleService) ReloadPermissionsForUser(roleName string) {
 	casbin.DeletePermissionsForUser(roleName)
 	s.LoadRolePolicy(roleName)
 }
 
 // 加载所有角色权限
-func (s *roleService)LoadRolePolicy(roleName string) {
+func (s *roleService) LoadRolePolicy(roleName string) {
 	permissionForRoles := s.GetRoleMenuPolicy(roleName)
 	for _, permissionForRole := range permissionForRoles {
 		casbin.AddPermissionForUser(permissionForRole.RoleName, permissionForRole.Path, permissionForRole.Method)
 	}
 }
 
-func (s *roleService)GetRoleMenuPolicy(roleName ...string) []define.RoleServicePermissionForRole {
+func (s *roleService) GetRoleMenuPolicy(roleName ...string) []define.RoleServicePermissionForRole {
 	var result []define.RoleServicePermissionForRole
 	m := dao.SysMenu.As("m")
 	m = m.LeftJoin("sys_role_menu rm", "m.menu_id = rm.menu_id")
