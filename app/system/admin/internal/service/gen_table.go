@@ -17,11 +17,11 @@ import (
 	"github.com/gogf/gf/errors/gerror"
 	"github.com/gogf/gf/frame/g"
 	"github.com/gogf/gf/net/ghttp"
+	"github.com/gogf/gf/os/glog"
 	"github.com/gogf/gf/os/gtime"
 	"github.com/gogf/gf/os/gview"
 	"github.com/gogf/gf/text/gstr"
 	"github.com/gogf/gf/util/gconv"
-	"github.com/golang/glog"
 	"strings"
 )
 
@@ -46,7 +46,7 @@ func (s *genTableService) Info(id int64) (*model.GenTableExtend, error) {
 }
 
 // 预览
-func (s *genTableService) Preview( tableId int64) g.Map {
+func (s *genTableService) Preview(tableId int64) g.Map {
 	entity, err := s.Info(tableId)
 	if err != nil || entity == nil {
 		return nil
@@ -80,7 +80,7 @@ func (s *genTableService) Preview( tableId int64) g.Map {
 	serviceKey := "vm/go/service.go.vm"
 	serviceValue := ""
 	view := g.View()
-	if tmpList, err := view.Parse(context.TODO(),listTmp, g.Map{"table": entity}); err == nil {
+	if tmpList, err := view.Parse(context.TODO(), listTmp, g.Map{"table": entity}); err == nil {
 		listValue = tmpList
 	}
 
@@ -90,44 +90,44 @@ func (s *genTableService) Preview( tableId int64) g.Map {
 	//	}
 	//}
 
-	if tmpAppJs, err := view.Parse(context.TODO(),appJsTmp, g.Map{"table": entity}); err == nil {
+	if tmpAppJs, err := view.Parse(context.TODO(), appJsTmp, g.Map{"table": entity}); err == nil {
 		appJsValue = tmpAppJs
 	}
 
-	if tmpModel, err := view.Parse(context.TODO(),"vm/go/model.html", g.Map{"table": entity}); err == nil {
+	if tmpModel, err := view.Parse(context.TODO(), "vm/go/model.html", g.Map{"table": entity}); err == nil {
 		modelValue = tmpModel
 	}
 
-	if tmpModelInternal, err := view.Parse(context.TODO(),"vm/go/model_internal.html", g.Map{"table": entity}); err == nil {
+	if tmpModelInternal, err := view.Parse(context.TODO(), "vm/go/model_internal.html", g.Map{"table": entity}); err == nil {
 		modelInternalValue = tmpModelInternal
 	}
 
-	if tmpDao, err := view.Parse(context.TODO(),"vm/go/dao.html", g.Map{"table": entity}); err == nil {
+	if tmpDao, err := view.Parse(context.TODO(), "vm/go/dao.html", g.Map{"table": entity}); err == nil {
 		daoValue = tmpDao
 	}
-	if tmpDaoInternal, err := view.Parse(context.TODO(),"vm/go/dao_internal.html", g.Map{"table": entity}); err == nil {
+	if tmpDaoInternal, err := view.Parse(context.TODO(), "vm/go/dao_internal.html", g.Map{"table": entity}); err == nil {
 		daolInternalValue = tmpDaoInternal
 	}
 
-	if tmpService, err := view.Parse(context.TODO(),"vm/go/service.html", g.Map{"table": entity}); err == nil {
+	if tmpService, err := view.Parse(context.TODO(), "vm/go/service.html", g.Map{"table": entity}); err == nil {
 		serviceValue = tmpService
 	}
 
-	if tmpController, err := view.Parse(context.TODO(),"vm/go/controller.html", g.Map{"table": entity}); err == nil {
+	if tmpController, err := view.Parse(context.TODO(), "vm/go/controller.html", g.Map{"table": entity}); err == nil {
 		controllerValue = tmpController
 	}
-	if tmpDefine, err := view.Parse(context.TODO(),"vm/go/define.html", g.Map{"table": entity}); err == nil {
+	if tmpDefine, err := view.Parse(context.TODO(), "vm/go/define.html", g.Map{"table": entity}); err == nil {
 		defineValue = tmpDefine
 	}
 
-	if tmpSql, err := view.Parse(context.TODO(),"vm/sql/sql.html", g.Map{"table": entity}); err == nil {
+	if tmpSql, err := view.Parse(context.TODO(), "vm/sql/sql.html", g.Map{"table": entity}); err == nil {
 		sqlValue = tmpSql
 	}
 
 	if entity.TplCategory == "tree" {
 		return g.Map{
-			listKey:          listValue,
-			appJsKey:         appJsValue,
+			listKey:  listValue,
+			appJsKey: appJsValue,
 			//treeKey:          treeValue,
 			sqlKey:           sqlValue,
 			modelKey:         modelValue,
@@ -317,7 +317,7 @@ func (s *genTableService) Delete(ids string) int64 {
 
 //查询据库列表
 func (s *genTableService) GetTables(param *define.GenTableApiSelectPageReq) *define.GenTableServiceList {
-	db,err := gdb.Instance()
+	db, err := gdb.Instance()
 	if err != nil {
 		return nil
 	}
@@ -328,10 +328,10 @@ func (s *genTableService) GetTables(param *define.GenTableApiSelectPageReq) *def
 
 	if param != nil {
 		if param.TableName != "" {
-			whereSlice = append(whereSlice, fmt.Sprintf("lower(table_name) like lower('%s')","%"+param.TableName+"%"))
+			whereSlice = append(whereSlice, fmt.Sprintf("lower(table_name) like lower('%s')", "%"+param.TableName+"%"))
 		}
 		if param.TableComment != "" {
-			whereSlice = append(whereSlice, fmt.Sprintf("lower(table_comment) like lower('%s')","%"+param.TableComment+"%"))
+			whereSlice = append(whereSlice, fmt.Sprintf("lower(table_comment) like lower('%s')", "%"+param.TableComment+"%"))
 		}
 		if param.BeginTime != "" {
 			whereSlice = append(whereSlice, "date_format(create_time,'%y%m%d') >= date_format('"+param.BeginTime+"','%y%m%d') ")
@@ -340,8 +340,8 @@ func (s *genTableService) GetTables(param *define.GenTableApiSelectPageReq) *def
 			whereSlice = append(whereSlice, "date_format(create_time,'%y%m%d') <= date_format('"+param.EndTime+"','%y%m%d') ")
 		}
 	}
-	where  := gstr.Implode(" and ",whereSlice)
-	countSql := fmt.Sprintf("select count(*) from information_schema.tables where %s ",where)
+	where := gstr.Implode(" and ", whereSlice)
+	countSql := fmt.Sprintf("select count(*) from information_schema.tables where %s ", where)
 	fmt.Println(countSql)
 	total, err := db.GetCount(countSql)
 	if err != nil {
@@ -349,13 +349,13 @@ func (s *genTableService) GetTables(param *define.GenTableApiSelectPageReq) *def
 	}
 	page := page.CreatePaging(param.PageNum, param.PageSize, total)
 
-	listSql := fmt.Sprintf("select table_name, table_comment, create_time, update_time from information_schema.tables where %s limit ?,?",where)
+	listSql := fmt.Sprintf("select table_name, table_comment, create_time, update_time from information_schema.tables where %s limit ?,?", where)
 	var result = &define.GenTableServiceList{
 		Page:  page.PageNum,
 		Size:  page.Pagesize,
 		Total: page.Total,
 	}
-	rows, err := db.GetAll(listSql,g.Slice{page.StartNum,page.Pagesize})
+	rows, err := db.GetAll(listSql, g.Slice{page.StartNum, page.Pagesize})
 	if err != nil {
 		return nil
 	}
@@ -376,12 +376,12 @@ func (s *genTableService) GetAllByName(tableNames []string) ([]model.GenTable, e
 	whereSlice = append(whereSlice, "table_name NOT LIKE 'gen_%'")
 	whereSlice = append(whereSlice, "table_schema = (select database())")
 	if len(tableNames) > 0 {
-		whereSlice = append(whereSlice, fmt.Sprintf("table_name in ('%s')",gstr.Implode("','",tableNames)))
+		whereSlice = append(whereSlice, fmt.Sprintf("table_name in ('%s')", gstr.Implode("','", tableNames)))
 	}
-	sql := fmt.Sprintf("select * from information_schema.tables where %s",gstr.Implode(" and ",whereSlice))
+	sql := fmt.Sprintf("select * from information_schema.tables where %s", gstr.Implode(" and ", whereSlice))
 	rows, err := db.GetAll(sql)
 	if err != nil {
-		return nil,gerror.New("未查询到数据")
+		return nil, gerror.New("未查询到数据")
 	}
 
 	var result []model.GenTable
@@ -544,7 +544,7 @@ func (s *genTableService) InitColumnField(column *model.GenTableColumn, table *m
 	}
 }
 
-func (s *genTableService) GenCode(r *ghttp.Request,tableId string) error {
+func (s *genTableService) GenCode(r *ghttp.Request, tableId string) error {
 	tableIds := convert.ToInt64Array(tableId, ",")
 	if len(tableIds) <= 0 {
 		return gerror.New("参数错误")
@@ -562,24 +562,24 @@ func (s *genTableService) GenCode(r *ghttp.Request,tableId string) error {
 		}
 
 		template := g.MapStrStr{
-			listTmp:                     strings.Join([]string{ "/template/", "business", "/", entity.BusinessName, "/index.vue"}, ""),
-			"vm/js/api.html":            strings.Join([]string{ "/template/", "business", "/", entity.BusinessName, "/index.js"}, ""),
-			"vm/go/model.html":          strings.Join([]string{ "/app/model/", entity.TableName, ".go"}, ""),
-			"vm/go/model_internal.html": strings.Join([]string{ "/app/model/", "internal", "/", entity.TableName, ".go"}, ""),
-			"vm/go/dao.html":            strings.Join([]string{ "/app/dao/", entity.TableName, ".go"}, ""),
-			"vm/go/dao_internal.html":   strings.Join([]string{ "/app/dao/", "internal", "/", entity.TableName, ".go"}, ""),
-			"vm/go/controller.html":     strings.Join([]string{ "/app/system/", entity.ModuleName, "/internal/api/", entity.TableName, ".go"}, ""),
-			"vm/go/define.html":         strings.Join([]string{ "/app/system/", entity.ModuleName, "/internal/define/", entity.TableName, ".go"}, ""),
-			"vm/go/service.html":        strings.Join([]string{ "/app/system/", entity.ModuleName, "/internal/service/", entity.TableName, ".go"}, ""),
+			listTmp:                     strings.Join([]string{"/template/", "business", "/", entity.BusinessName, "/index.vue"}, ""),
+			"vm/js/api.html":            strings.Join([]string{"/template/", "business", "/", entity.BusinessName, "/index.js"}, ""),
+			"vm/go/model.html":          strings.Join([]string{"/app/model/", entity.TableName, ".go"}, ""),
+			"vm/go/model_internal.html": strings.Join([]string{"/app/model/", "internal", "/", entity.TableName, ".go"}, ""),
+			"vm/go/dao.html":            strings.Join([]string{"/app/dao/", entity.TableName, ".go"}, ""),
+			"vm/go/dao_internal.html":   strings.Join([]string{"/app/dao/", "internal", "/", entity.TableName, ".go"}, ""),
+			"vm/go/controller.html":     strings.Join([]string{"/app/system/", entity.ModuleName, "/internal/api/", entity.TableName, ".go"}, ""),
+			"vm/go/define.html":         strings.Join([]string{"/app/system/", entity.ModuleName, "/internal/define/", entity.TableName, ".go"}, ""),
+			"vm/go/service.html":        strings.Join([]string{"/app/system/", entity.ModuleName, "/internal/service/", entity.TableName, ".go"}, ""),
 			//"vm/go/router.html":  strings.Join([]string{ "/app/controller/", entity.ModuleName, "/", entity.BusinessName, "_router.go"}, ""),
-			"vm/sql/sql.html": strings.Join([]string{ "/document/sql/", "business", "/", entity.BusinessName, "_menu.sql"}, ""),
+			"vm/sql/sql.html": strings.Join([]string{"/document/sql/", "business", "/", entity.BusinessName, "_menu.sql"}, ""),
 		}
 
 		view := g.View()
 		buf := new(bytes.Buffer)
 		zipUtil := zip.New(buf)
 		for k, v := range template {
-			s.genFile(view,zipUtil,&define.GenTableServiceGenFile{
+			s.genFile(view, zipUtil, &define.GenTableServiceGenFile{
 				TemplatePath:   k,
 				GenTableEntity: entity,
 				GenFileName:    v,
@@ -593,10 +593,10 @@ func (s *genTableService) GenCode(r *ghttp.Request,tableId string) error {
 	return nil
 }
 
-func (s *genTableService) genFile(view *gview.View,zip *zip.ZipUtils,genParam *define.GenTableServiceGenFile) {
-	if tmpList, err := view.Parse(context.TODO(),genParam.TemplatePath, g.Map{"table": genParam.GenTableEntity}); err == nil {
+func (s *genTableService) genFile(view *gview.View, zip *zip.ZipUtils, genParam *define.GenTableServiceGenFile) {
+	if tmpList, err := view.Parse(context.TODO(), genParam.TemplatePath, g.Map{"table": genParam.GenTableEntity}); err == nil {
 		//生成zip
-		zip.PackToBuffer(genParam.GenFileName,gconv.Bytes(tmpList))
+		zip.PackToBuffer(genParam.GenFileName, gconv.Bytes(tmpList))
 	}
 }
 
