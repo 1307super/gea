@@ -212,7 +212,7 @@ func (s *menuService) GetMenusListByUserId(userId int64) ([]*model.SysMenuExtend
 	m = m.LeftJoin("sys_user_role ur", "rm.role_id = ur.role_id")
 	m = m.LeftJoin("sys_role ro", "ur.role_id = ro.role_id")
 	m = m.Fields("distinct m.menu_id, m.parent_id, m.menu_name, m.path, m.component, m.visible, m.status, ifnull(m.perms,'') as perms, m.is_frame, m.menu_type, m.icon, m.order_num, m.create_time")
-	m = m.Where("ur.user_id = ? ", userId)
+	m = m.Where("ur.user_id = ? ", userId).Where(" m.menu_type in ('M', 'C')")
 	m = m.Order("m.parent_id, m.order_num")
 	if err := m.Structs(&result); err != nil {
 		return nil, gerror.New("读取数据失败")
