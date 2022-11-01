@@ -342,7 +342,6 @@ func (s *genTableService) GetTables(param *define.GenTableApiSelectPageReq) *def
 	}
 	where := gstr.Implode(" and ", whereSlice)
 	countSql := fmt.Sprintf("select count(*) from information_schema.tables where %s ", where)
-	fmt.Println(countSql)
 	total, err := db.GetCount(countSql)
 	if err != nil {
 		return nil

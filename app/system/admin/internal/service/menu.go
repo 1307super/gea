@@ -161,10 +161,10 @@ func (s *menuService) Delete(id int64) bool {
 	if err == nil {
 		affected, _ := result.RowsAffected()
 		if affected > 0 {
+			s.ClearCache()
 			return true
 		}
 	}
-	s.ClearCache()
 	return false
 }
 

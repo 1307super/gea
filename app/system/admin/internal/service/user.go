@@ -668,11 +668,9 @@ func (s *userService) Export(param *define.UserApiSelectPageReq) (string, error)
 	head := []string{"用户名", "呢称", "Email", "电话号码", "性别", "部门", "领导", "状态", "删除标记", "创建人", "创建时间", "备注"}
 	key := []string{"login_name", "user_name", "email", "phonenumber", "sex", "dept_name", "leader", "status", "del_flag", "create_by", "create_time", "remark"}
 	url, err := excel.DownlaodExcel(head, key, userList)
-
 	if err != nil {
 		return "", err
 	}
-
 	return url, nil
 }
 
